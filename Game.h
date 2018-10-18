@@ -13,9 +13,13 @@ public:
 
 class Block: public sf::RectangleShape
 {
+private:
+	Texture* texture = new Texture;
 public:
 	const float width = Game::height / 18.75;
 	Block(int x, int y);
+	Block(int x, int y, string texture);
+	void setPosition(int x, int y);
 };
 
 class Entity

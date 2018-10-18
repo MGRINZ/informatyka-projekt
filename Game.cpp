@@ -7,8 +7,8 @@ using namespace sf;
 
 Level::Level()
 {
-	for (int i = 0; i < 50; i++) {
-		addBlock(Block(0, i));
+	for (int i = 0; i < 10; i++) {
+		addBlock(Block(0, i, "dirt.jpg"));
 		addBlock(Block(i, 0));
 		addBlock(Block(i, i));
 	}
@@ -30,9 +30,17 @@ void Level::draw(RenderWindow &window)
 
 Block::Block(int x, int y)
 {
-	this->setSize(Vector2f(width, width));
-	this->setPosition(Vector2f(x * width, y * width));
-	this->setOutlineColor(Color::Red);
-	this->setOutlineThickness(1.0);
-	
+	setSize(Vector2f(width, width));
+	setPosition(x, y);
+}
+
+Block::Block(int x, int y, string txt) : Block(x, y)
+{
+	texture->loadFromFile("resources/textures/" + txt);
+	setTexture(texture);
+}
+
+void Block::setPosition(int x, int y)
+{
+	RectangleShape::setPosition(Vector2f(x * width, y * width));
 }
