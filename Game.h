@@ -37,5 +37,9 @@ public:
 	Level();
 	void addBlock(Block block);
 	void draw(RenderWindow &window);
+	int load(string levelName);
+	static const int LEVEL_LOAD_SUCCESS = 0;
+	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
+	static const string LEVEL_PROPERTY_TERRAIN;
 };
 

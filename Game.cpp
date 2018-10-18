@@ -1,17 +1,16 @@
 #include <iostream>
+#include <fstream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 
 using namespace std;
 using namespace sf;
 
+const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
+
 Level::Level()
 {
-	for (int i = 0; i < 10; i++) {
-		addBlock(Block(0, i, "dirt.jpg"));
-		addBlock(Block(i, 0));
-		addBlock(Block(i, i));
-	}
+	load("level1.lvl");
 }
 
 void Level::addBlock(Block block)
@@ -25,6 +24,49 @@ void Level::draw(RenderWindow &window)
 	{
 		window.draw(block);
 	}
+}
+
+int Level::load(string levelName)
+{
+	ifstream levelInputStream("resources/levels/" + levelName);
+	if (!levelInputStream.is_open())
+		return LEVEL_LOAD_ERROR_OPEN_FILE;
+
+	string line;
+	string property;
+	while (getline(levelInputStream, line))
+	{
+		if (line[0] == ';')
+		{
+			property = line;
+			continue;
+		}
+		else
+		{
+			if (property == LEVEL_PROPERTY_TERRAIN)
+			{
+				int x, y;
+				string texture;
+
+				char c_line[255];
+				strcpy_s(c_line, line.c_str());
+				char *ptr;
+				ptr = strtok(c_line, ";");
+				cout << ptr << endl;
+				x = atoi(ptr);
+				ptr = strtok(NULL, ";");
+				cout << ptr << endl;
+				y = atoi(ptr);
+				ptr = strtok(NULL, ";");
+				cout << ptr << endl;
+				texture = ptr;
+				addBlock(Block(x, y, texture));
+			}
+			else
+				continue;
+		}
+	}
+	return LEVEL_LOAD_SUCCESS;
 }
 
 

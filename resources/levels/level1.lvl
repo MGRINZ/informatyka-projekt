@@ -1,0 +1,11 @@
+;settings
+name=
+background=
+audio=
+;terrain
+0;0;dirt.jpg
+1;0;dirt.jpg
+2;0;dirt.jpg
+;background
+;foreground
+;entities
