@@ -27,19 +27,39 @@ class Entity
 
 };
 
+class Background : public Sprite
+{
+private:
+	Texture texture;
+	string name;
+public:
+	Background();
+	void setTexture(String texture);
+};
+
 class Level
 {
 private:
-	vector<Block> blocks;
+	vector<Block> solidBlocks;
+	vector<Block> backgroundBlocks;
+	vector<Block> foregroundBlocks;
 	vector<Entity> enemies;
 	Entity player;
+	string name;
+	Background background;
+	string audio;
 public:
 	Level();
-	void addBlock(Block block);
+	void addSolidBlock(Block block);
+	void addBackgroundBlock(Block block);
+	void addForegroundBlock(Block block);
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
+	static const string LEVEL_PROPERTY_SETTINGS;
 	static const string LEVEL_PROPERTY_TERRAIN;
+	static const string LEVEL_PROPERTY_BACKGROUND;
+	static const string LEVEL_PROPERTY_FOREGROUND;
+	static const string LEVEL_PROPERTY_ENTITIES;
 };
-

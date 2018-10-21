@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Informatyka Projekt", "Informatyka Projekt.vcxproj", "{98BD99DC-74E3-4926-A1A3-D6FC96C33BF4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csvtolvl_converter", "..\csvtolvl_converter\csvtolvl_converter.vcxproj", "{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{98BD99DC-74E3-4926-A1A3-D6FC96C33BF4}.Release|x64.Build.0 = Release|x64
 		{98BD99DC-74E3-4926-A1A3-D6FC96C33BF4}.Release|x86.ActiveCfg = Release|Win32
 		{98BD99DC-74E3-4926-A1A3-D6FC96C33BF4}.Release|x86.Build.0 = Release|Win32
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Debug|x64.ActiveCfg = Debug|x64
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Debug|x64.Build.0 = Debug|x64
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Debug|x86.ActiveCfg = Debug|Win32
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Debug|x86.Build.0 = Debug|Win32
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Release|x64.ActiveCfg = Release|x64
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Release|x64.Build.0 = Release|x64
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Release|x86.ActiveCfg = Release|Win32
+		{D06B5C86-2CBD-4749-BEFB-E0CCAB5D088E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

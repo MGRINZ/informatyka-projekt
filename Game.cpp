@@ -7,21 +7,37 @@
 using namespace std;
 using namespace sf;
 
+const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
+const string Level::LEVEL_PROPERTY_BACKGROUND = ";background";
+const string Level::LEVEL_PROPERTY_FOREGROUND = ";foreground";
+const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
 {
-	load("level1.lvl");
+	load("level2.lvl");
 }
 
-void Level::addBlock(Block block)
+void Level::addSolidBlock(Block block)
 {
-	blocks.push_back(block);
+	solidBlocks.push_back(block);
+}
+
+void Level::addBackgroundBlock(Block block)
+{
+	backgroundBlocks.push_back(block);
+}
+
+void Level::addForegroundBlock(Block block)
+{
+	foregroundBlocks.push_back(block);
 }
 
 void Level::draw(RenderWindow &window)
 {
-	for (auto &block : blocks)
+	window.draw(background);
+
+	for (auto &block : solidBlocks)
 	{
 		window.draw(block);
 	}
@@ -44,7 +60,17 @@ int Level::load(string levelName)
 		}
 		else
 		{
-			if (property == LEVEL_PROPERTY_TERRAIN)
+			if (property == LEVEL_PROPERTY_SETTINGS)
+			{
+				int pos = -1;
+				if (line.find("name") == 0)
+					name = line.substr(5);
+				else if (line.find("background") == 0)
+					background.setTexture(line.substr(11));
+				else if (line.find("audio") == 0)
+					audio = line.substr(6);
+			}
+			if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
 			{
 				int x, y;
 				string texture;
@@ -58,7 +84,13 @@ int Level::load(string levelName)
 				y = atoi(token.c_str());
 				getline(ss, token, ';');
 				texture = token;
-				addBlock(Block(x, y, texture));
+				if(property == LEVEL_PROPERTY_TERRAIN)
+					addSolidBlock(Block(x, y, texture));
+				else if(property == LEVEL_PROPERTY_BACKGROUND)
+					addBackgroundBlock(Block(x, y, texture));
+				else if(property == LEVEL_PROPERTY_FOREGROUND)
+					addForegroundBlock(Block(x, y, texture));
+
 			}
 			else
 				continue;
@@ -83,4 +115,19 @@ Block::Block(int x, int y, string txt) : Block(x, y)
 void Block::setPosition(int x, int y)
 {
 	RectangleShape::setPosition(Vector2f(x * width, y * width));
+}
+
+Background::Background()
+{
+	
+}
+
+void Background::setTexture(String texture)
+{
+	name = texture;
+	if(!texture.isEmpty())
+	{
+		this->texture.loadFromFile("resources/backgrounds/" + texture);
+		Sprite::setTexture(this->texture);
+	}
 }
