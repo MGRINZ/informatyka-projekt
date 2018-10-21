@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
@@ -47,19 +48,16 @@ int Level::load(string levelName)
 			{
 				int x, y;
 				string texture;
+				string token;
 
-				char c_line[255];
-				strcpy_s(c_line, line.c_str());
-				char *ptr;
-				ptr = strtok(c_line, ";");
-				cout << ptr << endl;
-				x = atoi(ptr);
-				ptr = strtok(NULL, ";");
-				cout << ptr << endl;
-				y = atoi(ptr);
-				ptr = strtok(NULL, ";");
-				cout << ptr << endl;
-				texture = ptr;
+				stringstream ss;
+				ss << line;
+				getline(ss, token, ';');
+				x = atoi(token.c_str());
+				getline(ss, token, ';');
+				y = atoi(token.c_str());
+				getline(ss, token, ';');
+				texture = token;
 				addBlock(Block(x, y, texture));
 			}
 			else

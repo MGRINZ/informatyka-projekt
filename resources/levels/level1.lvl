@@ -6,6 +6,10 @@ audio=
 0;0;dirt.jpg
 1;0;dirt.jpg
 2;0;dirt.jpg
+3;0;crate.jpg
+4;0;crate.jpg
+5;0;crate.jpg
+6;0;crate.jpg
 ;background
 ;foreground
 ;entities
