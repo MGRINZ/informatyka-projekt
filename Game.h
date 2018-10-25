@@ -34,6 +34,7 @@ public:
 	void handleGravity(vector<Block> &blocks, float gravity = Block::WIDTH / 4);
 	bool canGoRight(vector<Block> &blocks);
 	bool canGoLeft(vector<Block> &blocks);
+	void jump(vector<Block> &blocks);
 };
 
 class Background : public Sprite

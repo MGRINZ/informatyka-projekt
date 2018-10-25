@@ -120,10 +120,14 @@ void Level::handleEntities()
 		if(player.canGoRight(solidBlocks))
 			player.move(Vector2f(Block::WIDTH / 8, 0));
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Left))
+	if (Keyboard::isKeyPressed(Keyboard::Left))
 	{
 		if (player.canGoLeft(solidBlocks))
 			player.move(Vector2f(-Block::WIDTH / 8, 0));
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		player.jump(solidBlocks);
 	}
 }
 
@@ -191,6 +195,12 @@ bool Entity::canGoLeft(vector<Block> &blocks)
 	}
 
 	return true;
+}
+
+void Entity::jump(vector<Block> &blocks)
+{
+	static bool max_height = false;
+	move(Vector2f(0, -Block::WIDTH));
 }
 
 Block::Block(int x, int y)
