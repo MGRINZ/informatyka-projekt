@@ -7,7 +7,7 @@ using namespace sf;
 
 int main()
 {
-	RenderWindow window(VideoMode(Game::width, Game::height), "Gra");
+	RenderWindow window(VideoMode(Game::WIDTH, Game::HEIGHT), "Gra");
 	window.setFramerateLimit(60);
 
 	Level level;
@@ -19,6 +19,8 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 		}
+
+		level.handleEntities();
 
 		window.clear();
 		level.draw(window);

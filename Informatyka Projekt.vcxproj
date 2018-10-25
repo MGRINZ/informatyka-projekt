@@ -26,7 +26,14 @@
     <ClInclude Include="Game.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\backgrounds\bg1.jpg" />
+    <Image Include="resources\textures\crate.jpg" />
     <Image Include="resources\textures\dirt.jpg" />
+    <Image Include="resources\textures\grass.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\levels\level1.lvl" />
+    <None Include="resources\levels\level2.lvl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

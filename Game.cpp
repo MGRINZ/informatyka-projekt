@@ -7,6 +7,8 @@
 using namespace std;
 using namespace sf;
 
+const float Block::WIDTH = Game::HEIGHT / 18.75;
+const float Entity::WIDTH = Block::WIDTH;
 const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
 const string Level::LEVEL_PROPERTY_BACKGROUND = ";background";
@@ -16,6 +18,7 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 Level::Level()
 {
 	load("level2.lvl");
+	player.setPosition(16, 10);
 }
 
 void Level::addSolidBlock(Block block)
@@ -37,10 +40,15 @@ void Level::draw(RenderWindow &window)
 {
 	window.draw(background);
 
-	for (auto &block : solidBlocks)
-	{
+	for (auto &block : backgroundBlocks)
 		window.draw(block);
-	}
+	for (auto &block : solidBlocks)
+		window.draw(block);
+	
+	window.draw(player);
+
+	for (auto &block : foregroundBlocks)
+		window.draw(block);
 }
 
 int Level::load(string levelName)
@@ -99,10 +107,90 @@ int Level::load(string levelName)
 	return LEVEL_LOAD_SUCCESS;
 }
 
+void Level::handleEntities()
+{
+	for (auto &enemy : enemies)
+	{
+		enemy.handleGravity(solidBlocks);
+	}
+	player.handleGravity(solidBlocks);
+
+	if (Keyboard::isKeyPressed(Keyboard::Right))
+	{
+		if(player.canGoRight(solidBlocks))
+			player.move(Vector2f(Block::WIDTH / 8, 0));
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::Left))
+	{
+		if (player.canGoLeft(solidBlocks))
+			player.move(Vector2f(-Block::WIDTH / 8, 0));
+	}
+}
+
+void Entity::handleGravity(vector<Block> &blocks, float gravity)
+{
+	Vector2f entityPosition = getPosition();
+	int eX = rint(entityPosition.x);
+	int eY = rint(entityPosition.y);
+
+	for (auto &block : blocks)
+	{
+		Vector2f blockPosition = block.getPosition();
+		//dolna krawêdŸ obiektu styka siê z górn¹ krawêdzi¹ bloku && prawa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku && lewa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku
+		if (eY >= blockPosition.y && eX + WIDTH / 2 > blockPosition.x && eX - WIDTH / 2 < blockPosition.x + Block::WIDTH)
+			return;
+	}
+	
+	move(Vector2f(0, gravity));
+}
+
+bool Entity::canGoRight(vector<Block> &blocks)
+{
+	Vector2f entityPosition = getPosition();
+	int eX = rint(entityPosition.x);
+	int eY = rint(entityPosition.y);
+
+	for (auto &block : blocks)
+	{
+		Vector2f blockPosition = block.getPosition();
+
+		//Bierzemy pod uwagê tylko te bloki po prawej stronie obiektu
+		if (blockPosition.x < eX + WIDTH / 2)
+			continue;
+
+		//prawa krawêdŸ obiektu styka siê z lew¹ krawêdzi¹ bloku && górna krawêdŸ obiektu jest powy¿ej dolnej krawêdzi bloku && dolna krawêdŸ obiektu jest poni¿ej górnej krawêdzi bloku
+		if (eX + WIDTH / 2 >= blockPosition.x && eY - WIDTH < blockPosition.y + Block::WIDTH && eY > blockPosition.y)
+			return false;
+	}
+
+	return true;
+}
+
+bool Entity::canGoLeft(vector<Block> &blocks)
+{
+	Vector2f entityPosition = getPosition();
+	int eX = rint(entityPosition.x);
+	int eY = rint(entityPosition.y);
+
+	for (auto &block : blocks)
+	{
+		Vector2f blockPosition = block.getPosition();
+
+		//Bierzemy pod uwagê tylko te bloki po lewej stronie obiektu
+		if (blockPosition.x + Block::WIDTH > eX - WIDTH / 2)
+			continue;
+
+		//lewa krawêdŸ obiektu styka siê z praw¹ krawêdzi¹ bloku && górna krawêdŸ obiektu jest powy¿ej dolnej krawêdzi bloku && dolna krawêdŸ obiektu jest poni¿ej górnej krawêdzi bloku
+		if (eX - WIDTH / 2 <= blockPosition.x + Block::WIDTH && eY - WIDTH < blockPosition.y + Block::WIDTH && eY > blockPosition.y)
+			return false;
+	}
+
+	return true;
+}
 
 Block::Block(int x, int y)
 {
-	setSize(Vector2f(width, width));
+	setSize(Vector2f(WIDTH, WIDTH));
 	setPosition(x, y);
 }
 
@@ -114,7 +202,7 @@ Block::Block(int x, int y, string txt) : Block(x, y)
 
 void Block::setPosition(int x, int y)
 {
-	RectangleShape::setPosition(Vector2f(x * width, y * width));
+	RectangleShape::setPosition(Vector2f(x * WIDTH, y * WIDTH));
 }
 
 Background::Background()
@@ -130,4 +218,16 @@ void Background::setTexture(String texture)
 		this->texture.loadFromFile("resources/backgrounds/" + texture);
 		Sprite::setTexture(this->texture);
 	}
+}
+
+Entity::Entity()
+{
+	setOrigin(Vector2f(WIDTH / 2, WIDTH));
+	setTexture(texture);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+}
+
+void Entity::setPosition(int x, int y)
+{
+	Sprite::setPosition(Vector2f(x * WIDTH + WIDTH / 2, y * WIDTH + WIDTH));
 }
