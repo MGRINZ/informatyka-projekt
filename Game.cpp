@@ -18,7 +18,7 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 Level::Level()
 {
 	load("level2.lvl");
-	player.setPosition(16, 10);
+	player.setPosition(6, 12);
 }
 
 void Level::addSolidBlock(Block block)
@@ -136,6 +136,11 @@ void Entity::handleGravity(vector<Block> &blocks, float gravity)
 	for (auto &block : blocks)
 	{
 		Vector2f blockPosition = block.getPosition();
+
+		//Bierzemy pod uwagê tylko te bloki poni¿ej obiektu
+		if (blockPosition.y + Block::WIDTH <= eY - WIDTH)
+			continue;
+
 		//dolna krawêdŸ obiektu styka siê z górn¹ krawêdzi¹ bloku && prawa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku && lewa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku
 		if (eY >= blockPosition.y && eX + WIDTH / 2 > blockPosition.x && eX - WIDTH / 2 < blockPosition.x + Block::WIDTH)
 			return;
