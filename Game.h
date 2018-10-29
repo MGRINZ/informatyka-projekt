@@ -26,15 +26,20 @@ class Entity : public Sprite
 {
 private:
 	Texture texture;
+	double yVelocity;
+	bool isFalling;
+	bool canJump;
 
 public:
 	static const float WIDTH;
 	Entity();
 	void setPosition(int x, int y);
-	void handleGravity(vector<Block> &blocks, float gravity = Block::WIDTH / 4);
+	void handleGravity(vector<Block> &blocks, float gravity = 10);
 	bool canGoRight(vector<Block> &blocks);
 	bool canGoLeft(vector<Block> &blocks);
 	void jump(vector<Block> &blocks);
+	void setCanJump(bool canJump);
+	bool getCanJump();
 };
 
 class Background : public Sprite

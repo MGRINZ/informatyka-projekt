@@ -18,7 +18,7 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 Level::Level()
 {
 	load("level2.lvl");
-	player.setPosition(14, 12);
+	player.setPosition(14, 9);
 }
 
 void Level::addSolidBlock(Block block)
@@ -129,10 +129,15 @@ void Level::handleEntities()
 	{
 		player.jump(solidBlocks);
 	}
+	if (!Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		player.setCanJump(false);
+	}
 }
 
 void Entity::handleGravity(vector<Block> &blocks, float gravity)
 {
+	static int i = 0;
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
@@ -142,15 +147,23 @@ void Entity::handleGravity(vector<Block> &blocks, float gravity)
 		Vector2f blockPosition = block.getPosition();
 
 		//Bierzemy pod uwagê tylko te bloki poni¿ej obiektu
-		if (blockPosition.y + Block::WIDTH <= eY - WIDTH)
+		if(eY + WIDTH < blockPosition.y && eY < blockPosition.y + Block::WIDTH)
 			continue;
 
 		//dolna krawêdŸ obiektu styka siê z górn¹ krawêdzi¹ bloku && prawa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku && lewa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku
 		if (eY >= blockPosition.y && eX + WIDTH / 2 > blockPosition.x && eX - WIDTH / 2 < blockPosition.x + Block::WIDTH)
+		{
+			Sprite::setPosition(Vector2f(eX, (int) (eY / Block::WIDTH) * Block::WIDTH));
+			yVelocity = 0.0;
+			isFalling = false;
+			canJump = true;
 			return;
+		}
 	}
 	
-	move(Vector2f(0, gravity));
+	yVelocity += gravity * 0.001;
+	isFalling = true;
+	move(Vector2f(0, yVelocity * Block::WIDTH));
 }
 
 bool Entity::canGoRight(vector<Block> &blocks)
@@ -199,8 +212,19 @@ bool Entity::canGoLeft(vector<Block> &blocks)
 
 void Entity::jump(vector<Block> &blocks)
 {
-	static bool max_height = false;
-	move(Vector2f(0, -Block::WIDTH));
+	if (isFalling && !canJump)
+		return;
+	move(Vector2f(0, -10));
+}
+
+void Entity::setCanJump(bool canJump)
+{
+	this->canJump = canJump;
+}
+
+bool Entity::getCanJump()
+{
+	return canJump;
 }
 
 Block::Block(int x, int y)
@@ -240,6 +264,8 @@ Entity::Entity()
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
 	setTexture(texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+	yVelocity = 0.0;
+	isFalling = false;
 }
 
 void Entity::setPosition(int x, int y)
