@@ -18,7 +18,7 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 Level::Level()
 {
 	load("level2.lvl");
-	player.setPosition(6, 12);
+	player.setPosition(14, 12);
 }
 
 void Level::addSolidBlock(Block block)
@@ -134,8 +134,8 @@ void Level::handleEntities()
 void Entity::handleGravity(vector<Block> &blocks, float gravity)
 {
 	Vector2f entityPosition = getPosition();
-	int eX = rint(entityPosition.x);
-	int eY = rint(entityPosition.y);
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
 
 	for (auto &block : blocks)
 	{
@@ -156,15 +156,15 @@ void Entity::handleGravity(vector<Block> &blocks, float gravity)
 bool Entity::canGoRight(vector<Block> &blocks)
 {
 	Vector2f entityPosition = getPosition();
-	int eX = rint(entityPosition.x);
-	int eY = rint(entityPosition.y);
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
 
 	for (auto &block : blocks)
 	{
 		Vector2f blockPosition = block.getPosition();
 
 		//Bierzemy pod uwagê tylko te bloki po prawej stronie obiektu
-		if (blockPosition.x < eX + WIDTH / 2)
+		if(eX - WIDTH / 2 > blockPosition.x && eX + WIDTH / 2 > blockPosition.x + Block::WIDTH)
 			continue;
 
 		//prawa krawêdŸ obiektu styka siê z lew¹ krawêdzi¹ bloku && górna krawêdŸ obiektu jest powy¿ej dolnej krawêdzi bloku && dolna krawêdŸ obiektu jest poni¿ej górnej krawêdzi bloku
@@ -178,15 +178,15 @@ bool Entity::canGoRight(vector<Block> &blocks)
 bool Entity::canGoLeft(vector<Block> &blocks)
 {
 	Vector2f entityPosition = getPosition();
-	int eX = rint(entityPosition.x);
-	int eY = rint(entityPosition.y);
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
 
 	for (auto &block : blocks)
 	{
 		Vector2f blockPosition = block.getPosition();
 
 		//Bierzemy pod uwagê tylko te bloki po lewej stronie obiektu
-		if (blockPosition.x + Block::WIDTH > eX - WIDTH / 2)
+		if (eX - WIDTH / 2 < blockPosition.x && eX + WIDTH / 2 < blockPosition.x + Block::WIDTH)
 			continue;
 
 		//lewa krawêdŸ obiektu styka siê z praw¹ krawêdzi¹ bloku && górna krawêdŸ obiektu jest powy¿ej dolnej krawêdzi bloku && dolna krawêdŸ obiektu jest poni¿ej górnej krawêdzi bloku
