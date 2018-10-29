@@ -1,0 +1,15 @@
+;settings
+name=dsa
+background=bg1.jpg
+audio=cxz
+;terrain
+10;0;dirt.jpg
+11;0;dirt.jpg
+12;0;dirt.jpg
+13;0;crate.jpg
+14;0;crate.jpg
+15;0;crate.jpg
+16;0;crate.jpg
+;background
+;foreground
+;entities
