@@ -18,7 +18,7 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 Level::Level()
 {
 	load("level2.lvl");
-	player.setPosition(14, 9);
+	player.setPosition(5, 9);
 }
 
 void Level::addSolidBlock(Block block)
@@ -135,79 +135,58 @@ void Level::handleEntities()
 	}
 }
 
-void Entity::handleGravity(vector<Block> &blocks, float gravity)
+void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
 	static int i = 0;
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
 
-	for (auto &block : blocks)
+	Block *blockL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	Block *blockR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+
+	if (blockL != NULL || blockR != NULL)
 	{
-		Vector2f blockPosition = block.getPosition();
-
-		//Bierzemy pod uwagê tylko te bloki poni¿ej obiektu
-		if(eY + WIDTH < blockPosition.y && eY < blockPosition.y + Block::WIDTH)
-			continue;
-
-		//dolna krawêdŸ obiektu styka siê z górn¹ krawêdzi¹ bloku && prawa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku && lewa krawêdŸ obiektu znajduje siê na górnej krawêdzi bloku
-		if (eY >= blockPosition.y && eX + WIDTH / 2 > blockPosition.x && eX - WIDTH / 2 < blockPosition.x + Block::WIDTH)
-		{
-			Sprite::setPosition(Vector2f(eX, (int) (eY / Block::WIDTH) * Block::WIDTH));
-			yVelocity = 0.0;
-			isFalling = false;
-			canJump = true;
-			return;
-		}
+		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
+		yVelocity = 0.0;
+		isFalling = false;
+		canJump = true;
+		return;
 	}
-	
+
 	yVelocity += gravity * 0.001;
 	isFalling = true;
 	move(Vector2f(0, yVelocity * Block::WIDTH));
 }
 
-bool Entity::canGoRight(vector<Block> &blocks)
+bool Entity::canGoRight(BlocksVector &blocks)
 {
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
 
-	for (auto &block : blocks)
-	{
-		Vector2f blockPosition = block.getPosition();
+	Block *blockU = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);
+	Block *blockD = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - 1) / Block::WIDTH);
 
-		//Bierzemy pod uwagê tylko te bloki po prawej stronie obiektu
-		if(eX - WIDTH / 2 > blockPosition.x && eX + WIDTH / 2 > blockPosition.x + Block::WIDTH)
-			continue;
+	if (blockU == NULL && blockD == NULL)
+		return true;
 
-		//prawa krawêdŸ obiektu styka siê z lew¹ krawêdzi¹ bloku && górna krawêdŸ obiektu jest powy¿ej dolnej krawêdzi bloku && dolna krawêdŸ obiektu jest poni¿ej górnej krawêdzi bloku
-		if (eX + WIDTH / 2 >= blockPosition.x && eY - WIDTH < blockPosition.y + Block::WIDTH && eY > blockPosition.y)
-			return false;
-	}
-
-	return true;
+	return false;
 }
 
-bool Entity::canGoLeft(vector<Block> &blocks)
+bool Entity::canGoLeft(BlocksVector &blocks)
 {
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
 
-	for (auto &block : blocks)
-	{
-		Vector2f blockPosition = block.getPosition();
+	Block *blockU = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);	// - 4 (prêdkoœæ w piks)
+	Block *blockD = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - 1) / Block::WIDTH);		// - 4 (prêdkoœæ w piks)
 
-		//Bierzemy pod uwagê tylko te bloki po lewej stronie obiektu
-		if (eX - WIDTH / 2 < blockPosition.x && eX + WIDTH / 2 < blockPosition.x + Block::WIDTH)
-			continue;
+	if (blockU == NULL && blockD == NULL)
+		return true;
 
-		//lewa krawêdŸ obiektu styka siê z praw¹ krawêdzi¹ bloku && górna krawêdŸ obiektu jest powy¿ej dolnej krawêdzi bloku && dolna krawêdŸ obiektu jest poni¿ej górnej krawêdzi bloku
-		if (eX - WIDTH / 2 <= blockPosition.x + Block::WIDTH && eY - WIDTH < blockPosition.y + Block::WIDTH && eY > blockPosition.y)
-			return false;
-	}
-
-	return true;
+	return false;
 }
 
 void Entity::jump(vector<Block> &blocks)
@@ -242,6 +221,17 @@ Block::Block(int x, int y, string txt) : Block(x, y)
 void Block::setPosition(int x, int y)
 {
 	RectangleShape::setPosition(Vector2f(x * WIDTH, y * WIDTH));
+}
+
+Block* BlocksVector::getSolidBlockAtPosition(int x, int y)
+{
+	for (auto &block : *this)
+	{
+		Vector2f blockPosition = block.getPosition();
+		if (blockPosition.x == x * Block::WIDTH && blockPosition.y == y * Block::WIDTH)
+			return &block;
+	}
+	return nullptr;
 }
 
 Background::Background()

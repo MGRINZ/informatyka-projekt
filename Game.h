@@ -22,6 +22,12 @@ public:
 	void setPosition(int x, int y);
 };
 
+class BlocksVector : public vector<Block>
+{
+public:
+	Block* getSolidBlockAtPosition(int x, int y);
+};
+
 class Entity : public Sprite
 {
 private:
@@ -34,9 +40,9 @@ public:
 	static const float WIDTH;
 	Entity();
 	void setPosition(int x, int y);
-	void handleGravity(vector<Block> &blocks, float gravity = 10);
-	bool canGoRight(vector<Block> &blocks);
-	bool canGoLeft(vector<Block> &blocks);
+	void handleGravity(BlocksVector &blocks, float gravity = 10);
+	bool canGoRight(BlocksVector &blocks);
+	bool canGoLeft(BlocksVector &blocks);
 	void jump(vector<Block> &blocks);
 	void setCanJump(bool canJump);
 	bool getCanJump();
@@ -55,7 +61,7 @@ public:
 class Level
 {
 private:
-	vector<Block> solidBlocks;
+	BlocksVector solidBlocks;
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
 	vector<Entity> enemies;
