@@ -34,6 +34,7 @@ private:
 	Texture texture;
 	double yVelocityDown;
 	double yVelocityUp;
+	bool jumping;
 
 public:
 	static const float WIDTH;
@@ -43,6 +44,8 @@ public:
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void jump(BlocksVector &blocks);
+	void setJumping(bool jumping);
+	bool isJumping();
 };
 
 class Background : public Sprite

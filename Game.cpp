@@ -17,7 +17,7 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
 {
-	load("level2.lvl");
+	load("level3.lvl");
 	player.setPosition(5, 9);
 }
 
@@ -131,21 +131,47 @@ void Level::handleEntities()
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Up))
 	{
-		
+		player.setJumping(false);
 	}
 }
 
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
-	static int i = 0;
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
 
-	Block *blockL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
-	Block *blockR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	cout << eY << endl;
+	cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) << endl;
+	cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH << endl;
+	cout << yVelocityDown << endl;
+	cout << yVelocityUp << endl;
+	cout << yVelocityDown + yVelocityUp << endl << endl;
 
-	if (blockL != NULL || blockR != NULL)
+	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	
+	Block *blockUL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+	Block *blockUR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+
+	if (blockUL != NULL || blockUR != NULL)
+	{
+		/*blockUL->rotate(1);
+		blockUR->rotate(1);*/
+		/*cout << eY << endl;
+		cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) << endl;
+		cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH << endl;
+		cout << yVelocityDown << endl;
+		cout << yVelocityUp << endl;
+		cout << yVelocityDown + yVelocityUp << endl << endl;*/
+		yVelocityUp = 0.0;
+		yVelocityDown = 0.0;
+		jumping = false;
+		//system("pause");
+	}
+
+
+	if (blockDL != NULL || blockDR != NULL)
 	{
 		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
 		yVelocityDown = 0.0;
@@ -156,7 +182,7 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 	if(yVelocityDown == yVelocityUp)
 		yVelocityDown = 0.0;
 
-	yVelocityDown += gravity * 0.001;
+	yVelocityDown += gravity * 0.0017;
 	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
 }
 
@@ -192,11 +218,24 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 
 void Entity::jump(BlocksVector &blocks)
 {
+	if (!isJumping() && yVelocityDown > 0)
+		return;
 	if (yVelocityUp == 0)
-		yVelocityUp = -0.2;
-	else if(yVelocityUp > -0.3)
+		yVelocityUp = -0.27;
+	else if(yVelocityUp > -0.37)
 		yVelocityUp -= 10 * 0.001;
 	move(Vector2f(0, -0.025 * Block::WIDTH));
+	jumping = true;
+}
+
+void Entity::setJumping(bool jumping)
+{
+	this->jumping = jumping;
+}
+
+bool Entity::isJumping()
+{
+	return jumping;
 }
 
 Block::Block(int x, int y)
@@ -249,6 +288,7 @@ Entity::Entity()
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 	yVelocityDown = 0.0;
 	yVelocityUp = 0.0;
+	jumping = false;
 }
 
 void Entity::setPosition(int x, int y)
