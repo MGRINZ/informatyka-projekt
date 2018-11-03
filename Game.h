@@ -32,9 +32,8 @@ class Entity : public Sprite
 {
 private:
 	Texture texture;
-	double yVelocity;
-	bool isFalling;
-	bool canJump;
+	double yVelocityDown;
+	double yVelocityUp;
 
 public:
 	static const float WIDTH;
@@ -43,9 +42,7 @@ public:
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
-	void jump(vector<Block> &blocks);
-	void setCanJump(bool canJump);
-	bool getCanJump();
+	void jump(BlocksVector &blocks);
 };
 
 class Background : public Sprite

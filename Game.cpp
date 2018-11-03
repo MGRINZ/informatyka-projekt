@@ -131,7 +131,7 @@ void Level::handleEntities()
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Up))
 	{
-		player.setCanJump(false);
+		
 	}
 }
 
@@ -148,15 +148,16 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 	if (blockL != NULL || blockR != NULL)
 	{
 		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
-		yVelocity = 0.0;
-		isFalling = false;
-		canJump = true;
+		yVelocityDown = 0.0;
+		yVelocityUp = 0.0;
 		return;
 	}
 
-	yVelocity += gravity * 0.001;
-	isFalling = true;
-	move(Vector2f(0, yVelocity * Block::WIDTH));
+	if(yVelocityDown == yVelocityUp)
+		yVelocityDown = 0.0;
+
+	yVelocityDown += gravity * 0.001;
+	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
 }
 
 bool Entity::canGoRight(BlocksVector &blocks)
@@ -189,21 +190,13 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 	return false;
 }
 
-void Entity::jump(vector<Block> &blocks)
+void Entity::jump(BlocksVector &blocks)
 {
-	if (isFalling && !canJump)
-		return;
-	move(Vector2f(0, -10));
-}
-
-void Entity::setCanJump(bool canJump)
-{
-	this->canJump = canJump;
-}
-
-bool Entity::getCanJump()
-{
-	return canJump;
+	if (yVelocityUp == 0)
+		yVelocityUp = -0.2;
+	else if(yVelocityUp > -0.3)
+		yVelocityUp -= 10 * 0.001;
+	move(Vector2f(0, -0.025 * Block::WIDTH));
 }
 
 Block::Block(int x, int y)
@@ -254,8 +247,8 @@ Entity::Entity()
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
 	setTexture(texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
-	yVelocity = 0.0;
-	isFalling = false;
+	yVelocityDown = 0.0;
+	yVelocityUp = 0.0;
 }
 
 void Entity::setPosition(int x, int y)
