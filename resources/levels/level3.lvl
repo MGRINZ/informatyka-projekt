@@ -17,12 +17,10 @@ background=bg1.jpg
 1;6;dirt.jpg
 0;7;dirt.jpg
 1;7;dirt.jpg
-20;7;grass.jpg
-21;7;grass.jpg
+20;8;grass.jpg
+21;8;grass.jpg
 0;8;dirt.jpg
 1;8;dirt.jpg
-20;8;dirt.jpg
-21;8;dirt.jpg
 0;9;dirt.jpg
 1;9;dirt.jpg
 20;9;dirt.jpg

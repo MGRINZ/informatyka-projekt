@@ -19,6 +19,7 @@ Level::Level()
 {
 	load("level3.lvl");
 	player.setPosition(5, 9);
+	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 }
 
 void Level::addSolidBlock(Block block)
@@ -117,13 +118,29 @@ void Level::handleEntities()
 
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
-		if(player.canGoRight(solidBlocks))
+		if (player.canGoRight(solidBlocks))
+		{
 			player.move(Vector2f(Block::WIDTH / 8, 0));
+
+			if (player.getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
+			{
+				view.move(Vector2f(Block::WIDTH / 8, 0));
+				background.move(Vector2f(Block::WIDTH / 8, 0));
+			}
+		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Left))
 	{
 		if (player.canGoLeft(solidBlocks))
+		{
 			player.move(Vector2f(-Block::WIDTH / 8, 0));
+
+			if (player.getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
+			{
+				view.move(Vector2f(-Block::WIDTH / 8, 0));
+				background.move(Vector2f(-Block::WIDTH / 8, 0));
+			}
+		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Up))
 	{
@@ -135,18 +152,16 @@ void Level::handleEntities()
 	}
 }
 
+View Level::getView()
+{
+	return view;
+}
+
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
-
-	cout << eY << endl;
-	cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) << endl;
-	cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH << endl;
-	cout << yVelocityDown << endl;
-	cout << yVelocityUp << endl;
-	cout << yVelocityDown + yVelocityUp << endl << endl;
 
 	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
 	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
