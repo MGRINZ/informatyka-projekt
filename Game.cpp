@@ -156,18 +156,9 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 
 	if (blockUL != NULL || blockUR != NULL)
 	{
-		/*blockUL->rotate(1);
-		blockUR->rotate(1);*/
-		/*cout << eY << endl;
-		cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) << endl;
-		cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH << endl;
-		cout << yVelocityDown << endl;
-		cout << yVelocityUp << endl;
-		cout << yVelocityDown + yVelocityUp << endl << endl;*/
 		yVelocityUp = 0.0;
 		yVelocityDown = 0.0;
 		jumping = false;
-		//system("pause");
 	}
 
 
