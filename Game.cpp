@@ -291,7 +291,7 @@ Block::Block(int x, int y)
 
 Block::Block(int x, int y, string txt) : Block(x, y)
 {
-	texture->loadFromFile("resources/textures/" + txt);
+	texture->loadFromFile("resources/textures/blocks/" + txt);
 	setTexture(texture);
 }
 
