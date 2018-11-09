@@ -28,6 +28,17 @@ public:
 	Block* getSolidBlockAtPosition(int x, int y);
 };
 
+class Item : public Block
+{
+private:
+	bool active = true;
+public:
+	Item(int x, int y);
+	Item(int x, int y, string texture);
+	bool isActive();
+	void disable();
+};
+
 class Entity : public Sprite
 {
 private:
@@ -53,6 +64,7 @@ public:
 	void setMovingDirectionY(int y);
 	int getMovingDirectionX();
 	int getMovingDirectionY();
+	void takingItem(vector<Item> &items);
 };
 
 class Background : public Sprite
@@ -72,6 +84,7 @@ private:
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
 	vector<Entity> enemies;
+	vector<Item> items;
 	Entity player;
 	string name;
 	Background background;

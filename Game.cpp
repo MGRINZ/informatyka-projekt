@@ -20,6 +20,7 @@ Level::Level()
 	load("level3.lvl");
 	player.setPosition(5, 9);
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
+	items.push_back(Item(10, 5));
 }
 
 void Level::addSolidBlock(Block block)
@@ -45,6 +46,11 @@ void Level::draw(RenderWindow &window)
 		window.draw(block);
 	for (auto &block : solidBlocks)
 		window.draw(block);
+	for (auto &item : items)
+	{
+		if(item.isActive())
+			window.draw(item);
+	}
 	
 	window.draw(player);
 
@@ -116,6 +122,7 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
+	player.takingItem(items);
 
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
@@ -355,6 +362,19 @@ int Entity::getMovingDirectionY()
 	return isMovingY;
 }
 
+void Entity::takingItem(vector<Item> &items)
+{
+	for (auto &item : items)
+	{
+		FloatRect gb = item.getGlobalBounds();
+		if (getGlobalBounds().intersects(gb))
+		{
+			item.disable();
+			break;
+		}
+	}
+}
+
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
@@ -371,4 +391,23 @@ Entity::Entity()
 void Entity::setPosition(int x, int y)
 {
 	Sprite::setPosition(Vector2f(x * WIDTH + WIDTH / 2, y * WIDTH + WIDTH));
+}
+
+Item::Item(int x, int y) : Block(x, y)
+{
+
+}
+
+Item::Item(int x, int y, string texture) : Block(x, y, texture)
+{
+}
+
+bool Item::isActive()
+{
+	return active;
+}
+
+void Item::disable()
+{
+	active = false;
 }
