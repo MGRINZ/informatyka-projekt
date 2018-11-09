@@ -178,3 +178,7 @@ background=bg1.jpg
 9;11;crate.jpg
 11;10;crate.jpg
 13;9;crate.jpg
+;items
+10;4;egg
+14;4;egg
+17;4;egg

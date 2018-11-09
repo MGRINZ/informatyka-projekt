@@ -13,6 +13,7 @@ const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
 const string Level::LEVEL_PROPERTY_BACKGROUND = ";background";
 const string Level::LEVEL_PROPERTY_FOREGROUND = ";foreground";
+const string Level::LEVEL_PROPERTY_ITEMS = ";items";
 const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
@@ -20,7 +21,6 @@ Level::Level()
 	load("level3.lvl");
 	player.setPosition(5, 9);
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
-	items.push_back(Item(10, 5));
 }
 
 void Level::addSolidBlock(Block block)
@@ -36,6 +36,11 @@ void Level::addBackgroundBlock(Block block)
 void Level::addForegroundBlock(Block block)
 {
 	foregroundBlocks.push_back(block);
+}
+
+void Level::addItem(Item item)
+{
+	items.push_back(item);
 }
 
 void Level::draw(RenderWindow &window)
@@ -85,7 +90,7 @@ int Level::load(string levelName)
 				else if (line.find("audio") == 0)
 					audio = line.substr(6);
 			}
-			if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
+			else if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
 			{
 				int x, y;
 				string texture;
@@ -106,6 +111,22 @@ int Level::load(string levelName)
 				else if(property == LEVEL_PROPERTY_FOREGROUND)
 					addForegroundBlock(Block(x, y, texture));
 
+			}
+			else if (property == LEVEL_PROPERTY_ITEMS)
+			{
+				int x, y;
+				string type;
+
+				string token;
+				stringstream ss;
+				ss << line;
+				getline(ss, token, ';');
+				x = atoi(token.c_str());
+				getline(ss, token, ';');
+				y = atoi(token.c_str());
+				getline(ss, token, ';');
+				type = token;
+				addItem(Item(x, y));
 			}
 			else
 				continue;

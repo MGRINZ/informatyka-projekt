@@ -97,11 +97,13 @@ public:
 	static const string LEVEL_PROPERTY_TERRAIN;
 	static const string LEVEL_PROPERTY_BACKGROUND;
 	static const string LEVEL_PROPERTY_FOREGROUND;
+	static const string LEVEL_PROPERTY_ITEMS;
 	static const string LEVEL_PROPERTY_ENTITIES;
 	Level();
 	void addSolidBlock(Block block);
 	void addBackgroundBlock(Block block);
 	void addForegroundBlock(Block block);
+	void addItem(Item item);
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	void handleEntities();
