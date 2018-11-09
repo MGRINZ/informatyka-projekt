@@ -115,12 +115,14 @@ void Level::handleEntities()
 		enemy.handleGravity(solidBlocks);
 	}
 	player.handleGravity(solidBlocks);
+	player.animate();
 
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
 		if (player.canGoRight(solidBlocks))
 		{
 			player.move(Vector2f(Block::WIDTH / 8, 0));
+			player.setMovingDirectionX(1);
 
 			if (player.getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
 			{
@@ -134,6 +136,7 @@ void Level::handleEntities()
 		if (player.canGoLeft(solidBlocks))
 		{
 			player.move(Vector2f(-Block::WIDTH / 8, 0));
+			player.setMovingDirectionX(-1);
 
 			if (player.getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
 			{
@@ -142,6 +145,8 @@ void Level::handleEntities()
 			}
 		}
 	}
+	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
+		player.setMovingDirectionX(0);
 	if (Keyboard::isKeyPressed(Keyboard::Up))
 	{
 		player.jump(solidBlocks);
@@ -174,6 +179,7 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		yVelocityUp = 0.0;
 		yVelocityDown = 0.0;
 		jumping = false;
+		setMovingDirectionY(0);
 	}
 
 
@@ -182,6 +188,7 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
 		yVelocityDown = 0.0;
 		yVelocityUp = 0.0;
+		setMovingDirectionY(0);
 		return;
 	}
 
@@ -190,6 +197,10 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 
 	yVelocityDown += gravity * 0.0017;
 	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
+	if (yVelocityDown + yVelocityUp > 0)
+		setMovingDirectionY(1);
+	else if(yVelocityDown + yVelocityUp < 0)
+		setMovingDirectionY(-1);
 }
 
 bool Entity::canGoRight(BlocksVector &blocks)
@@ -287,14 +298,74 @@ void Background::setTexture(String texture)
 	}
 }
 
+void Entity::animate()
+{
+	Vector2u txtSize = texture.getSize();
+
+	if(isMovingY) {		
+		IntRect txtRect = getTextureRect();
+		txtRect.left = 6 * WIDTH;
+		if(isMovingX == 1)
+			txtRect.top = 0;
+		else if (isMovingX == -1)
+			txtRect.top = WIDTH;
+		setTextureRect(txtRect);
+		return;
+	}
+
+	if(!isMovingX) {
+		IntRect txtRect = getTextureRect();
+		txtRect.left = 0;
+		setTextureRect(txtRect);
+		return;
+	}
+
+	if (animateClock.getElapsedTime().asMilliseconds() >= 50)
+	{
+		IntRect txtRect = getTextureRect();
+		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
+		if (txtRect.left >= 5 * WIDTH)
+			txtRect.left = 0;
+		if (isMovingX == 1)
+			txtRect.top = 0;
+		else if (isMovingX == -1)
+			txtRect.top = WIDTH;
+		setTextureRect(txtRect);
+		animateClock.restart();
+	}
+}
+
+void Entity::setMovingDirectionX(int x)
+{
+	isMovingX = x;
+}
+
+void Entity::setMovingDirectionY(int y)
+{
+	isMovingY = y;
+}
+
+int Entity::getMovingDirectionX()
+{
+	return isMovingX;
+}
+
+int Entity::getMovingDirectionY()
+{
+	return isMovingY;
+}
+
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
+	texture.loadFromFile("resources/textures/easteregg-man.png");
 	setTexture(texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 	yVelocityDown = 0.0;
 	yVelocityUp = 0.0;
 	jumping = false;
+	isMovingX = 0;
+	isMovingY = 0;
 }
 
 void Entity::setPosition(int x, int y)

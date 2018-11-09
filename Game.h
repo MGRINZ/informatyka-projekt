@@ -35,7 +35,9 @@ private:
 	double yVelocityDown;
 	double yVelocityUp;
 	bool jumping;
-
+	int isMovingX;	//-1 w lewo, 0 false, 1 w prawo
+	int isMovingY;	//-1 w górê, 0 false, 1 w dó³
+	Clock animateClock;
 public:
 	static const float WIDTH;
 	Entity();
@@ -46,6 +48,11 @@ public:
 	void jump(BlocksVector &blocks);
 	void setJumping(bool jumping);
 	bool isJumping();
+	void animate();
+	void setMovingDirectionX(int x);
+	void setMovingDirectionY(int y);
+	int getMovingDirectionX();
+	int getMovingDirectionY();
 };
 
 class Background : public Sprite
