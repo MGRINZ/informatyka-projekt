@@ -11,9 +11,11 @@ public:
 	static const int HEIGHT = 600;
 };
 
-class Block: public sf::RectangleShape
+class Block : public sf::RectangleShape
 {
 private:
+	const string RES_DIR = "resources/textures/blocks/";
+protected:
 	Texture* texture = new Texture;
 public:
 	static const float WIDTH;
@@ -31,12 +33,15 @@ public:
 class Item : public Block
 {
 private:
+	const string RES_DIR = "resources/textures/";
 	bool active = true;
+	Clock animateClock;
 public:
 	Item(int x, int y);
 	Item(int x, int y, string texture);
 	bool isActive();
 	void disable();
+	void animate();
 };
 
 class Entity : public Sprite
@@ -107,5 +112,6 @@ public:
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	void handleEntities();
+	void handleItems();
 	View getView();
 };

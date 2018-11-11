@@ -21,6 +21,7 @@ int main()
 		}
 
 		level.handleEntities();
+		level.handleItems();
 
 		window.clear();
 		window.setView(level.getView());

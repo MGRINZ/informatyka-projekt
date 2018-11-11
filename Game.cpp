@@ -126,7 +126,7 @@ int Level::load(string levelName)
 				y = atoi(token.c_str());
 				getline(ss, token, ';');
 				type = token;
-				addItem(Item(x, y));
+				addItem(Item(x, y, "egg1.png"));
 			}
 			else
 				continue;
@@ -143,7 +143,7 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
-	player.takingItem(items);
+	
 
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
@@ -183,6 +183,15 @@ void Level::handleEntities()
 	{
 		player.setJumping(false);
 	}
+}
+
+void Level::handleItems()
+{
+	for (auto &item : items)
+	{
+		item.animate();
+	}
+	player.takingItem(items);
 }
 
 View Level::getView()
@@ -328,8 +337,6 @@ void Background::setTexture(String texture)
 
 void Entity::animate()
 {
-	Vector2u txtSize = texture.getSize();
-
 	if(isMovingY) {		
 		IntRect txtRect = getTextureRect();
 		txtRect.left = 6 * WIDTH;
@@ -419,8 +426,11 @@ Item::Item(int x, int y) : Block(x, y)
 
 }
 
-Item::Item(int x, int y, string texture) : Block(x, y, texture)
+Item::Item(int x, int y, string txt) : Block(x, y)
 {
+	texture->loadFromFile("resources/textures/" + txt);
+	setTexture(texture);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 
 bool Item::isActive()
@@ -431,4 +441,18 @@ bool Item::isActive()
 void Item::disable()
 {
 	active = false;
+}
+
+void Item::animate()
+{
+	Vector2u txtSize = texture->getSize();
+	if (animateClock.getElapsedTime().asMilliseconds() >= 100)
+	{
+		IntRect txtRect = getTextureRect();
+		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
+		if (txtRect.left >= txtSize.x)
+			txtRect.left = 0;
+		setTextureRect(txtRect);
+		animateClock.restart();
+	}
 }
