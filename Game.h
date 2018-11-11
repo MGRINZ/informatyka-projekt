@@ -59,6 +59,7 @@ public:
 	Entity();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void jump(BlocksVector &blocks);
@@ -69,7 +70,8 @@ public:
 	void setMovingDirectionY(int y);
 	int getMovingDirectionX();
 	int getMovingDirectionY();
-	void takingItem(vector<Item> &items);
+	void takingItem(Item &item);
+	void handleLevelEnd(Vector2u endPosition[]);
 };
 
 class Background : public Sprite
@@ -95,6 +97,7 @@ private:
 	Background background;
 	string audio;
 	View view;
+	Vector2u endPosition[2];
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;

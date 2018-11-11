@@ -1,5 +1,7 @@
 ;settings
 background=bg1.jpg
+start=3;9
+end=28;11;30;13
 ;terrain
 0;0;dirt.jpg
 1;0;dirt.jpg

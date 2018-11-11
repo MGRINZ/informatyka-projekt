@@ -19,7 +19,8 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 Level::Level()
 {
 	load("level3.lvl");
-	player.setPosition(5, 9);
+	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
+	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 }
 
@@ -89,6 +90,31 @@ int Level::load(string levelName)
 					background.setTexture(line.substr(11));
 				else if (line.find("audio") == 0)
 					audio = line.substr(6);
+				else if (line.find("start") == 0)
+				{
+					string startPosition = line.substr(6);
+					string x, y;
+					stringstream ss;
+					ss << startPosition;
+					getline(ss, x, ';');
+					getline(ss, y, ';');
+					player.setPosition(atoi(x.c_str()), atoi(y.c_str()));
+				}
+				else if (line.find("end") == 0)
+				{
+					string startPosition = line.substr(4);
+					string x, y;
+					stringstream ss;
+					ss << startPosition;
+					getline(ss, x, ';');
+					getline(ss, y, ';');
+					endPosition[0].x = atoi(x.c_str());
+					endPosition[0].y = atoi(y.c_str());
+					getline(ss, x, ';');
+					getline(ss, y, ';');
+					endPosition[1].x = atoi(x.c_str());
+					endPosition[1].y = atoi(y.c_str());
+				}
 			}
 			else if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
 			{
@@ -143,46 +169,8 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
-	
-
-	if (Keyboard::isKeyPressed(Keyboard::Right))
-	{
-		if (player.canGoRight(solidBlocks))
-		{
-			player.move(Vector2f(Block::WIDTH / 8, 0));
-			player.setMovingDirectionX(1);
-
-			if (player.getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(Block::WIDTH / 8, 0));
-				background.move(Vector2f(Block::WIDTH / 8, 0));
-			}
-		}
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Left))
-	{
-		if (player.canGoLeft(solidBlocks))
-		{
-			player.move(Vector2f(-Block::WIDTH / 8, 0));
-			player.setMovingDirectionX(-1);
-
-			if (player.getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(-Block::WIDTH / 8, 0));
-				background.move(Vector2f(-Block::WIDTH / 8, 0));
-			}
-		}
-	}
-	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
-		player.setMovingDirectionX(0);
-	if (Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		player.jump(solidBlocks);
-	}
-	if (!Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		player.setJumping(false);
-	}
+	player.handleMovement(solidBlocks, view, background);
+	player.handleLevelEnd(endPosition);
 }
 
 void Level::handleItems()
@@ -190,8 +178,8 @@ void Level::handleItems()
 	for (auto &item : items)
 	{
 		item.animate();
+		player.takingItem(item);
 	}
-	player.takingItem(items);
 }
 
 View Level::getView()
@@ -238,6 +226,50 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(1);
 	else if(yVelocityDown + yVelocityUp < 0)
 		setMovingDirectionY(-1);
+}
+
+void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
+{
+	if (Keyboard::isKeyPressed(Keyboard::Right))
+	{
+		if (canGoRight(solidBlocks))
+		{
+			move(Vector2f(Block::WIDTH / 8, 0));
+			setMovingDirectionX(1);
+
+			if (getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
+			{
+				view.move(Vector2f(Block::WIDTH / 8, 0));
+				background.move(Vector2f(Block::WIDTH / 8, 0));
+			}
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Left))
+	{
+		if (canGoLeft(solidBlocks))
+		{
+			move(Vector2f(-Block::WIDTH / 8, 0));
+			setMovingDirectionX(-1);
+
+			if (getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
+			{
+				view.move(Vector2f(-Block::WIDTH / 8, 0));
+				background.move(Vector2f(-Block::WIDTH / 8, 0));
+			}
+		}
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
+		setMovingDirectionX(0);
+	if (Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		jump(solidBlocks);
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		setJumping(false);
+	}
+
+	cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
 }
 
 bool Entity::canGoRight(BlocksVector &blocks)
@@ -390,16 +422,20 @@ int Entity::getMovingDirectionY()
 	return isMovingY;
 }
 
-void Entity::takingItem(vector<Item> &items)
+void Entity::takingItem(Item &item)
 {
-	for (auto &item : items)
+	FloatRect gb = item.getGlobalBounds();
+	if (getGlobalBounds().intersects(gb))
+		item.disable();
+}
+
+void Entity::handleLevelEnd(Vector2u endPosition[])
+{
+	FloatRect gb = getGlobalBounds();
+	FloatRect endArea(endPosition[0].x * Block::WIDTH, endPosition[0].y * Block::WIDTH, (endPosition[1].x - endPosition[0].x + 1) * Block::WIDTH, (endPosition[1].y - endPosition[0].y + 1) * Block::WIDTH);
+	if (gb.intersects(endArea))
 	{
-		FloatRect gb = item.getGlobalBounds();
-		if (getGlobalBounds().intersects(gb))
-		{
-			item.disable();
-			break;
-		}
+		cout << "end";
 	}
 }
 
