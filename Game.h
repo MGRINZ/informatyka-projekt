@@ -84,6 +84,29 @@ public:
 	void setTexture(String texture);
 };
 
+class HealthBar
+{
+private:
+	Texture healthTexture;
+	Texture healthTextureEmpty;
+	Sprite health[3];
+	int maxHealth = 3;
+public:
+	HealthBar();
+	void draw(RenderWindow &window);
+	void setHealth(int hp);
+	void setMaxHealth(int maxHealth);
+};
+
+class HUD
+{
+private:
+	HealthBar healthBar;
+public:
+	HUD();
+	void draw(RenderWindow &window);
+};
+
 class LevelEndScreen
 {
 private:
@@ -112,6 +135,7 @@ private:
 	string audio;
 	View view;
 	Vector2u endPosition[2];
+	HUD hud;
 	LevelEndScreen endScreen;
 	int status;
 

@@ -61,6 +61,8 @@ void Level::draw(RenderWindow &window)
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
 
+	hud.draw(window);
+
 	if(getStatus() == LEVEL_STATUS_FINISHED)
 		endScreen.draw(window);
 }
@@ -562,4 +564,47 @@ void LevelEndScreen::setPosition(Vector2f position)
 	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
 	container.setPosition(Vector2f(position.x, position.y));
 	header.setPosition(Vector2f(position.x, position.y - 120));
+}
+
+HUD::HUD()
+{
+}
+
+void HUD::draw(RenderWindow & window)
+{
+	healthBar.draw(window);
+}
+
+HealthBar::HealthBar()
+{
+	healthTexture.loadFromFile("resources/textures/health.png");
+	healthTextureEmpty.loadFromFile("resources/textures/health_empty.png");
+	for (int i = 0; i < maxHealth; i++)
+	{
+		health[i].setPosition(Vector2f(50 + i * 50, 20));
+		health[i].setScale(Vector2f(1.5, 1.5));
+	}
+	setHealth(3);
+}
+
+void HealthBar::draw(RenderWindow & window)
+{
+	for(int i = 0; i < maxHealth; i++)
+		window.draw(health[i]);
+}
+
+void HealthBar::setHealth(int hp)
+{
+	for (int i = 0; i < maxHealth; i++)
+	{
+		if (i < hp)
+			health[i].setTexture(healthTexture);
+		else
+			health[i].setTexture(healthTextureEmpty);
+	}
+}
+
+void HealthBar::setMaxHealth(int maxHealth)
+{
+	this->maxHealth = maxHealth;
 }
