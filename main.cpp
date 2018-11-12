@@ -11,7 +11,8 @@ int main()
 	window.setFramerateLimit(60);
 
 	Level level;
-
+	level.load("level3.lvl");
+	
 	while (window.isOpen())
 	{
 		Event event;
@@ -19,13 +20,27 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 		}
-
-		level.handleEntities();
-		level.handleItems();
-
+		
 		window.clear();
-		window.setView(level.getView());
+
+		switch (level.getStatus())
+		{
+			case Level::LEVEL_STATUS_FINISHED:
+			{
+				break;
+			}
+			default:
+			{
+				level.handleEntities();
+				level.handleItems();
+				window.setView(level.getView());
+			}
+		}
+
+		level.handleFinish();
+
 		level.draw(window);
+
 		window.display();
 	}
 	return 0;

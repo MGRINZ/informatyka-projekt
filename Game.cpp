@@ -18,10 +18,8 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
 {
-	load("level3.lvl");
 	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
 	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
-	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 }
 
 void Level::addSolidBlock(Block block)
@@ -62,10 +60,22 @@ void Level::draw(RenderWindow &window)
 
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
+
+	if(getStatus() == LEVEL_STATUS_FINISHED)
+		endScreen.draw(window);
 }
 
 int Level::load(string levelName)
 {
+	status = LEVEL_STATUS_LOADING;
+
+	solidBlocks.clear();
+	backgroundBlocks.clear();
+	foregroundBlocks.clear();
+	enemies.clear();
+	items.clear();
+	player.reset();
+
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
 		return LEVEL_LOAD_ERROR_OPEN_FILE;
@@ -87,7 +97,10 @@ int Level::load(string levelName)
 				if (line.find("name") == 0)
 					name = line.substr(5);
 				else if (line.find("background") == 0)
+				{
 					background.setTexture(line.substr(11));
+					background.setPosition(Vector2f(0, 0));
+				}
 				else if (line.find("audio") == 0)
 					audio = line.substr(6);
 				else if (line.find("start") == 0)
@@ -158,6 +171,9 @@ int Level::load(string levelName)
 				continue;
 		}
 	}
+
+	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
+	status = LEVEL_STATUS_IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
 
@@ -170,7 +186,6 @@ void Level::handleEntities()
 	player.handleGravity(solidBlocks);
 	player.animate();
 	player.handleMovement(solidBlocks, view, background);
-	player.handleLevelEnd(endPosition);
 }
 
 void Level::handleItems()
@@ -182,9 +197,34 @@ void Level::handleItems()
 	}
 }
 
+void Level::handleFinish()
+{
+	FloatRect gb = player.getGlobalBounds();
+	FloatRect endArea(endPosition[0].x * Block::WIDTH, endPosition[0].y * Block::WIDTH, (endPosition[1].x - endPosition[0].x + 1) * Block::WIDTH, (endPosition[1].y - endPosition[0].y + 1) * Block::WIDTH);
+	
+	if (!gb.intersects(endArea))
+		return;
+
+	setStatus(LEVEL_STATUS_FINISHED);
+	endScreen.setPosition(view.getCenter());
+
+	if (Keyboard::isKeyPressed(Keyboard::Enter))
+		load("level3.lvl");
+}
+
 View Level::getView()
 {
 	return view;
+}
+
+int Level::getStatus()
+{
+	return status;
+}
+
+void Level::setStatus(int status)
+{
+	this->status = status;
 }
 
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
@@ -269,7 +309,7 @@ void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 		setJumping(false);
 	}
 
-	cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
+	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
 }
 
 bool Entity::canGoRight(BlocksVector &blocks)
@@ -429,22 +469,17 @@ void Entity::takingItem(Item &item)
 		item.disable();
 }
 
-void Entity::handleLevelEnd(Vector2u endPosition[])
-{
-	FloatRect gb = getGlobalBounds();
-	FloatRect endArea(endPosition[0].x * Block::WIDTH, endPosition[0].y * Block::WIDTH, (endPosition[1].x - endPosition[0].x + 1) * Block::WIDTH, (endPosition[1].y - endPosition[0].y + 1) * Block::WIDTH);
-	if (gb.intersects(endArea))
-	{
-		cout << "end";
-	}
-}
-
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
 	texture.loadFromFile("resources/textures/easteregg-man.png");
 	setTexture(texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+	reset();
+}
+
+void Entity::reset()
+{
 	yVelocityDown = 0.0;
 	yVelocityUp = 0.0;
 	jumping = false;
@@ -491,4 +526,40 @@ void Item::animate()
 		setTextureRect(txtRect);
 		animateClock.restart();
 	}
+}
+
+LevelEndScreen::LevelEndScreen()
+{
+	FloatRect gb;
+
+	overlay.setFillColor(Color(0,0,0,192));
+	overlay.setSize(Vector2f(Game::WIDTH, Game::HEIGHT));
+	
+	container.setFillColor(Color::Blue);
+	container.setOrigin(Vector2f(Game::WIDTH * 0.8 / 2, Game::HEIGHT * 0.5 / 2));
+	container.setSize(Vector2f(Game::WIDTH * 0.8, Game::HEIGHT * 0.5));
+	
+	headerFont.loadFromFile("resources/fonts/verdana.ttf");
+	
+	header.setFont(headerFont);
+	header.setString("Poziom ukonczony");
+	gb = header.getGlobalBounds();
+	header.setOrigin(Vector2f(gb.width / 2, gb.height / 2));
+
+	setPosition(Vector2f(0, 0));
+}
+
+void LevelEndScreen::draw(RenderWindow & window)
+{
+	window.draw(overlay);
+	window.draw(container);
+	window.draw(header);
+}
+
+void LevelEndScreen::setPosition(Vector2f position)
+{
+	this->position = position;
+	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
+	container.setPosition(Vector2f(position.x, position.y));
+	header.setPosition(Vector2f(position.x, position.y - 120));
 }

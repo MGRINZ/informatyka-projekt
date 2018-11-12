@@ -57,6 +57,7 @@ private:
 public:
 	static const float WIDTH;
 	Entity();
+	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
 	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
@@ -71,7 +72,6 @@ public:
 	int getMovingDirectionX();
 	int getMovingDirectionY();
 	void takingItem(Item &item);
-	void handleLevelEnd(Vector2u endPosition[]);
 };
 
 class Background : public Sprite
@@ -82,6 +82,20 @@ private:
 public:
 	Background();
 	void setTexture(String texture);
+};
+
+class LevelEndScreen
+{
+private:
+	Vector2f position;
+	RectangleShape overlay;
+	RectangleShape container;
+	Font headerFont;
+	Text header;
+public:
+	LevelEndScreen();
+	void draw(RenderWindow &window);
+	void setPosition(Vector2f position);
 };
 
 class Level
@@ -98,6 +112,9 @@ private:
 	string audio;
 	View view;
 	Vector2u endPosition[2];
+	LevelEndScreen endScreen;
+	int status;
+
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
@@ -107,6 +124,10 @@ public:
 	static const string LEVEL_PROPERTY_FOREGROUND;
 	static const string LEVEL_PROPERTY_ITEMS;
 	static const string LEVEL_PROPERTY_ENTITIES;
+	static const int LEVEL_STATUS_LOADING = 0;
+	static const int LEVEL_STATUS_IN_GAME = 1;
+	static const int LEVEL_STATUS_PAUSED = 2;
+	static const int LEVEL_STATUS_FINISHED = 3;
 	Level();
 	void addSolidBlock(Block block);
 	void addBackgroundBlock(Block block);
@@ -116,5 +137,8 @@ public:
 	int load(string levelName);
 	void handleEntities();
 	void handleItems();
+	void handleFinish();
 	View getView();
+	int getStatus();
+	void setStatus(int status);
 };
