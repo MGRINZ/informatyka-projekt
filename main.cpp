@@ -23,6 +23,7 @@ int main()
 		level.handleEntities();
 
 		window.clear();
+		window.setView(level.getView());
 		level.draw(window);
 		window.display();
 	}

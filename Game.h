@@ -69,6 +69,7 @@ private:
 	string name;
 	Background background;
 	string audio;
+	View view;
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
@@ -84,4 +85,5 @@ public:
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	void handleEntities();
+	View getView();
 };
