@@ -7,6 +7,8 @@
 using namespace std;
 using namespace sf;
 
+const float Block::WIDTH = Game::HEIGHT / 18.75;
+const float Entity::WIDTH = Block::WIDTH;
 const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
 const string Level::LEVEL_PROPERTY_BACKGROUND = ";background";
@@ -15,7 +17,8 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
 {
-	load("level2.lvl");
+	load("level3.lvl");
+	player.setPosition(5, 9);
 }
 
 void Level::addSolidBlock(Block block)
@@ -37,10 +40,15 @@ void Level::draw(RenderWindow &window)
 {
 	window.draw(background);
 
-	for (auto &block : solidBlocks)
-	{
+	for (auto &block : backgroundBlocks)
 		window.draw(block);
-	}
+	for (auto &block : solidBlocks)
+		window.draw(block);
+	
+	window.draw(player);
+
+	for (auto &block : foregroundBlocks)
+		window.draw(block);
 }
 
 int Level::load(string levelName)
@@ -99,10 +107,131 @@ int Level::load(string levelName)
 	return LEVEL_LOAD_SUCCESS;
 }
 
+void Level::handleEntities()
+{
+	for (auto &enemy : enemies)
+	{
+		enemy.handleGravity(solidBlocks);
+	}
+	player.handleGravity(solidBlocks);
+
+	if (Keyboard::isKeyPressed(Keyboard::Right))
+	{
+		if(player.canGoRight(solidBlocks))
+			player.move(Vector2f(Block::WIDTH / 8, 0));
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Left))
+	{
+		if (player.canGoLeft(solidBlocks))
+			player.move(Vector2f(-Block::WIDTH / 8, 0));
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		player.jump(solidBlocks);
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		player.setJumping(false);
+	}
+}
+
+void Entity::handleGravity(BlocksVector &blocks, float gravity)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	cout << eY << endl;
+	cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) << endl;
+	cout << (eY - WIDTH + (-(yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH << endl;
+	cout << yVelocityDown << endl;
+	cout << yVelocityUp << endl;
+	cout << yVelocityDown + yVelocityUp << endl << endl;
+
+	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	
+	Block *blockUL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+	Block *blockUR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+
+	if (blockUL != NULL || blockUR != NULL)
+	{
+		yVelocityUp = 0.0;
+		yVelocityDown = 0.0;
+		jumping = false;
+	}
+
+
+	if (blockDL != NULL || blockDR != NULL)
+	{
+		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
+		yVelocityDown = 0.0;
+		yVelocityUp = 0.0;
+		return;
+	}
+
+	if(yVelocityDown == yVelocityUp)
+		yVelocityDown = 0.0;
+
+	yVelocityDown += gravity * 0.0017;
+	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
+}
+
+bool Entity::canGoRight(BlocksVector &blocks)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	Block *blockU = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);
+	Block *blockD = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - 1) / Block::WIDTH);
+
+	if (blockU == NULL && blockD == NULL)
+		return true;
+
+	return false;
+}
+
+bool Entity::canGoLeft(BlocksVector &blocks)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	Block *blockU = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);	// - 4 (prêdkoœæ w piks)
+	Block *blockD = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - 1) / Block::WIDTH);		// - 4 (prêdkoœæ w piks)
+
+	if (blockU == NULL && blockD == NULL)
+		return true;
+
+	return false;
+}
+
+void Entity::jump(BlocksVector &blocks)
+{
+	if (!isJumping() && yVelocityDown > 0)
+		return;
+	if (yVelocityUp == 0)
+		yVelocityUp = -0.27;
+	else if(yVelocityUp > -0.37)
+		yVelocityUp -= 10 * 0.001;
+	move(Vector2f(0, -0.025 * Block::WIDTH));
+	jumping = true;
+}
+
+void Entity::setJumping(bool jumping)
+{
+	this->jumping = jumping;
+}
+
+bool Entity::isJumping()
+{
+	return jumping;
+}
 
 Block::Block(int x, int y)
 {
-	setSize(Vector2f(width, width));
+	setSize(Vector2f(WIDTH, WIDTH));
 	setPosition(x, y);
 }
 
@@ -114,7 +243,18 @@ Block::Block(int x, int y, string txt) : Block(x, y)
 
 void Block::setPosition(int x, int y)
 {
-	RectangleShape::setPosition(Vector2f(x * width, y * width));
+	RectangleShape::setPosition(Vector2f(x * WIDTH, y * WIDTH));
+}
+
+Block* BlocksVector::getSolidBlockAtPosition(int x, int y)
+{
+	for (auto &block : *this)
+	{
+		Vector2f blockPosition = block.getPosition();
+		if (blockPosition.x == x * Block::WIDTH && blockPosition.y == y * Block::WIDTH)
+			return &block;
+	}
+	return nullptr;
 }
 
 Background::Background()
@@ -130,4 +270,19 @@ void Background::setTexture(String texture)
 		this->texture.loadFromFile("resources/backgrounds/" + texture);
 		Sprite::setTexture(this->texture);
 	}
+}
+
+Entity::Entity()
+{
+	setOrigin(Vector2f(WIDTH / 2, WIDTH));
+	setTexture(texture);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+	yVelocityDown = 0.0;
+	yVelocityUp = 0.0;
+	jumping = false;
+}
+
+void Entity::setPosition(int x, int y)
+{
+	Sprite::setPosition(Vector2f(x * WIDTH + WIDTH / 2, y * WIDTH + WIDTH));
 }
