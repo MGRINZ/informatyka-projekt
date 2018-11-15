@@ -44,6 +44,33 @@ public:
 	void animate();
 };
 
+class HealthBar
+{
+private:
+	Texture healthTexture;
+	Texture healthTextureEmpty;
+	Sprite health[3];
+	int maxHealth = 3;
+	Vector2f position;
+public:
+	HealthBar();
+	void draw(RenderWindow &window);
+	void setHealth(int hp);
+	void setMaxHealth(int maxHealth);
+	void setPosition(Vector2f position);
+	void move(Vector2f position);
+};
+
+class HUD
+{
+private:
+	HealthBar healthBar;
+public:
+	HUD();
+	void draw(RenderWindow &window);
+	void move(Vector2f position);
+};
+
 class Entity : public Sprite
 {
 private:
@@ -60,7 +87,7 @@ public:
 	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
-	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void jump(BlocksVector &blocks);
@@ -82,29 +109,6 @@ private:
 public:
 	Background();
 	void setTexture(String texture);
-};
-
-class HealthBar
-{
-private:
-	Texture healthTexture;
-	Texture healthTextureEmpty;
-	Sprite health[3];
-	int maxHealth = 3;
-public:
-	HealthBar();
-	void draw(RenderWindow &window);
-	void setHealth(int hp);
-	void setMaxHealth(int maxHealth);
-};
-
-class HUD
-{
-private:
-	HealthBar healthBar;
-public:
-	HUD();
-	void draw(RenderWindow &window);
 };
 
 class LevelEndScreen

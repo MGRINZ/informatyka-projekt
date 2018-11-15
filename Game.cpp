@@ -187,7 +187,7 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
-	player.handleMovement(solidBlocks, view, background);
+	player.handleMovement(solidBlocks, view, background, hud);
 }
 
 void Level::handleItems()
@@ -270,36 +270,42 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(-1);
 }
 
-void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
+void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud)
 {
+	Vector2f velocity(0, 0);
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
 		if (canGoRight(solidBlocks))
 		{
-			move(Vector2f(Block::WIDTH / 8, 0));
+			velocity = Vector2f(Block::WIDTH / 8, 0);
 			setMovingDirectionX(1);
 
-			if (getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(Block::WIDTH / 8, 0));
-				background.move(Vector2f(Block::WIDTH / 8, 0));
-			}
+			
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Left))
 	{
 		if (canGoLeft(solidBlocks))
 		{
-			move(Vector2f(-Block::WIDTH / 8, 0));
+			velocity = Vector2f(-Block::WIDTH / 8, 0);
 			setMovingDirectionX(-1);
 
-			if (getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
+			/*if (getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
 			{
 				view.move(Vector2f(-Block::WIDTH / 8, 0));
 				background.move(Vector2f(-Block::WIDTH / 8, 0));
-			}
+			}*/
 		}
 	}
+
+	move(velocity);
+	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
+	{
+		view.move(velocity);
+		background.move(velocity);
+		hud.move(velocity);
+	}
+
 	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
 		setMovingDirectionX(0);
 	if (Keyboard::isKeyPressed(Keyboard::Up))
@@ -575,15 +581,18 @@ void HUD::draw(RenderWindow & window)
 	healthBar.draw(window);
 }
 
+void HUD::move(Vector2f position)
+{
+	healthBar.move(position);
+}
+
 HealthBar::HealthBar()
 {
 	healthTexture.loadFromFile("resources/textures/health.png");
 	healthTextureEmpty.loadFromFile("resources/textures/health_empty.png");
 	for (int i = 0; i < maxHealth; i++)
-	{
-		health[i].setPosition(Vector2f(50 + i * 50, 20));
 		health[i].setScale(Vector2f(1.5, 1.5));
-	}
+	setPosition(Vector2f(50, 20));
 	setHealth(3);
 }
 
@@ -607,4 +616,19 @@ void HealthBar::setHealth(int hp)
 void HealthBar::setMaxHealth(int maxHealth)
 {
 	this->maxHealth = maxHealth;
+}
+
+void HealthBar::setPosition(Vector2f position)
+{
+	this->position = position;
+	for (int i = 0; i < maxHealth; i++)
+		health[i].setPosition(Vector2f(position.x + i * 50, position.y));
+}
+
+void HealthBar::move(Vector2f position)
+{
+	this->position.x += position.x;
+	this->position.y += position.y;
+	for (int i = 0; i < maxHealth; i++)
+		health[i].move(position);
 }
