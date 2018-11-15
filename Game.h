@@ -61,14 +61,35 @@ public:
 	void move(Vector2f position);
 };
 
+class ItemsBar
+{
+private:
+	Texture itemsTexture;
+	Sprite item;
+	Font itemCounterFont;
+	Text itemCounter;
+	vector<Item>* items;
+	Vector2f position;
+public:
+	ItemsBar();
+	void draw(RenderWindow &window);
+	void setPosition(Vector2f position);
+	void move(Vector2f position);
+	void setItems(vector<Item>* items);
+};
+
 class HUD
 {
 private:
 	HealthBar healthBar;
+	ItemsBar itemsBar;
 public:
 	HUD();
 	void draw(RenderWindow &window);
+	void setPosition(Vector2f position);
 	void move(Vector2f position);
+	HealthBar* getHealthBar();
+	ItemsBar* getItemsBar();
 };
 
 class Entity : public Sprite

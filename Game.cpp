@@ -77,6 +77,7 @@ int Level::load(string levelName)
 	enemies.clear();
 	items.clear();
 	player.reset();
+	hud.setPosition(Vector2f(50, 20));
 
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
@@ -197,6 +198,7 @@ void Level::handleItems()
 		item.animate();
 		player.takingItem(item);
 	}
+	hud.getItemsBar()->setItems(&items);
 }
 
 void Level::handleFinish()
@@ -289,12 +291,6 @@ void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 		{
 			velocity = Vector2f(-Block::WIDTH / 8, 0);
 			setMovingDirectionX(-1);
-
-			/*if (getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(-Block::WIDTH / 8, 0));
-				background.move(Vector2f(-Block::WIDTH / 8, 0));
-			}*/
 		}
 	}
 
@@ -574,16 +570,35 @@ void LevelEndScreen::setPosition(Vector2f position)
 
 HUD::HUD()
 {
+	setPosition(Vector2f(50, 20));
 }
 
 void HUD::draw(RenderWindow & window)
 {
 	healthBar.draw(window);
+	itemsBar.draw(window);
+}
+
+void HUD::setPosition(Vector2f position)
+{
+	healthBar.setPosition(Vector2f(position));
+	itemsBar.setPosition(Vector2f(position.x + 200, position.y));
 }
 
 void HUD::move(Vector2f position)
 {
 	healthBar.move(position);
+	itemsBar.move(position);
+}
+
+HealthBar * HUD::getHealthBar()
+{
+	return &healthBar;
+}
+
+ItemsBar * HUD::getItemsBar()
+{
+	return &itemsBar;
 }
 
 HealthBar::HealthBar()
@@ -592,7 +607,6 @@ HealthBar::HealthBar()
 	healthTextureEmpty.loadFromFile("resources/textures/health_empty.png");
 	for (int i = 0; i < maxHealth; i++)
 		health[i].setScale(Vector2f(1.5, 1.5));
-	setPosition(Vector2f(50, 20));
 	setHealth(3);
 }
 
@@ -631,4 +645,50 @@ void HealthBar::move(Vector2f position)
 	this->position.y += position.y;
 	for (int i = 0; i < maxHealth; i++)
 		health[i].move(position);
+}
+
+ItemsBar::ItemsBar()
+{
+	itemsTexture.loadFromFile("resources/textures/egg1.png");
+	item.setTexture(itemsTexture);
+	item.setTextureRect(IntRect(0, 0, 32, 32));
+	item.setScale(Vector2f(1.5, 1.5));
+
+	itemCounterFont.loadFromFile("resources/fonts/verdana.ttf");
+	itemCounter.setFont(itemCounterFont);
+	itemCounter.setOutlineColor(Color::Black);
+	itemCounter.setOutlineThickness(1);
+}
+
+void ItemsBar::draw(RenderWindow & window)
+{
+	window.draw(item);
+	window.draw(itemCounter);
+}
+
+void ItemsBar::setPosition(Vector2f position)
+{
+	item.setPosition(position);
+	itemCounter.setPosition(Vector2f(position.x + 50, position.y + 4));
+}
+
+void ItemsBar::move(Vector2f position)
+{
+	item.move(position);
+	itemCounter.move(position);
+}
+
+void ItemsBar::setItems(vector<Item>* items)
+{
+	this->items = items;
+	int count = 0;
+	for (auto &item : *items)
+	{
+		if (!item.isActive())
+			count++;
+	}
+
+	stringstream ss;
+	ss << count << "/" << items->size();
+	itemCounter.setString(ss.str());
 }
