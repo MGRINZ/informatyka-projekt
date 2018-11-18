@@ -4,6 +4,8 @@
 using namespace std;
 using namespace sf;
 
+class Entity;
+
 class Game
 {
 public:
@@ -61,21 +63,43 @@ public:
 	void move(Vector2f position);
 };
 
-class ItemsBar
+class HUDBar
 {
-private:
-	Texture itemsTexture;
-	Sprite item;
-	Font itemCounterFont;
-	Text itemCounter;
+protected:
+	Texture iconTexture;
+	Sprite icon;
+	Font counterFont;
+	Text counter;
 	vector<Item>* items;
 	Vector2f position;
 public:
-	ItemsBar();
+	HUDBar();
 	void draw(RenderWindow &window);
 	void setPosition(Vector2f position);
 	void move(Vector2f position);
+};
+
+class ItemsBar : public HUDBar
+{
+public:
+	ItemsBar();
 	void setItems(vector<Item>* items);
+};
+
+class EnemiesBar : public HUDBar
+{
+public:
+	EnemiesBar();
+	void setItems(vector<Entity>* items);
+};
+
+class TimeBar : public HUDBar
+{
+private:
+	int timeLeft = 0;
+public:
+	TimeBar();
+	void setTimeLeft(int timeLeft);
 };
 
 class HUD
@@ -83,6 +107,8 @@ class HUD
 private:
 	HealthBar healthBar;
 	ItemsBar itemsBar;
+	EnemiesBar enemiesBar;
+	TimeBar timeBar;
 public:
 	HUD();
 	void draw(RenderWindow &window);
@@ -90,6 +116,8 @@ public:
 	void move(Vector2f position);
 	HealthBar* getHealthBar();
 	ItemsBar* getItemsBar();
+	EnemiesBar* getEnemiesBar();
+	TimeBar* getTimeBar();
 };
 
 class Entity : public Sprite

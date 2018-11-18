@@ -189,6 +189,9 @@ void Level::handleEntities()
 	player.handleGravity(solidBlocks);
 	player.animate();
 	player.handleMovement(solidBlocks, view, background, hud);
+
+	hud.getEnemiesBar()->setItems(&enemies);
+	hud.getTimeBar()->setTimeLeft(3666);
 }
 
 void Level::handleItems()
@@ -577,12 +580,16 @@ void HUD::draw(RenderWindow & window)
 {
 	healthBar.draw(window);
 	itemsBar.draw(window);
+	enemiesBar.draw(window);
+	timeBar.draw(window);
 }
 
 void HUD::setPosition(Vector2f position)
 {
 	healthBar.setPosition(Vector2f(position));
 	itemsBar.setPosition(Vector2f(position.x + 200, position.y));
+	enemiesBar.setPosition(Vector2f(position.x + 350, position.y));
+	timeBar.setPosition(Vector2f(position.x + 500, position.y));
 }
 
 void HUD::move(Vector2f position)
@@ -599,6 +606,16 @@ HealthBar * HUD::getHealthBar()
 ItemsBar * HUD::getItemsBar()
 {
 	return &itemsBar;
+}
+
+EnemiesBar * HUD::getEnemiesBar()
+{
+	return &enemiesBar;
+}
+
+TimeBar * HUD::getTimeBar()
+{
+	return &timeBar;
 }
 
 HealthBar::HealthBar()
@@ -647,35 +664,39 @@ void HealthBar::move(Vector2f position)
 		health[i].move(position);
 }
 
-ItemsBar::ItemsBar()
+HUDBar::HUDBar()
 {
-	itemsTexture.loadFromFile("resources/textures/egg1.png");
-	item.setTexture(itemsTexture);
-	item.setTextureRect(IntRect(0, 0, 32, 32));
-	item.setScale(Vector2f(1.5, 1.5));
+	this->icon.setTextureRect(IntRect(0, 0, 32, 32));
+	this->icon.setScale(Vector2f(1.5, 1.5));
 
-	itemCounterFont.loadFromFile("resources/fonts/verdana.ttf");
-	itemCounter.setFont(itemCounterFont);
-	itemCounter.setOutlineColor(Color::Black);
-	itemCounter.setOutlineThickness(1);
+	counterFont.loadFromFile("resources/fonts/verdana.ttf");
+	counter.setFont(counterFont);
+	counter.setOutlineColor(Color::Black);
+	counter.setOutlineThickness(1);
 }
 
-void ItemsBar::draw(RenderWindow & window)
+ItemsBar::ItemsBar() : HUDBar()
 {
-	window.draw(item);
-	window.draw(itemCounter);
+	iconTexture.loadFromFile("resources/textures/egg1.png");
+	icon.setTexture(iconTexture);
 }
 
-void ItemsBar::setPosition(Vector2f position)
+void HUDBar::draw(RenderWindow & window)
 {
-	item.setPosition(position);
-	itemCounter.setPosition(Vector2f(position.x + 50, position.y + 4));
+	window.draw(icon);
+	window.draw(counter);
 }
 
-void ItemsBar::move(Vector2f position)
+void HUDBar::setPosition(Vector2f position)
 {
-	item.move(position);
-	itemCounter.move(position);
+	icon.setPosition(position);
+	counter.setPosition(Vector2f(position.x + 50, position.y + 4));
+}
+
+void HUDBar::move(Vector2f position)
+{
+	icon.move(position);
+	counter.move(position);
 }
 
 void ItemsBar::setItems(vector<Item>* items)
@@ -690,5 +711,45 @@ void ItemsBar::setItems(vector<Item>* items)
 
 	stringstream ss;
 	ss << count << "/" << items->size();
-	itemCounter.setString(ss.str());
+	counter.setString(ss.str());
+}
+
+EnemiesBar::EnemiesBar() : HUDBar()
+{
+	iconTexture.loadFromFile("");
+	icon.setTexture(iconTexture);
+}
+
+void EnemiesBar::setItems(vector<Entity>* items)
+{
+	counter.setString("0/0");
+}
+
+TimeBar::TimeBar() : HUDBar()
+{
+	delete items;
+	iconTexture.loadFromFile("");
+	icon.setTexture(iconTexture);
+}
+
+void TimeBar::setTimeLeft(int timeLeft)
+{
+	this->timeLeft = timeLeft;
+	
+	int s, m, h;
+
+	s = timeLeft % 60;
+	timeLeft /= 60;
+	m = timeLeft % 60;
+	timeLeft /= 60;
+	h = timeLeft;
+
+	stringstream ss;
+	
+	if (h > 0)
+		ss << ((h < 10) ? "0" : "") << h << ":";
+	ss << ((m < 10) ? "0" : "") << m << ":";
+	ss << ((s < 10) ? "0" : "") << s;
+
+	counter.setString(ss.str());
 }
