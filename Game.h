@@ -186,6 +186,8 @@ private:
 	string name;
 	Background background;
 	string audio;
+	int timeLeft;
+	Clock levelClock;
 	View view;
 	Vector2u endPosition[2];
 	HUD hud;
@@ -215,6 +217,7 @@ public:
 	void handleEntities();
 	void handleItems();
 	void handleFinish();
+	void handleTimers();
 	View getView();
 	int getStatus();
 	void setStatus(int status);

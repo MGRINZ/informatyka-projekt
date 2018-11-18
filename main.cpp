@@ -38,6 +38,7 @@ int main()
 		}
 
 		level.handleFinish();
+		level.handleTimers();
 
 		level.draw(window);
 

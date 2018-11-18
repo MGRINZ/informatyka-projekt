@@ -2,6 +2,7 @@
 background=bg1.jpg
 start=3;8
 end=30;12;30;14
+time=360
 ;terrain
 0;0;dirt.jpg
 1;0;dirt.jpg

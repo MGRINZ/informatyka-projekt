@@ -131,6 +131,10 @@ int Level::load(string levelName)
 					endPosition[1].x = atoi(x.c_str());
 					endPosition[1].y = atoi(y.c_str());
 				}
+				else if (line.find("time") == 0)
+				{
+					timeLeft = atoi(line.substr(5).c_str());
+				}
 			}
 			else if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
 			{
@@ -176,6 +180,7 @@ int Level::load(string levelName)
 	}
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
+	hud.getTimeBar()->setTimeLeft(timeLeft);
 	status = LEVEL_STATUS_IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
@@ -191,7 +196,6 @@ void Level::handleEntities()
 	player.handleMovement(solidBlocks, view, background, hud);
 
 	hud.getEnemiesBar()->setItems(&enemies);
-	hud.getTimeBar()->setTimeLeft(3666);
 }
 
 void Level::handleItems()
@@ -217,6 +221,21 @@ void Level::handleFinish()
 
 	if (Keyboard::isKeyPressed(Keyboard::Enter))
 		load("level3.lvl");
+}
+
+void Level::handleTimers()
+{
+	if (levelClock.getElapsedTime().asSeconds() < 1)
+		return;
+
+	if (getStatus() == LEVEL_STATUS_IN_GAME)
+	{
+		if(timeLeft > 0)
+			timeLeft--;
+		hud.getTimeBar()->setTimeLeft(timeLeft);
+	}
+
+	levelClock.restart();
 }
 
 View Level::getView()
@@ -596,6 +615,8 @@ void HUD::move(Vector2f position)
 {
 	healthBar.move(position);
 	itemsBar.move(position);
+	enemiesBar.move(position);
+	timeBar.move(position);
 }
 
 HealthBar * HUD::getHealthBar()
