@@ -641,10 +641,8 @@ TimeBar * HUD::getTimeBar()
 
 HealthBar::HealthBar()
 {
-	healthTexture.loadFromFile("resources/textures/health.png");
-	healthTextureEmpty.loadFromFile("resources/textures/health_empty.png");
-	for (int i = 0; i < maxHealth; i++)
-		health[i].setScale(Vector2f(1.5, 1.5));
+	healthTexture.loadFromFile("resources/textures/hud/health.png");
+	healthTextureEmpty.loadFromFile("resources/textures/hud/health_empty.png");
 	setHealth(3);
 }
 
@@ -687,8 +685,7 @@ void HealthBar::move(Vector2f position)
 
 HUDBar::HUDBar()
 {
-	this->icon.setTextureRect(IntRect(0, 0, 32, 32));
-	this->icon.setScale(Vector2f(1.5, 1.5));
+	this->icon.setTextureRect(IntRect(0, 0, 48, 48));
 
 	counterFont.loadFromFile("resources/fonts/verdana.ttf");
 	counter.setFont(counterFont);
@@ -698,7 +695,7 @@ HUDBar::HUDBar()
 
 ItemsBar::ItemsBar() : HUDBar()
 {
-	iconTexture.loadFromFile("resources/textures/egg1.png");
+	iconTexture.loadFromFile("resources/textures/hud/egg.png");
 	icon.setTexture(iconTexture);
 }
 
@@ -711,7 +708,7 @@ void HUDBar::draw(RenderWindow & window)
 void HUDBar::setPosition(Vector2f position)
 {
 	icon.setPosition(position);
-	counter.setPosition(Vector2f(position.x + 50, position.y + 4));
+	counter.setPosition(Vector2f(position.x + 60, position.y + 4));
 }
 
 void HUDBar::move(Vector2f position)
@@ -737,7 +734,7 @@ void ItemsBar::setItems(vector<Item>* items)
 
 EnemiesBar::EnemiesBar() : HUDBar()
 {
-	iconTexture.loadFromFile("");
+	iconTexture.loadFromFile("resources/textures/hud/enemy.png");
 	icon.setTexture(iconTexture);
 }
 
@@ -749,7 +746,7 @@ void EnemiesBar::setItems(vector<Entity>* items)
 TimeBar::TimeBar() : HUDBar()
 {
 	delete items;
-	iconTexture.loadFromFile("");
+	iconTexture.loadFromFile("resources/textures/hud/clock.png");
 	icon.setTexture(iconTexture);
 }
 
