@@ -13,13 +13,13 @@ const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
 const string Level::LEVEL_PROPERTY_BACKGROUND = ";background";
 const string Level::LEVEL_PROPERTY_FOREGROUND = ";foreground";
+const string Level::LEVEL_PROPERTY_ITEMS = ";items";
 const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
 {
-	load("level3.lvl");
-	player.setPosition(5, 9);
-	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
+	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
+	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
 }
 
 void Level::addSolidBlock(Block block)
@@ -37,6 +37,11 @@ void Level::addForegroundBlock(Block block)
 	foregroundBlocks.push_back(block);
 }
 
+void Level::addItem(Item item)
+{
+	items.push_back(item);
+}
+
 void Level::draw(RenderWindow &window)
 {
 	window.draw(background);
@@ -45,15 +50,32 @@ void Level::draw(RenderWindow &window)
 		window.draw(block);
 	for (auto &block : solidBlocks)
 		window.draw(block);
+	for (auto &item : items)
+	{
+		if(item.isActive())
+			window.draw(item);
+	}
 	
 	window.draw(player);
 
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
+
+	if(getStatus() == LEVEL_STATUS_FINISHED)
+		endScreen.draw(window);
 }
 
 int Level::load(string levelName)
 {
+	status = LEVEL_STATUS_LOADING;
+
+	solidBlocks.clear();
+	backgroundBlocks.clear();
+	foregroundBlocks.clear();
+	enemies.clear();
+	items.clear();
+	player.reset();
+
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
 		return LEVEL_LOAD_ERROR_OPEN_FILE;
@@ -75,11 +97,39 @@ int Level::load(string levelName)
 				if (line.find("name") == 0)
 					name = line.substr(5);
 				else if (line.find("background") == 0)
+				{
 					background.setTexture(line.substr(11));
+					background.setPosition(Vector2f(0, 0));
+				}
 				else if (line.find("audio") == 0)
 					audio = line.substr(6);
+				else if (line.find("start") == 0)
+				{
+					string startPosition = line.substr(6);
+					string x, y;
+					stringstream ss;
+					ss << startPosition;
+					getline(ss, x, ';');
+					getline(ss, y, ';');
+					player.setPosition(atoi(x.c_str()), atoi(y.c_str()));
+				}
+				else if (line.find("end") == 0)
+				{
+					string startPosition = line.substr(4);
+					string x, y;
+					stringstream ss;
+					ss << startPosition;
+					getline(ss, x, ';');
+					getline(ss, y, ';');
+					endPosition[0].x = atoi(x.c_str());
+					endPosition[0].y = atoi(y.c_str());
+					getline(ss, x, ';');
+					getline(ss, y, ';');
+					endPosition[1].x = atoi(x.c_str());
+					endPosition[1].y = atoi(y.c_str());
+				}
 			}
-			if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
+			else if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
 			{
 				int x, y;
 				string texture;
@@ -101,10 +151,29 @@ int Level::load(string levelName)
 					addForegroundBlock(Block(x, y, texture));
 
 			}
+			else if (property == LEVEL_PROPERTY_ITEMS)
+			{
+				int x, y;
+				string type;
+
+				string token;
+				stringstream ss;
+				ss << line;
+				getline(ss, token, ';');
+				x = atoi(token.c_str());
+				getline(ss, token, ';');
+				y = atoi(token.c_str());
+				getline(ss, token, ';');
+				type = token;
+				addItem(Item(x, y, "egg1.png"));
+			}
 			else
 				continue;
 		}
 	}
+
+	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
+	status = LEVEL_STATUS_IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
 
@@ -116,50 +185,46 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
+	player.handleMovement(solidBlocks, view, background);
+}
 
-	if (Keyboard::isKeyPressed(Keyboard::Right))
+void Level::handleItems()
+{
+	for (auto &item : items)
 	{
-		if (player.canGoRight(solidBlocks))
-		{
-			player.move(Vector2f(Block::WIDTH / 8, 0));
-			player.setMovingDirectionX(1);
+		item.animate();
+		player.takingItem(item);
+	}
+}
 
-			if (player.getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(Block::WIDTH / 8, 0));
-				background.move(Vector2f(Block::WIDTH / 8, 0));
-			}
-		}
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Left))
-	{
-		if (player.canGoLeft(solidBlocks))
-		{
-			player.move(Vector2f(-Block::WIDTH / 8, 0));
-			player.setMovingDirectionX(-1);
+void Level::handleFinish()
+{
+	FloatRect gb = player.getGlobalBounds();
+	FloatRect endArea(endPosition[0].x * Block::WIDTH, endPosition[0].y * Block::WIDTH, (endPosition[1].x - endPosition[0].x + 1) * Block::WIDTH, (endPosition[1].y - endPosition[0].y + 1) * Block::WIDTH);
+	
+	if (!gb.intersects(endArea))
+		return;
 
-			if (player.getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(-Block::WIDTH / 8, 0));
-				background.move(Vector2f(-Block::WIDTH / 8, 0));
-			}
-		}
-	}
-	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
-		player.setMovingDirectionX(0);
-	if (Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		player.jump(solidBlocks);
-	}
-	if (!Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		player.setJumping(false);
-	}
+	setStatus(LEVEL_STATUS_FINISHED);
+	endScreen.setPosition(view.getCenter());
+
+	if (Keyboard::isKeyPressed(Keyboard::Enter))
+		load("level3.lvl");
 }
 
 View Level::getView()
 {
 	return view;
+}
+
+int Level::getStatus()
+{
+	return status;
+}
+
+void Level::setStatus(int status)
+{
+	this->status = status;
 }
 
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
@@ -201,6 +266,50 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(1);
 	else if(yVelocityDown + yVelocityUp < 0)
 		setMovingDirectionY(-1);
+}
+
+void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
+{
+	if (Keyboard::isKeyPressed(Keyboard::Right))
+	{
+		if (canGoRight(solidBlocks))
+		{
+			move(Vector2f(Block::WIDTH / 8, 0));
+			setMovingDirectionX(1);
+
+			if (getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
+			{
+				view.move(Vector2f(Block::WIDTH / 8, 0));
+				background.move(Vector2f(Block::WIDTH / 8, 0));
+			}
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Left))
+	{
+		if (canGoLeft(solidBlocks))
+		{
+			move(Vector2f(-Block::WIDTH / 8, 0));
+			setMovingDirectionX(-1);
+
+			if (getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
+			{
+				view.move(Vector2f(-Block::WIDTH / 8, 0));
+				background.move(Vector2f(-Block::WIDTH / 8, 0));
+			}
+		}
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
+		setMovingDirectionX(0);
+	if (Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		jump(solidBlocks);
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		setJumping(false);
+	}
+
+	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
 }
 
 bool Entity::canGoRight(BlocksVector &blocks)
@@ -263,7 +372,7 @@ Block::Block(int x, int y)
 
 Block::Block(int x, int y, string txt) : Block(x, y)
 {
-	texture->loadFromFile("resources/textures/" + txt);
+	texture->loadFromFile("resources/textures/blocks/" + txt);
 	setTexture(texture);
 }
 
@@ -300,8 +409,6 @@ void Background::setTexture(String texture)
 
 void Entity::animate()
 {
-	Vector2u txtSize = texture.getSize();
-
 	if(isMovingY) {		
 		IntRect txtRect = getTextureRect();
 		txtRect.left = 6 * WIDTH;
@@ -355,12 +462,24 @@ int Entity::getMovingDirectionY()
 	return isMovingY;
 }
 
+void Entity::takingItem(Item &item)
+{
+	FloatRect gb = item.getGlobalBounds();
+	if (getGlobalBounds().intersects(gb))
+		item.disable();
+}
+
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
 	texture.loadFromFile("resources/textures/easteregg-man.png");
 	setTexture(texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+	reset();
+}
+
+void Entity::reset()
+{
 	yVelocityDown = 0.0;
 	yVelocityUp = 0.0;
 	jumping = false;
@@ -371,4 +490,76 @@ Entity::Entity()
 void Entity::setPosition(int x, int y)
 {
 	Sprite::setPosition(Vector2f(x * WIDTH + WIDTH / 2, y * WIDTH + WIDTH));
+}
+
+Item::Item(int x, int y) : Block(x, y)
+{
+
+}
+
+Item::Item(int x, int y, string txt) : Block(x, y)
+{
+	texture->loadFromFile("resources/textures/" + txt);
+	setTexture(texture);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+}
+
+bool Item::isActive()
+{
+	return active;
+}
+
+void Item::disable()
+{
+	active = false;
+}
+
+void Item::animate()
+{
+	Vector2u txtSize = texture->getSize();
+	if (animateClock.getElapsedTime().asMilliseconds() >= 100)
+	{
+		IntRect txtRect = getTextureRect();
+		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
+		if (txtRect.left >= txtSize.x)
+			txtRect.left = 0;
+		setTextureRect(txtRect);
+		animateClock.restart();
+	}
+}
+
+LevelEndScreen::LevelEndScreen()
+{
+	FloatRect gb;
+
+	overlay.setFillColor(Color(0,0,0,192));
+	overlay.setSize(Vector2f(Game::WIDTH, Game::HEIGHT));
+	
+	container.setFillColor(Color::Blue);
+	container.setOrigin(Vector2f(Game::WIDTH * 0.8 / 2, Game::HEIGHT * 0.5 / 2));
+	container.setSize(Vector2f(Game::WIDTH * 0.8, Game::HEIGHT * 0.5));
+	
+	headerFont.loadFromFile("resources/fonts/verdana.ttf");
+	
+	header.setFont(headerFont);
+	header.setString("Poziom ukonczony");
+	gb = header.getGlobalBounds();
+	header.setOrigin(Vector2f(gb.width / 2, gb.height / 2));
+
+	setPosition(Vector2f(0, 0));
+}
+
+void LevelEndScreen::draw(RenderWindow & window)
+{
+	window.draw(overlay);
+	window.draw(container);
+	window.draw(header);
+}
+
+void LevelEndScreen::setPosition(Vector2f position)
+{
+	this->position = position;
+	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
+	container.setPosition(Vector2f(position.x, position.y));
+	header.setPosition(Vector2f(position.x, position.y - 120));
 }

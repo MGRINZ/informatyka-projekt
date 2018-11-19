@@ -11,9 +11,11 @@ public:
 	static const int HEIGHT = 600;
 };
 
-class Block: public sf::RectangleShape
+class Block : public sf::RectangleShape
 {
 private:
+	const string RES_DIR = "resources/textures/blocks/";
+protected:
 	Texture* texture = new Texture;
 public:
 	static const float WIDTH;
@@ -26,6 +28,20 @@ class BlocksVector : public vector<Block>
 {
 public:
 	Block* getSolidBlockAtPosition(int x, int y);
+};
+
+class Item : public Block
+{
+private:
+	const string RES_DIR = "resources/textures/";
+	bool active = true;
+	Clock animateClock;
+public:
+	Item(int x, int y);
+	Item(int x, int y, string texture);
+	bool isActive();
+	void disable();
+	void animate();
 };
 
 class Entity : public Sprite
@@ -41,8 +57,10 @@ private:
 public:
 	static const float WIDTH;
 	Entity();
+	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void jump(BlocksVector &blocks);
@@ -53,6 +71,7 @@ public:
 	void setMovingDirectionY(int y);
 	int getMovingDirectionX();
 	int getMovingDirectionY();
+	void takingItem(Item &item);
 };
 
 class Background : public Sprite
@@ -65,6 +84,20 @@ public:
 	void setTexture(String texture);
 };
 
+class LevelEndScreen
+{
+private:
+	Vector2f position;
+	RectangleShape overlay;
+	RectangleShape container;
+	Font headerFont;
+	Text header;
+public:
+	LevelEndScreen();
+	void draw(RenderWindow &window);
+	void setPosition(Vector2f position);
+};
+
 class Level
 {
 private:
@@ -72,11 +105,16 @@ private:
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
 	vector<Entity> enemies;
+	vector<Item> items;
 	Entity player;
 	string name;
 	Background background;
 	string audio;
 	View view;
+	Vector2u endPosition[2];
+	LevelEndScreen endScreen;
+	int status;
+
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
@@ -84,13 +122,23 @@ public:
 	static const string LEVEL_PROPERTY_TERRAIN;
 	static const string LEVEL_PROPERTY_BACKGROUND;
 	static const string LEVEL_PROPERTY_FOREGROUND;
+	static const string LEVEL_PROPERTY_ITEMS;
 	static const string LEVEL_PROPERTY_ENTITIES;
+	static const int LEVEL_STATUS_LOADING = 0;
+	static const int LEVEL_STATUS_IN_GAME = 1;
+	static const int LEVEL_STATUS_PAUSED = 2;
+	static const int LEVEL_STATUS_FINISHED = 3;
 	Level();
 	void addSolidBlock(Block block);
 	void addBackgroundBlock(Block block);
 	void addForegroundBlock(Block block);
+	void addItem(Item item);
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	void handleEntities();
+	void handleItems();
+	void handleFinish();
 	View getView();
+	int getStatus();
+	void setStatus(int status);
 };
