@@ -88,9 +88,11 @@ public:
 
 class EnemiesBar : public HUDBar
 {
+private:
+	vector <Entity*>* items;
 public:
 	EnemiesBar();
-	void setItems(vector<Entity>* items);
+	void setItems(vector<Entity*>* items);
 };
 
 class TimeBar : public HUDBar
@@ -131,6 +133,7 @@ private:
 	int isMovingY;	//-1 w górê, 0 false, 1 w dó³
 	Clock animateClock;
 	bool flags[1] = { 0 };
+	bool alive;
 	
 public:
 	static const float WIDTH;
@@ -153,7 +156,11 @@ public:
 	int getMovingDirectionX();
 	int getMovingDirectionY();
 	bool getFlag(Flags flag);
+	bool getFlag(string flag);
 	void setFlag(Flags flag, bool value);
+	void setFlag(string flag, bool value);
+	Flags getFlagByName(string name);
+	bool isAlive();
 };
 
 class Player : public Entity
@@ -162,6 +169,12 @@ public:
 	Player() : Entity("easteregg-man.png") {};
 	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	void takingItem(Item &item);
+};
+
+class EJelly : public Entity
+{
+public:
+	EJelly() : Entity("") {};
 };
 
 class Background : public Sprite
@@ -194,7 +207,7 @@ private:
 	BlocksVector solidBlocks;
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
-	vector<Entity> enemies;
+	vector<Entity*> enemies;
 	vector<Item> items;
 	Player player;
 	string name;
@@ -226,6 +239,7 @@ public:
 	void addBackgroundBlock(Block block);
 	void addForegroundBlock(Block block);
 	void addItem(Item item);
+	void addEnemy(Entity* entity);
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	void handleEntities();

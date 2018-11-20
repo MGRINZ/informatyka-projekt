@@ -9,7 +9,7 @@ int main()
 {
 	RenderWindow window(VideoMode(Game::WIDTH, Game::HEIGHT), "Gra");
 	window.setFramerateLimit(60);
-
+	
 	Level level;
 	level.load("level3.lvl");
 	

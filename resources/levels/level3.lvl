@@ -385,6 +385,9 @@ time=360
 30;13;dirt.jpg
 29;14;dirt.jpg
 30;14;dirt.jpg
+;entities
+13;14;jelly;
+15;14;jelly;
 ;items
 10;4;egg
 14;4;egg

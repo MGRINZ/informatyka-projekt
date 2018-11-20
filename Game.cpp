@@ -42,6 +42,11 @@ void Level::addItem(Item item)
 	items.push_back(item);
 }
 
+void Level::addEnemy(Entity * entity)
+{
+	enemies.push_back(entity);
+}
+
 void Level::draw(RenderWindow &window)
 {
 	window.draw(background);
@@ -57,6 +62,9 @@ void Level::draw(RenderWindow &window)
 	}
 	
 	window.draw(player);
+
+	for (auto &enemy : enemies)
+		window.draw(*enemy);
 
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
@@ -174,6 +182,44 @@ int Level::load(string levelName)
 				type = token;
 				addItem(Item(x, y, "egg1.png"));
 			}
+			else if (property == LEVEL_PROPERTY_ENTITIES)
+			{
+				int x, y;
+				string type;
+				string flags;
+
+				string token;
+				stringstream ss;
+				ss << line;
+				getline(ss, token, ';');
+				x = atoi(token.c_str());
+				getline(ss, token, ';');
+				y = atoi(token.c_str());
+				getline(ss, token, ';');
+				type = token;
+				getline(ss, token, ';');
+				flags = token;
+
+				Entity* enemy = NULL;
+				if (type == "jelly")
+					enemy = new EJelly();
+				enemy->setPosition(x, y);
+				
+				if (!flags.empty())
+				{
+					ss.str("");
+					ss.clear();
+					ss << flags;
+					while (!ss.eof())
+					{
+						getline(ss, token, '|');
+						cout << token;
+						enemy->setFlag(token, true);
+					}
+				}
+
+				addEnemy(enemy);
+			}
 			else
 				continue;
 		}
@@ -189,7 +235,7 @@ void Level::handleEntities()
 {
 	for (auto &enemy : enemies)
 	{
-		enemy.handleGravity(solidBlocks);
+		enemy->handleGravity(solidBlocks);
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
@@ -464,9 +510,30 @@ bool Entity::getFlag(Flags flag)
 	return flags[flag];
 }
 
+bool Entity::getFlag(string flag)
+{
+	return getFlag(getFlagByName(flag));
+}
+
 void Entity::setFlag(Flags flag, bool value)
 {
 	flags[flag] = value;
+}
+
+void Entity::setFlag(string flag, bool value)
+{
+	setFlag(getFlagByName(flag), value);
+}
+
+Entity::Flags Entity::getFlagByName(string name)
+{
+	if (name == "SMART")
+		return Flags::SMART;
+}
+
+bool Entity::isAlive()
+{
+	return alive;
 }
 
 Entity::Entity()
@@ -489,6 +556,7 @@ void Entity::reset()
 	jumping = false;
 	isMovingX = 0;
 	isMovingY = 0;
+	alive = true;
 }
 
 void Entity::setPosition(int x, int y)
@@ -716,9 +784,19 @@ EnemiesBar::EnemiesBar() : HUDBar()
 	icon.setTexture(iconTexture);
 }
 
-void EnemiesBar::setItems(vector<Entity>* items)
+void EnemiesBar::setItems(vector<Entity*>* items)
 {
-	counter.setString("0/0");
+	this->items = items;
+	int count = 0;
+	for (auto &item : *items)
+	{
+		if (!item->isAlive())
+			count++;
+	}
+
+	stringstream ss;
+	ss << count << "/" << items->size();
+	counter.setString(ss.str());
 }
 
 TimeBar::TimeBar() : HUDBar()
