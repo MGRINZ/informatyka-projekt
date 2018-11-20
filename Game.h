@@ -130,13 +130,18 @@ private:
 	int isMovingX;	//-1 w lewo, 0 false, 1 w prawo
 	int isMovingY;	//-1 w górê, 0 false, 1 w dó³
 	Clock animateClock;
+	bool flags[1] = { 0 };
+	
 public:
 	static const float WIDTH;
+	enum Flags {
+		SMART
+	};
 	Entity();
+	Entity(string texture);
 	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
-	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void jump(BlocksVector &blocks);
@@ -147,6 +152,15 @@ public:
 	void setMovingDirectionY(int y);
 	int getMovingDirectionX();
 	int getMovingDirectionY();
+	bool getFlag(Flags flag);
+	void setFlag(Flags flag, bool value);
+};
+
+class Player : public Entity
+{
+public:
+	Player() : Entity("easteregg-man.png") {};
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	void takingItem(Item &item);
 };
 
@@ -182,7 +196,7 @@ private:
 	vector<Block> foregroundBlocks;
 	vector<Entity> enemies;
 	vector<Item> items;
-	Entity player;
+	Player player;
 	string name;
 	Background background;
 	string audio;

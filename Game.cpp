@@ -294,50 +294,6 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(-1);
 }
 
-void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud)
-{
-	Vector2f velocity(0, 0);
-	if (Keyboard::isKeyPressed(Keyboard::Right))
-	{
-		if (canGoRight(solidBlocks))
-		{
-			velocity = Vector2f(Block::WIDTH / 8, 0);
-			setMovingDirectionX(1);
-
-			
-		}
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Left))
-	{
-		if (canGoLeft(solidBlocks))
-		{
-			velocity = Vector2f(-Block::WIDTH / 8, 0);
-			setMovingDirectionX(-1);
-		}
-	}
-
-	move(velocity);
-	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
-	{
-		view.move(velocity);
-		background.move(velocity);
-		hud.move(velocity);
-	}
-
-	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
-		setMovingDirectionX(0);
-	if (Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		jump(solidBlocks);
-	}
-	if (!Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		setJumping(false);
-	}
-
-	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
-}
-
 bool Entity::canGoRight(BlocksVector &blocks)
 {
 	Vector2f entityPosition = getPosition();
@@ -347,6 +303,12 @@ bool Entity::canGoRight(BlocksVector &blocks)
 	Block *blockU = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);
 	Block *blockD = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - 1) / Block::WIDTH);
 
+	if (getFlag(Flags::SMART))
+	{
+		Block *blockD2 = blocks.getSolidBlockAtPosition((eX) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH);
+		if (blockD2 == NULL && !isMovingY)
+			return false;
+	}
 	if (blockU == NULL && blockD == NULL)
 		return true;
 
@@ -362,6 +324,12 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 	Block *blockU = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);	// - 4 (prêdkoœæ w piks)
 	Block *blockD = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - 1) / Block::WIDTH);		// - 4 (prêdkoœæ w piks)
 
+	if (getFlag(Flags::SMART))
+	{
+		Block *blockD2 = blocks.getSolidBlockAtPosition((eX - 1) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH);
+		if (blockD2 == NULL && !isMovingY)
+			return false;
+	}
 	if (blockU == NULL && blockD == NULL)
 		return true;
 
@@ -435,9 +403,12 @@ void Background::setTexture(String texture)
 
 void Entity::animate()
 {
-	if(isMovingY) {		
+	Vector2u txtSize = texture.getSize();
+	int jumpFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê skoku
+
+	if(isMovingY) {	
 		IntRect txtRect = getTextureRect();
-		txtRect.left = 6 * WIDTH;
+		txtRect.left = jumpFrame * WIDTH;
 		if(isMovingX == 1)
 			txtRect.top = 0;
 		else if (isMovingX == -1)
@@ -457,7 +428,7 @@ void Entity::animate()
 	{
 		IntRect txtRect = getTextureRect();
 		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
-		if (txtRect.left >= 5 * WIDTH)
+		if (txtRect.left >= (jumpFrame - 1) * WIDTH)
 			txtRect.left = 0;
 		if (isMovingX == 1)
 			txtRect.top = 0;
@@ -488,20 +459,27 @@ int Entity::getMovingDirectionY()
 	return isMovingY;
 }
 
-void Entity::takingItem(Item &item)
+bool Entity::getFlag(Flags flag)
 {
-	FloatRect gb = item.getGlobalBounds();
-	if (getGlobalBounds().intersects(gb))
-		item.disable();
+	return flags[flag];
+}
+
+void Entity::setFlag(Flags flag, bool value)
+{
+	flags[flag] = value;
 }
 
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
-	texture.loadFromFile("resources/textures/easteregg-man.png");
-	setTexture(texture);
-	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 	reset();
+}
+
+Entity::Entity(string texture) : Entity()
+{
+	this->texture.loadFromFile("resources/textures/entities/" + texture);
+	setTexture(this->texture);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 
 void Entity::reset()
@@ -770,4 +748,53 @@ void TimeBar::setTimeLeft(int timeLeft)
 	ss << ((s < 10) ? "0" : "") << s;
 
 	counter.setString(ss.str());
+}
+
+void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud)
+{
+	Vector2f velocity(0, 0);
+	if (Keyboard::isKeyPressed(Keyboard::Right))
+	{
+		if (canGoRight(solidBlocks))
+		{
+			velocity = Vector2f(Block::WIDTH / 8, 0);
+			setMovingDirectionX(1);
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Left))
+	{
+		if (canGoLeft(solidBlocks))
+		{
+			velocity = Vector2f(-Block::WIDTH / 8, 0);
+			setMovingDirectionX(-1);
+		}
+	}
+
+	move(velocity);
+	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
+	{
+		view.move(velocity);
+		background.move(velocity);
+		hud.move(velocity);
+	}
+
+	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
+		setMovingDirectionX(0);
+	if (Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		jump(solidBlocks);
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		setJumping(false);
+	}
+
+	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
+}
+
+void Player::takingItem(Item &item)
+{
+	FloatRect gb = item.getGlobalBounds();
+	if (getGlobalBounds().intersects(gb))
+		item.disable();
 }
