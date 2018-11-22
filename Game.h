@@ -124,7 +124,7 @@ public:
 
 class Entity : public Sprite
 {
-private:
+protected:
 	Texture texture;
 	double yVelocityDown;
 	double yVelocityUp;
@@ -148,7 +148,7 @@ public:
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void handleMovement(BlocksVector &solidBlocks);
-	void jump(BlocksVector &blocks);
+	void jump();
 	void setJumping(bool jumping);
 	bool isJumping();
 	void animate();
@@ -162,6 +162,7 @@ public:
 	void setFlag(string flag, bool value);
 	Flags getFlagByName(string name);
 	bool isAlive();
+	void die();
 };
 
 class Player : public Entity
@@ -170,6 +171,8 @@ public:
 	Player() : Entity("easteregg-man.png") {};
 	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	void takingItem(Item &item);
+	void takingDamage(Entity &enemy);
+	void dealDamage(Entity &enemy);
 };
 
 class EJelly : public Entity

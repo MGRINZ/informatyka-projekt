@@ -236,9 +236,9 @@ void Level::handleEntities()
 	for (auto &enemy : enemies)
 	{
 		enemy->handleGravity(solidBlocks);
-		//enemy.animate();
+		//enemy->animate();
 		enemy->handleMovement(solidBlocks);
-		
+		player.takingDamage(*enemy);
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
@@ -387,6 +387,8 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 
 void Entity::handleMovement(BlocksVector &solidBlocks)
 {
+	if (!isAlive())
+		return;
 	if (getMovingDirectionX() == 0)
 		setMovingDirectionX(-1);
 
@@ -409,7 +411,7 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 	move(velocity);
 }
 
-void Entity::jump(BlocksVector &blocks)
+void Entity::jump()
 {
 	if (!isJumping() && yVelocityDown > 0)
 		return;
@@ -561,6 +563,11 @@ Entity::Flags Entity::getFlagByName(string name)
 bool Entity::isAlive()
 {
 	return alive;
+}
+
+void Entity::die()
+{
+	alive = false;
 }
 
 Entity::Entity()
@@ -887,7 +894,7 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 		setMovingDirectionX(0);
 	if (Keyboard::isKeyPressed(Keyboard::Up))
 	{
-		jump(solidBlocks);
+		jump();
 	}
 	if (!Keyboard::isKeyPressed(Keyboard::Up))
 	{
@@ -902,4 +909,28 @@ void Player::takingItem(Item &item)
 	FloatRect gb = item.getGlobalBounds();
 	if (getGlobalBounds().intersects(gb))
 		item.disable();
+}
+
+void Player::takingDamage(Entity & enemy)
+{
+	if (!enemy.isAlive())
+		return;
+	FloatRect egb = enemy.getGlobalBounds();
+	Vector2f ppos = getPosition();
+	if (!egb.intersects(getGlobalBounds()))
+		return;
+
+	if (ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1)	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
+	{
+		dealDamage(enemy);
+		return;
+	}
+}
+
+void Player::dealDamage(Entity & enemy)
+{
+	enemy.die();
+	setJumping(false);
+	yVelocityDown = 0;
+	jump();
 }
