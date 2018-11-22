@@ -236,6 +236,9 @@ void Level::handleEntities()
 	for (auto &enemy : enemies)
 	{
 		enemy->handleGravity(solidBlocks);
+		//enemy.animate();
+		enemy->handleMovement(solidBlocks);
+		
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
@@ -380,6 +383,30 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 		return true;
 
 	return false;
+}
+
+void Entity::handleMovement(BlocksVector &solidBlocks)
+{
+	if (getMovingDirectionX() == 0)
+		setMovingDirectionX(-1);
+
+	Vector2f velocity(0, 0);
+	
+	if (getMovingDirectionX() == -1)
+	{
+		if (canGoLeft(solidBlocks))
+			velocity = Vector2f(-Block::WIDTH / 32, 0);
+		else	
+			setMovingDirectionX(1);
+	} else if (getMovingDirectionX() == 1)
+	{
+		if (canGoRight(solidBlocks))
+			velocity = Vector2f(Block::WIDTH / 32, 0);
+		else
+			setMovingDirectionX(-1);
+	}
+
+	move(velocity);
 }
 
 void Entity::jump(BlocksVector &blocks)

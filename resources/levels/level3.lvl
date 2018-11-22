@@ -387,7 +387,7 @@ time=360
 30;14;dirt.jpg
 ;entities
 13;14;jelly;
-15;14;jelly;
+15;14;jelly;SMART
 ;items
 10;4;egg
 14;4;egg

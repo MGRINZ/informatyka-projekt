@@ -147,6 +147,7 @@ public:
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
+	void handleMovement(BlocksVector &solidBlocks);
 	void jump(BlocksVector &blocks);
 	void setJumping(bool jumping);
 	bool isJumping();
