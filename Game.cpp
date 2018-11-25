@@ -920,11 +920,13 @@ void Player::takingDamage(Entity & enemy)
 	if (!egb.intersects(getGlobalBounds()))
 		return;
 
-	if (ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1)	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
+	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1) && (ppos.y < egb.top + 5))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
 	{
 		dealDamage(enemy);
 		return;
 	}
+
+
 }
 
 void Player::dealDamage(Entity & enemy)
