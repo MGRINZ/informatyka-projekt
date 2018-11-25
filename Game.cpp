@@ -69,7 +69,7 @@ void Level::draw(RenderWindow &window)
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
 
-	hud.draw(window);
+	player.getHUD()->draw(window);
 
 	if(getStatus() == LEVEL_STATUS_FINISHED)
 		endScreen.draw(window);
@@ -85,7 +85,6 @@ int Level::load(string levelName)
 	enemies.clear();
 	items.clear();
 	player.reset();
-	hud.setPosition(Vector2f(50, 20));
 
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
@@ -226,7 +225,7 @@ int Level::load(string levelName)
 	}
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
-	hud.getTimeBar()->setTimeLeft(timeLeft);
+	player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
 	status = LEVEL_STATUS_IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
@@ -242,9 +241,9 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
-	player.handleMovement(solidBlocks, view, background, hud);
+	player.handleMovement(solidBlocks, view, background);
 
-	hud.getEnemiesBar()->setItems(&enemies);
+	player.getHUD()->getEnemiesBar()->setItems(&enemies);
 }
 
 void Level::handleItems()
@@ -254,7 +253,7 @@ void Level::handleItems()
 		item.animate();
 		player.takingItem(item);
 	}
-	hud.getItemsBar()->setItems(&items);
+	player.getHUD()->getItemsBar()->setItems(&items);
 }
 
 void Level::handleFinish()
@@ -281,7 +280,9 @@ void Level::handleTimers()
 	{
 		if(timeLeft > 0)
 			timeLeft--;
-		hud.getTimeBar()->setTimeLeft(timeLeft);
+		player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
+
+		player.immunity();
 	}
 
 	levelClock.restart();
@@ -408,7 +409,7 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 			setMovingDirectionX(-1);
 	}
 
-	move(velocity);
+	//move(velocity);
 }
 
 void Entity::jump()
@@ -862,7 +863,7 @@ void TimeBar::setTimeLeft(int timeLeft)
 	counter.setString(ss.str());
 }
 
-void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud)
+void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
 {
 	Vector2f velocity(0, 0);
 	if (Keyboard::isKeyPressed(Keyboard::Right))
@@ -904,11 +905,19 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
 }
 
+HUD * Player::getHUD()
+{
+	return &hud;
+}
+
 void Player::takingItem(Item &item)
 {
 	FloatRect gb = item.getGlobalBounds();
 	if (getGlobalBounds().intersects(gb))
+	{
 		item.disable();
+
+	}
 }
 
 void Player::takingDamage(Entity & enemy)
@@ -920,13 +929,18 @@ void Player::takingDamage(Entity & enemy)
 	if (!egb.intersects(getGlobalBounds()))
 		return;
 
-	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1) && (ppos.y < egb.top + 5))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
+	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
 	{
 		dealDamage(enemy);
 		return;
 	}
 
+	if (immunityTimer)
+		return;
 
+	setHealth(getHealth() - 1);
+	immunityTimer = 2;
+	setColor(Color::Transparent);
 }
 
 void Player::dealDamage(Entity & enemy)
@@ -935,4 +949,45 @@ void Player::dealDamage(Entity & enemy)
 	setJumping(false);
 	yVelocityDown = 0;
 	jump();
+}
+
+void Player::setHealth(int health)
+{
+	this->health = health;
+	hud.getHealthBar()->setHealth(health);
+}
+
+int Player::getHealth()
+{
+	return health;
+}
+
+void Player::reset()
+{
+	Entity::reset();
+	hud.setPosition(Vector2f(50, 20));
+
+	setHealth(3);
+	hud.getHealthBar()->setMaxHealth(3);
+}
+
+void Player::immunity()
+{
+	if(immunityTimer > 0)
+		immunityTimer--;
+	
+	if(immunityTimer <= 0)
+		setColor(Color::White);
+}
+
+void Player::animate()
+{
+	if (immunityTimer > 0)
+	{
+		if (animateClock.getElapsedTime().asMilliseconds() % 100 > 0)
+			setColor(Color::Transparent);
+		if(animateClock.getElapsedTime().asMilliseconds() % 100 > 50)
+			setColor(Color::White);
+	}
+	Entity::animate();
 }

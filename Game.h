@@ -167,12 +167,22 @@ public:
 
 class Player : public Entity
 {
+private:
+	HUD hud;
+	int health;
+	int immunityTimer;
 public:
 	Player() : Entity("easteregg-man.png") {};
-	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
+	HUD* getHUD();
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
 	void takingItem(Item &item);
 	void takingDamage(Entity &enemy);
 	void dealDamage(Entity &enemy);
+	void setHealth(int health);
+	int getHealth();
+	void reset();
+	void immunity();
+	void animate();
 };
 
 class EJelly : public Entity
@@ -221,7 +231,6 @@ private:
 	Clock levelClock;
 	View view;
 	Vector2u endPosition[2];
-	HUD hud;
 	LevelEndScreen endScreen;
 	int status;
 
