@@ -88,9 +88,11 @@ public:
 
 class EnemiesBar : public HUDBar
 {
+private:
+	vector <Entity*>* items;
 public:
 	EnemiesBar();
-	void setItems(vector<Entity>* items);
+	void setItems(vector<Entity*>* items);
 };
 
 class TimeBar : public HUDBar
@@ -122,7 +124,7 @@ public:
 
 class Entity : public Sprite
 {
-private:
+protected:
 	Texture texture;
 	double yVelocityDown;
 	double yVelocityUp;
@@ -130,16 +132,23 @@ private:
 	int isMovingX;	//-1 w lewo, 0 false, 1 w prawo
 	int isMovingY;	//-1 w górê, 0 false, 1 w dó³
 	Clock animateClock;
+	bool flags[1] = { 0 };
+	bool alive;
+	
 public:
 	static const float WIDTH;
+	enum Flags {
+		SMART
+	};
 	Entity();
+	Entity(string texture);
 	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
-	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
-	void jump(BlocksVector &blocks);
+	void handleMovement(BlocksVector &solidBlocks);
+	void jump();
 	void setJumping(bool jumping);
 	bool isJumping();
 	void animate();
@@ -147,7 +156,39 @@ public:
 	void setMovingDirectionY(int y);
 	int getMovingDirectionX();
 	int getMovingDirectionY();
+	bool getFlag(Flags flag);
+	bool getFlag(string flag);
+	void setFlag(Flags flag, bool value);
+	void setFlag(string flag, bool value);
+	Flags getFlagByName(string name);
+	bool isAlive();
+	void die();
+};
+
+class Player : public Entity
+{
+private:
+	HUD hud;
+	int health;
+	int immunityTimer;
+public:
+	Player() : Entity("easteregg-man.png") {};
+	HUD* getHUD();
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
 	void takingItem(Item &item);
+	void takingDamage(Entity &enemy);
+	void dealDamage(Entity &enemy);
+	void setHealth(int health);
+	int getHealth();
+	void reset();
+	void immunity();
+	void animate();
+};
+
+class EJelly : public Entity
+{
+public:
+	EJelly() : Entity("") {};
 };
 
 class Background : public Sprite
@@ -180,9 +221,9 @@ private:
 	BlocksVector solidBlocks;
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
-	vector<Entity> enemies;
+	vector<Entity*> enemies;
 	vector<Item> items;
-	Entity player;
+	Player player;
 	string name;
 	Background background;
 	string audio;
@@ -190,7 +231,6 @@ private:
 	Clock levelClock;
 	View view;
 	Vector2u endPosition[2];
-	HUD hud;
 	LevelEndScreen endScreen;
 	int status;
 
@@ -212,6 +252,7 @@ public:
 	void addBackgroundBlock(Block block);
 	void addForegroundBlock(Block block);
 	void addItem(Item item);
+	void addEnemy(Entity* entity);
 	void draw(RenderWindow &window);
 	int load(string levelName);
 	void handleEntities();

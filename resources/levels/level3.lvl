@@ -236,8 +236,6 @@ time=360
 6;15;grass.jpg
 7;15;grass.jpg
 8;15;grass.jpg
-9;15;grass.jpg
-10;15;grass.jpg
 11;15;grass.jpg
 12;15;grass.jpg
 13;15;grass.jpg
@@ -273,8 +271,6 @@ time=360
 6;16;dirt.jpg
 7;16;dirt.jpg
 8;16;dirt.jpg
-9;16;dirt.jpg
-10;16;dirt.jpg
 11;16;dirt.jpg
 12;16;dirt.jpg
 13;16;dirt.jpg
@@ -310,8 +306,8 @@ time=360
 6;17;dirt.jpg
 7;17;dirt.jpg
 8;17;dirt.jpg
-9;17;dirt.jpg
-10;17;dirt.jpg
+9;17;grass.jpg
+10;17;grass.jpg
 11;17;dirt.jpg
 12;17;dirt.jpg
 13;17;dirt.jpg
@@ -389,7 +385,14 @@ time=360
 30;13;dirt.jpg
 29;14;dirt.jpg
 30;14;dirt.jpg
+;entities
+13;14;jelly;
+15;14;jelly;SMART
 ;items
 10;4;egg
 14;4;egg
 17;4;egg
+9;15;egg
+10;15;egg
+9;16;egg
+10;16;egg

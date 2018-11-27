@@ -42,6 +42,11 @@ void Level::addItem(Item item)
 	items.push_back(item);
 }
 
+void Level::addEnemy(Entity * entity)
+{
+	enemies.push_back(entity);
+}
+
 void Level::draw(RenderWindow &window)
 {
 	window.draw(background);
@@ -58,10 +63,13 @@ void Level::draw(RenderWindow &window)
 	
 	window.draw(player);
 
+	for (auto &enemy : enemies)
+		window.draw(*enemy);
+
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
 
-	hud.draw(window);
+	player.getHUD()->draw(window);
 
 	if(getStatus() == LEVEL_STATUS_FINISHED)
 		endScreen.draw(window);
@@ -77,7 +85,6 @@ int Level::load(string levelName)
 	enemies.clear();
 	items.clear();
 	player.reset();
-	hud.setPosition(Vector2f(50, 20));
 
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
@@ -174,13 +181,51 @@ int Level::load(string levelName)
 				type = token;
 				addItem(Item(x, y, "egg1.png"));
 			}
+			else if (property == LEVEL_PROPERTY_ENTITIES)
+			{
+				int x, y;
+				string type;
+				string flags;
+
+				string token;
+				stringstream ss;
+				ss << line;
+				getline(ss, token, ';');
+				x = atoi(token.c_str());
+				getline(ss, token, ';');
+				y = atoi(token.c_str());
+				getline(ss, token, ';');
+				type = token;
+				getline(ss, token, ';');
+				flags = token;
+
+				Entity* enemy = NULL;
+				if (type == "jelly")
+					enemy = new EJelly();
+				enemy->setPosition(x, y);
+				
+				if (!flags.empty())
+				{
+					ss.str("");
+					ss.clear();
+					ss << flags;
+					while (!ss.eof())
+					{
+						getline(ss, token, '|');
+						cout << token;
+						enemy->setFlag(token, true);
+					}
+				}
+
+				addEnemy(enemy);
+			}
 			else
 				continue;
 		}
 	}
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
-	hud.getTimeBar()->setTimeLeft(timeLeft);
+	player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
 	status = LEVEL_STATUS_IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
@@ -189,13 +234,16 @@ void Level::handleEntities()
 {
 	for (auto &enemy : enemies)
 	{
-		enemy.handleGravity(solidBlocks);
+		enemy->handleGravity(solidBlocks);
+		//enemy->animate();
+		enemy->handleMovement(solidBlocks);
+		player.takingDamage(*enemy);
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
-	player.handleMovement(solidBlocks, view, background, hud);
+	player.handleMovement(solidBlocks, view, background);
 
-	hud.getEnemiesBar()->setItems(&enemies);
+	player.getHUD()->getEnemiesBar()->setItems(&enemies);
 }
 
 void Level::handleItems()
@@ -205,7 +253,7 @@ void Level::handleItems()
 		item.animate();
 		player.takingItem(item);
 	}
-	hud.getItemsBar()->setItems(&items);
+	player.getHUD()->getItemsBar()->setItems(&items);
 }
 
 void Level::handleFinish()
@@ -232,7 +280,9 @@ void Level::handleTimers()
 	{
 		if(timeLeft > 0)
 			timeLeft--;
-		hud.getTimeBar()->setTimeLeft(timeLeft);
+		player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
+
+		player.immunity();
 	}
 
 	levelClock.restart();
@@ -294,50 +344,6 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(-1);
 }
 
-void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud)
-{
-	Vector2f velocity(0, 0);
-	if (Keyboard::isKeyPressed(Keyboard::Right))
-	{
-		if (canGoRight(solidBlocks))
-		{
-			velocity = Vector2f(Block::WIDTH / 8, 0);
-			setMovingDirectionX(1);
-
-			
-		}
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Left))
-	{
-		if (canGoLeft(solidBlocks))
-		{
-			velocity = Vector2f(-Block::WIDTH / 8, 0);
-			setMovingDirectionX(-1);
-		}
-	}
-
-	move(velocity);
-	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
-	{
-		view.move(velocity);
-		background.move(velocity);
-		hud.move(velocity);
-	}
-
-	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
-		setMovingDirectionX(0);
-	if (Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		jump(solidBlocks);
-	}
-	if (!Keyboard::isKeyPressed(Keyboard::Up))
-	{
-		setJumping(false);
-	}
-
-	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
-}
-
 bool Entity::canGoRight(BlocksVector &blocks)
 {
 	Vector2f entityPosition = getPosition();
@@ -347,6 +353,12 @@ bool Entity::canGoRight(BlocksVector &blocks)
 	Block *blockU = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);
 	Block *blockD = blocks.getSolidBlockAtPosition((eX - WIDTH / 2 + Block::WIDTH) / Block::WIDTH, (eY - 1) / Block::WIDTH);
 
+	if (getFlag(Flags::SMART))
+	{
+		Block *blockD2 = blocks.getSolidBlockAtPosition((eX) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH);
+		if (blockD2 == NULL && !isMovingY)
+			return false;
+	}
 	if (blockU == NULL && blockD == NULL)
 		return true;
 
@@ -362,13 +374,45 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 	Block *blockU = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - WIDTH) / Block::WIDTH);	// - 4 (prêdkoœæ w piks)
 	Block *blockD = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - Block::WIDTH - 4) / Block::WIDTH, (eY - 1) / Block::WIDTH);		// - 4 (prêdkoœæ w piks)
 
+	if (getFlag(Flags::SMART))
+	{
+		Block *blockD2 = blocks.getSolidBlockAtPosition((eX - 1) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH);
+		if (blockD2 == NULL && !isMovingY)
+			return false;
+	}
 	if (blockU == NULL && blockD == NULL)
 		return true;
 
 	return false;
 }
 
-void Entity::jump(BlocksVector &blocks)
+void Entity::handleMovement(BlocksVector &solidBlocks)
+{
+	if (!isAlive())
+		return;
+	if (getMovingDirectionX() == 0)
+		setMovingDirectionX(-1);
+
+	Vector2f velocity(0, 0);
+	
+	if (getMovingDirectionX() == -1)
+	{
+		if (canGoLeft(solidBlocks))
+			velocity = Vector2f(-Block::WIDTH / 32, 0);
+		else	
+			setMovingDirectionX(1);
+	} else if (getMovingDirectionX() == 1)
+	{
+		if (canGoRight(solidBlocks))
+			velocity = Vector2f(Block::WIDTH / 32, 0);
+		else
+			setMovingDirectionX(-1);
+	}
+
+	//move(velocity);
+}
+
+void Entity::jump()
 {
 	if (!isJumping() && yVelocityDown > 0)
 		return;
@@ -435,9 +479,12 @@ void Background::setTexture(String texture)
 
 void Entity::animate()
 {
-	if(isMovingY) {		
+	Vector2u txtSize = texture.getSize();
+	int jumpFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê skoku
+
+	if(isMovingY) {	
 		IntRect txtRect = getTextureRect();
-		txtRect.left = 6 * WIDTH;
+		txtRect.left = jumpFrame * WIDTH;
 		if(isMovingX == 1)
 			txtRect.top = 0;
 		else if (isMovingX == -1)
@@ -457,7 +504,7 @@ void Entity::animate()
 	{
 		IntRect txtRect = getTextureRect();
 		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
-		if (txtRect.left >= 5 * WIDTH)
+		if (txtRect.left >= (jumpFrame - 1) * WIDTH)
 			txtRect.left = 0;
 		if (isMovingX == 1)
 			txtRect.top = 0;
@@ -488,20 +535,53 @@ int Entity::getMovingDirectionY()
 	return isMovingY;
 }
 
-void Entity::takingItem(Item &item)
+bool Entity::getFlag(Flags flag)
 {
-	FloatRect gb = item.getGlobalBounds();
-	if (getGlobalBounds().intersects(gb))
-		item.disable();
+	return flags[flag];
+}
+
+bool Entity::getFlag(string flag)
+{
+	return getFlag(getFlagByName(flag));
+}
+
+void Entity::setFlag(Flags flag, bool value)
+{
+	flags[flag] = value;
+}
+
+void Entity::setFlag(string flag, bool value)
+{
+	setFlag(getFlagByName(flag), value);
+}
+
+Entity::Flags Entity::getFlagByName(string name)
+{
+	if (name == "SMART")
+		return Flags::SMART;
+}
+
+bool Entity::isAlive()
+{
+	return alive;
+}
+
+void Entity::die()
+{
+	alive = false;
 }
 
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
-	texture.loadFromFile("resources/textures/easteregg-man.png");
-	setTexture(texture);
-	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 	reset();
+}
+
+Entity::Entity(string texture) : Entity()
+{
+	this->texture.loadFromFile("resources/textures/entities/" + texture);
+	setTexture(this->texture);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 
 void Entity::reset()
@@ -511,6 +591,7 @@ void Entity::reset()
 	jumping = false;
 	isMovingX = 0;
 	isMovingY = 0;
+	alive = true;
 }
 
 void Entity::setPosition(int x, int y)
@@ -738,9 +819,19 @@ EnemiesBar::EnemiesBar() : HUDBar()
 	icon.setTexture(iconTexture);
 }
 
-void EnemiesBar::setItems(vector<Entity>* items)
+void EnemiesBar::setItems(vector<Entity*>* items)
 {
-	counter.setString("0/0");
+	this->items = items;
+	int count = 0;
+	for (auto &item : *items)
+	{
+		if (!item->isAlive())
+			count++;
+	}
+
+	stringstream ss;
+	ss << count << "/" << items->size();
+	counter.setString(ss.str());
 }
 
 TimeBar::TimeBar() : HUDBar()
@@ -770,4 +861,133 @@ void TimeBar::setTimeLeft(int timeLeft)
 	ss << ((s < 10) ? "0" : "") << s;
 
 	counter.setString(ss.str());
+}
+
+void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
+{
+	Vector2f velocity(0, 0);
+	if (Keyboard::isKeyPressed(Keyboard::Right))
+	{
+		if (canGoRight(solidBlocks))
+		{
+			velocity = Vector2f(Block::WIDTH / 8, 0);
+			setMovingDirectionX(1);
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Left))
+	{
+		if (canGoLeft(solidBlocks))
+		{
+			velocity = Vector2f(-Block::WIDTH / 8, 0);
+			setMovingDirectionX(-1);
+		}
+	}
+
+	move(velocity);
+	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
+	{
+		view.move(velocity);
+		background.move(velocity);
+		hud.move(velocity);
+	}
+
+	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
+		setMovingDirectionX(0);
+	if (Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		jump();
+	}
+	if (!Keyboard::isKeyPressed(Keyboard::Up))
+	{
+		setJumping(false);
+	}
+
+	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
+}
+
+HUD * Player::getHUD()
+{
+	return &hud;
+}
+
+void Player::takingItem(Item &item)
+{
+	FloatRect gb = item.getGlobalBounds();
+	if (getGlobalBounds().intersects(gb))
+	{
+		item.disable();
+
+	}
+}
+
+void Player::takingDamage(Entity & enemy)
+{
+	if (!enemy.isAlive())
+		return;
+	FloatRect egb = enemy.getGlobalBounds();
+	Vector2f ppos = getPosition();
+	if (!egb.intersects(getGlobalBounds()))
+		return;
+
+	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
+	{
+		dealDamage(enemy);
+		return;
+	}
+
+	if (immunityTimer)
+		return;
+
+	setHealth(getHealth() - 1);
+	immunityTimer = 2;
+	setColor(Color::Transparent);
+}
+
+void Player::dealDamage(Entity & enemy)
+{
+	enemy.die();
+	setJumping(false);
+	yVelocityDown = 0;
+	jump();
+}
+
+void Player::setHealth(int health)
+{
+	this->health = health;
+	hud.getHealthBar()->setHealth(health);
+}
+
+int Player::getHealth()
+{
+	return health;
+}
+
+void Player::reset()
+{
+	Entity::reset();
+	hud.setPosition(Vector2f(50, 20));
+
+	setHealth(3);
+	hud.getHealthBar()->setMaxHealth(3);
+}
+
+void Player::immunity()
+{
+	if(immunityTimer > 0)
+		immunityTimer--;
+	
+	if(immunityTimer <= 0)
+		setColor(Color::White);
+}
+
+void Player::animate()
+{
+	if (immunityTimer > 0)
+	{
+		if (animateClock.getElapsedTime().asMilliseconds() % 100 > 0)
+			setColor(Color::Transparent);
+		if(animateClock.getElapsedTime().asMilliseconds() % 100 > 50)
+			setColor(Color::White);
+	}
+	Entity::animate();
 }
