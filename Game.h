@@ -4,6 +4,8 @@
 using namespace std;
 using namespace sf;
 
+class Entity;
+
 class Game
 {
 public:
@@ -44,6 +46,80 @@ public:
 	void animate();
 };
 
+class HealthBar
+{
+private:
+	Texture healthTexture;
+	Texture healthTextureEmpty;
+	Sprite health[3];
+	int maxHealth = 3;
+	Vector2f position;
+public:
+	HealthBar();
+	void draw(RenderWindow &window);
+	void setHealth(int hp);
+	void setMaxHealth(int maxHealth);
+	void setPosition(Vector2f position);
+	void move(Vector2f position);
+};
+
+class HUDBar
+{
+protected:
+	Texture iconTexture;
+	Sprite icon;
+	Font counterFont;
+	Text counter;
+	vector<Item>* items;
+	Vector2f position;
+public:
+	HUDBar();
+	void draw(RenderWindow &window);
+	void setPosition(Vector2f position);
+	void move(Vector2f position);
+};
+
+class ItemsBar : public HUDBar
+{
+public:
+	ItemsBar();
+	void setItems(vector<Item>* items);
+};
+
+class EnemiesBar : public HUDBar
+{
+public:
+	EnemiesBar();
+	void setItems(vector<Entity>* items);
+};
+
+class TimeBar : public HUDBar
+{
+private:
+	int timeLeft = 0;
+public:
+	TimeBar();
+	void setTimeLeft(int timeLeft);
+};
+
+class HUD
+{
+private:
+	HealthBar healthBar;
+	ItemsBar itemsBar;
+	EnemiesBar enemiesBar;
+	TimeBar timeBar;
+public:
+	HUD();
+	void draw(RenderWindow &window);
+	void setPosition(Vector2f position);
+	void move(Vector2f position);
+	HealthBar* getHealthBar();
+	ItemsBar* getItemsBar();
+	EnemiesBar* getEnemiesBar();
+	TimeBar* getTimeBar();
+};
+
 class Entity : public Sprite
 {
 private:
@@ -60,7 +136,7 @@ public:
 	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
-	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
+	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	void jump(BlocksVector &blocks);
@@ -110,8 +186,11 @@ private:
 	string name;
 	Background background;
 	string audio;
+	int timeLeft;
+	Clock levelClock;
 	View view;
 	Vector2u endPosition[2];
+	HUD hud;
 	LevelEndScreen endScreen;
 	int status;
 
@@ -138,6 +217,7 @@ public:
 	void handleEntities();
 	void handleItems();
 	void handleFinish();
+	void handleTimers();
 	View getView();
 	int getStatus();
 	void setStatus(int status);

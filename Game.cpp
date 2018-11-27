@@ -61,6 +61,8 @@ void Level::draw(RenderWindow &window)
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
 
+	hud.draw(window);
+
 	if(getStatus() == LEVEL_STATUS_FINISHED)
 		endScreen.draw(window);
 }
@@ -75,6 +77,7 @@ int Level::load(string levelName)
 	enemies.clear();
 	items.clear();
 	player.reset();
+	hud.setPosition(Vector2f(50, 20));
 
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
@@ -128,6 +131,10 @@ int Level::load(string levelName)
 					endPosition[1].x = atoi(x.c_str());
 					endPosition[1].y = atoi(y.c_str());
 				}
+				else if (line.find("time") == 0)
+				{
+					timeLeft = atoi(line.substr(5).c_str());
+				}
 			}
 			else if (property == LEVEL_PROPERTY_TERRAIN || property == LEVEL_PROPERTY_BACKGROUND || property == LEVEL_PROPERTY_FOREGROUND)
 			{
@@ -173,6 +180,7 @@ int Level::load(string levelName)
 	}
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
+	hud.getTimeBar()->setTimeLeft(timeLeft);
 	status = LEVEL_STATUS_IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
@@ -185,7 +193,9 @@ void Level::handleEntities()
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
-	player.handleMovement(solidBlocks, view, background);
+	player.handleMovement(solidBlocks, view, background, hud);
+
+	hud.getEnemiesBar()->setItems(&enemies);
 }
 
 void Level::handleItems()
@@ -195,6 +205,7 @@ void Level::handleItems()
 		item.animate();
 		player.takingItem(item);
 	}
+	hud.getItemsBar()->setItems(&items);
 }
 
 void Level::handleFinish()
@@ -210,6 +221,21 @@ void Level::handleFinish()
 
 	if (Keyboard::isKeyPressed(Keyboard::Enter))
 		load("level3.lvl");
+}
+
+void Level::handleTimers()
+{
+	if (levelClock.getElapsedTime().asSeconds() < 1)
+		return;
+
+	if (getStatus() == LEVEL_STATUS_IN_GAME)
+	{
+		if(timeLeft > 0)
+			timeLeft--;
+		hud.getTimeBar()->setTimeLeft(timeLeft);
+	}
+
+	levelClock.restart();
 }
 
 View Level::getView()
@@ -268,36 +294,36 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(-1);
 }
 
-void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
+void Entity::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background, HUD &hud)
 {
+	Vector2f velocity(0, 0);
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
 		if (canGoRight(solidBlocks))
 		{
-			move(Vector2f(Block::WIDTH / 8, 0));
+			velocity = Vector2f(Block::WIDTH / 8, 0);
 			setMovingDirectionX(1);
 
-			if (getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(Block::WIDTH / 8, 0));
-				background.move(Vector2f(Block::WIDTH / 8, 0));
-			}
+			
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Left))
 	{
 		if (canGoLeft(solidBlocks))
 		{
-			move(Vector2f(-Block::WIDTH / 8, 0));
+			velocity = Vector2f(-Block::WIDTH / 8, 0);
 			setMovingDirectionX(-1);
-
-			if (getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2)
-			{
-				view.move(Vector2f(-Block::WIDTH / 8, 0));
-				background.move(Vector2f(-Block::WIDTH / 8, 0));
-			}
 		}
 	}
+
+	move(velocity);
+	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
+	{
+		view.move(velocity);
+		background.move(velocity);
+		hud.move(velocity);
+	}
+
 	if (!Keyboard::isKeyPressed(Keyboard::Right) && !Keyboard::isKeyPressed(Keyboard::Left))
 		setMovingDirectionX(0);
 	if (Keyboard::isKeyPressed(Keyboard::Up))
@@ -562,4 +588,186 @@ void LevelEndScreen::setPosition(Vector2f position)
 	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
 	container.setPosition(Vector2f(position.x, position.y));
 	header.setPosition(Vector2f(position.x, position.y - 120));
+}
+
+HUD::HUD()
+{
+	setPosition(Vector2f(50, 20));
+}
+
+void HUD::draw(RenderWindow & window)
+{
+	healthBar.draw(window);
+	itemsBar.draw(window);
+	enemiesBar.draw(window);
+	timeBar.draw(window);
+}
+
+void HUD::setPosition(Vector2f position)
+{
+	healthBar.setPosition(Vector2f(position));
+	itemsBar.setPosition(Vector2f(position.x + 200, position.y));
+	enemiesBar.setPosition(Vector2f(position.x + 350, position.y));
+	timeBar.setPosition(Vector2f(position.x + 500, position.y));
+}
+
+void HUD::move(Vector2f position)
+{
+	healthBar.move(position);
+	itemsBar.move(position);
+	enemiesBar.move(position);
+	timeBar.move(position);
+}
+
+HealthBar * HUD::getHealthBar()
+{
+	return &healthBar;
+}
+
+ItemsBar * HUD::getItemsBar()
+{
+	return &itemsBar;
+}
+
+EnemiesBar * HUD::getEnemiesBar()
+{
+	return &enemiesBar;
+}
+
+TimeBar * HUD::getTimeBar()
+{
+	return &timeBar;
+}
+
+HealthBar::HealthBar()
+{
+	healthTexture.loadFromFile("resources/textures/hud/health.png");
+	healthTextureEmpty.loadFromFile("resources/textures/hud/health_empty.png");
+	setHealth(3);
+}
+
+void HealthBar::draw(RenderWindow & window)
+{
+	for(int i = 0; i < maxHealth; i++)
+		window.draw(health[i]);
+}
+
+void HealthBar::setHealth(int hp)
+{
+	for (int i = 0; i < maxHealth; i++)
+	{
+		if (i < hp)
+			health[i].setTexture(healthTexture);
+		else
+			health[i].setTexture(healthTextureEmpty);
+	}
+}
+
+void HealthBar::setMaxHealth(int maxHealth)
+{
+	this->maxHealth = maxHealth;
+}
+
+void HealthBar::setPosition(Vector2f position)
+{
+	this->position = position;
+	for (int i = 0; i < maxHealth; i++)
+		health[i].setPosition(Vector2f(position.x + i * 50, position.y));
+}
+
+void HealthBar::move(Vector2f position)
+{
+	this->position.x += position.x;
+	this->position.y += position.y;
+	for (int i = 0; i < maxHealth; i++)
+		health[i].move(position);
+}
+
+HUDBar::HUDBar()
+{
+	this->icon.setTextureRect(IntRect(0, 0, 48, 48));
+
+	counterFont.loadFromFile("resources/fonts/verdana.ttf");
+	counter.setFont(counterFont);
+	counter.setOutlineColor(Color::Black);
+	counter.setOutlineThickness(1);
+}
+
+ItemsBar::ItemsBar() : HUDBar()
+{
+	iconTexture.loadFromFile("resources/textures/hud/egg.png");
+	icon.setTexture(iconTexture);
+}
+
+void HUDBar::draw(RenderWindow & window)
+{
+	window.draw(icon);
+	window.draw(counter);
+}
+
+void HUDBar::setPosition(Vector2f position)
+{
+	icon.setPosition(position);
+	counter.setPosition(Vector2f(position.x + 60, position.y + 4));
+}
+
+void HUDBar::move(Vector2f position)
+{
+	icon.move(position);
+	counter.move(position);
+}
+
+void ItemsBar::setItems(vector<Item>* items)
+{
+	this->items = items;
+	int count = 0;
+	for (auto &item : *items)
+	{
+		if (!item.isActive())
+			count++;
+	}
+
+	stringstream ss;
+	ss << count << "/" << items->size();
+	counter.setString(ss.str());
+}
+
+EnemiesBar::EnemiesBar() : HUDBar()
+{
+	iconTexture.loadFromFile("resources/textures/hud/enemy.png");
+	icon.setTexture(iconTexture);
+}
+
+void EnemiesBar::setItems(vector<Entity>* items)
+{
+	counter.setString("0/0");
+}
+
+TimeBar::TimeBar() : HUDBar()
+{
+	delete items;
+	iconTexture.loadFromFile("resources/textures/hud/clock.png");
+	icon.setTexture(iconTexture);
+}
+
+void TimeBar::setTimeLeft(int timeLeft)
+{
+	this->timeLeft = timeLeft;
+	
+	int s, m, h;
+
+	s = timeLeft % 60;
+	timeLeft /= 60;
+	m = timeLeft % 60;
+	timeLeft /= 60;
+	h = timeLeft;
+
+	stringstream ss;
+	
+	if (h > 0)
+		ss << ((h < 10) ? "0" : "") << h << ":";
+	ss << ((m < 10) ? "0" : "") << m << ":";
+	ss << ((s < 10) ? "0" : "") << s;
+
+	counter.setString(ss.str());
 }
