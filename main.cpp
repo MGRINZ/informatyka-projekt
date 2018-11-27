@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
+#include "Level.h"
 
 using namespace std;
 using namespace sf;

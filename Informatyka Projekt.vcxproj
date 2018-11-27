@@ -19,11 +19,41 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BlocksVector.cpp" />
+    <ClCompile Include="EJelly.cpp" />
+    <ClCompile Include="EnemiesBar.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="HealthBar.cpp" />
+    <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="HUDBar.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemsBar.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelEndScreen.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="TimeBar.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Background.h" />
+    <ClInclude Include="Block.h" />
+    <ClInclude Include="BlocksVector.h" />
+    <ClInclude Include="EJelly.h" />
+    <ClInclude Include="EnemiesBar.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="HealthBar.h" />
+    <ClInclude Include="HUD.h" />
+    <ClInclude Include="HUDBar.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemsBar.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelEndScreen.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="TimeBar.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\backgrounds\bg1.jpg" />
