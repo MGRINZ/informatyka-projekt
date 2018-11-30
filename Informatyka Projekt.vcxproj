@@ -32,7 +32,9 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemsBar.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelCompleteScreen.cpp" />
     <ClCompile Include="LevelEndScreen.cpp" />
+    <ClCompile Include="LevelFailedScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TimeBar.cpp" />
@@ -51,7 +53,9 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemsBar.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelCompleteScreen.h" />
     <ClInclude Include="LevelEndScreen.h" />
+    <ClInclude Include="LevelFailedScreen.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TimeBar.h" />
   </ItemGroup>

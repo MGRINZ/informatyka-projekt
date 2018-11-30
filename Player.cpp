@@ -94,9 +94,7 @@ void Player::setHealth(int health)
 	this->health = health;
 	hud.getHealthBar()->setHealth(health);
 	if (health < 0)
-	{
 		alive = false;
-	}
 }
 
 int Player::getHealth()

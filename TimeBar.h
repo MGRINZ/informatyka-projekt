@@ -9,4 +9,5 @@ private:
 public:
 	TimeBar();
 	void setTimeLeft(int timeLeft);
+	int getTimeLeft();
 };

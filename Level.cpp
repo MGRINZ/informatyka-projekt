@@ -1,8 +1,11 @@
+#include <iostream>
 #include "Level.h"
 #include <fstream>
 #include <sstream>
 #include "EJelly.h"
 #include "Game.h"
+
+using namespace std;
 
 const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
@@ -15,6 +18,8 @@ Level::Level()
 {
 	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
 	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
+	completeScreen = new LevelCompleteScreen(player.getHUD());
+	failedScreen = new LevelFailedScreen();
 }
 
 void Level::addSolidBlock(Block block)
@@ -67,7 +72,8 @@ void Level::draw(RenderWindow &window)
 	player.getHUD()->draw(window);
 
 	if (getStatus() == Status::FINISHED || getStatus() == Status::FAILED)
-		endScreen.draw(window);
+		if(endScreen != NULL)
+			endScreen->draw(window);
 }
 
 int Level::load(string levelName)
@@ -257,15 +263,16 @@ void Level::handleFinish()
 
 	if (gb.intersects(endArea)) {
 		setStatus(Status::FINISHED);
-		endScreen.setHeader("Poziom ukonczony");
+		endScreen = completeScreen;
 	}
 	if(!player.isAlive())
 	{
 		setStatus(Status::FAILED);
-		endScreen.setHeader("Poziom nieukonczony");
+		endScreen = failedScreen;
 	}
 
-	endScreen.setPosition(view.getCenter());
+	if(endScreen != NULL)
+		endScreen->setPosition(view.getCenter());
 
 	if (Keyboard::isKeyPressed(Keyboard::Enter))
 		load("level3.lvl");

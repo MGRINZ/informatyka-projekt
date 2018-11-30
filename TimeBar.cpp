@@ -29,3 +29,8 @@ void TimeBar::setTimeLeft(int timeLeft)
 
 	counter.setString(ss.str());
 }
+
+int TimeBar::getTimeLeft()
+{
+	return timeLeft;
+}

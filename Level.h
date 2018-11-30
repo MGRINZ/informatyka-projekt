@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "Background.h"
 #include "LevelEndScreen.h"
+#include "LevelCompleteScreen.h"
+#include "LevelFailedScreen.h"
 
 class Level
 {
@@ -23,7 +25,9 @@ private:
 	Clock levelClock;
 	View view;
 	Vector2u endPosition[2];
-	LevelEndScreen endScreen;
+	LevelEndScreen *endScreen;
+	LevelCompleteScreen *completeScreen;
+	LevelFailedScreen *failedScreen;
 	int status;
 
 public:
