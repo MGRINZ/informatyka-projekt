@@ -1,3 +1,4 @@
+#include "Game.h"
 #include "Entity.h"
 
 const float Entity::WIDTH = Block::WIDTH;
@@ -41,6 +42,9 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(1);
 	else if (yVelocityDown + yVelocityUp < 0)
 		setMovingDirectionY(-1);
+
+	if (entityPosition.y > Game::HEIGHT + WIDTH)
+		alive = false;
 }
 
 bool Entity::canGoRight(BlocksVector &blocks)
@@ -109,7 +113,7 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 			setMovingDirectionX(-1);
 	}
 
-	//move(velocity);
+	move(velocity);
 }
 
 void Entity::jump()
