@@ -7,4 +7,12 @@ LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
 	itemBar = *hud->getItemsBar();
 	enemiesBar = *hud->getEnemiesBar();
 	timeBar = *hud->getTimeBar();
+
+	//healthBar.setPosition();
+}
+
+void LevelCompleteScreen::draw(RenderWindow & window)
+{
+	LevelEndScreen::draw(window);
+	healthBar.draw(window);
 }

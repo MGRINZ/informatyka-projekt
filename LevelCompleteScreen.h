@@ -12,6 +12,6 @@ private:
 
 public:
 	LevelCompleteScreen(HUD * hud);
-
+	void draw(RenderWindow &window);
 };
 
