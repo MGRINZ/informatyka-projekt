@@ -66,13 +66,13 @@ void Level::draw(RenderWindow &window)
 
 	player.getHUD()->draw(window);
 
-	if (getStatus() == LEVEL_STATUS_FINISHED)
+	if (getStatus() == Status::FINISHED || getStatus() == Status::FAILED)
 		endScreen.draw(window);
 }
 
 int Level::load(string levelName)
 {
-	status = LEVEL_STATUS_LOADING;
+	status = Status::LOADING;
 
 	solidBlocks.clear();
 	backgroundBlocks.clear();
@@ -220,7 +220,7 @@ int Level::load(string levelName)
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 	player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
-	status = LEVEL_STATUS_IN_GAME;
+	status = Status::IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
 
@@ -255,10 +255,16 @@ void Level::handleFinish()
 	FloatRect gb = player.getGlobalBounds();
 	FloatRect endArea(endPosition[0].x * Block::WIDTH, endPosition[0].y * Block::WIDTH, (endPosition[1].x - endPosition[0].x + 1) * Block::WIDTH, (endPosition[1].y - endPosition[0].y + 1) * Block::WIDTH);
 
-	if (!gb.intersects(endArea))
-		return;
+	if (gb.intersects(endArea)) {
+		setStatus(Status::FINISHED);
+		endScreen.setHeader("Poziom ukonczony");
+	}
+	if(!player.isAlive())
+	{
+		setStatus(Status::FAILED);
+		endScreen.setHeader("Poziom nieukonczony");
+	}
 
-	setStatus(LEVEL_STATUS_FINISHED);
 	endScreen.setPosition(view.getCenter());
 
 	if (Keyboard::isKeyPressed(Keyboard::Enter))
@@ -270,7 +276,7 @@ void Level::handleTimers()
 	if (levelClock.getElapsedTime().asSeconds() < 1)
 		return;
 
-	if (getStatus() == LEVEL_STATUS_IN_GAME)
+	if (getStatus() == Status::IN_GAME)
 	{
 		if (timeLeft > 0)
 			timeLeft--;

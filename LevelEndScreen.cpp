@@ -3,8 +3,6 @@
 
 LevelEndScreen::LevelEndScreen()
 {
-	FloatRect gb;
-
 	overlay.setFillColor(Color(0, 0, 0, 192));
 	overlay.setSize(Vector2f(Game::WIDTH, Game::HEIGHT));
 
@@ -15,10 +13,6 @@ LevelEndScreen::LevelEndScreen()
 	headerFont.loadFromFile("resources/fonts/verdana.ttf");
 
 	header.setFont(headerFont);
-	header.setString("Poziom ukonczony");
-	gb = header.getGlobalBounds();
-	header.setOrigin(Vector2f(gb.width / 2, gb.height / 2));
-
 	setPosition(Vector2f(0, 0));
 }
 
@@ -35,4 +29,12 @@ void LevelEndScreen::setPosition(Vector2f position)
 	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
 	container.setPosition(Vector2f(position.x, position.y));
 	header.setPosition(Vector2f(position.x, position.y - 120));
+}
+
+void LevelEndScreen::setHeader(string header)
+{
+	FloatRect gb;
+	this->header.setString(header);
+	gb = this->header.getGlobalBounds();
+	this->header.setOrigin(Vector2f(gb.width / 2, gb.height / 2));
 }

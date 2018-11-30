@@ -35,10 +35,13 @@ public:
 	static const string LEVEL_PROPERTY_FOREGROUND;
 	static const string LEVEL_PROPERTY_ITEMS;
 	static const string LEVEL_PROPERTY_ENTITIES;
-	static const int LEVEL_STATUS_LOADING = 0;
-	static const int LEVEL_STATUS_IN_GAME = 1;
-	static const int LEVEL_STATUS_PAUSED = 2;
-	static const int LEVEL_STATUS_FINISHED = 3;
+	enum Status {
+		LOADING,
+		IN_GAME,
+		PAUSED,
+		FINISHED,
+		FAILED
+	};
 	Level();
 	void addSolidBlock(Block block);
 	void addBackgroundBlock(Block block);

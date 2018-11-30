@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+using namespace std;
 using namespace sf;
 
 class LevelEndScreen
@@ -15,4 +16,5 @@ public:
 	LevelEndScreen();
 	void draw(RenderWindow &window);
 	void setPosition(Vector2f position);
+	void setHeader(string header);
 };

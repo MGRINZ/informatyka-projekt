@@ -26,7 +26,8 @@ int main()
 
 		switch (level.getStatus())
 		{
-			case Level::LEVEL_STATUS_FINISHED:
+			case Level::Status::FINISHED:
+			case Level::Status::FAILED:
 			{
 				break;
 			}
