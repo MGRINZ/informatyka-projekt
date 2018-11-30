@@ -18,7 +18,7 @@ Level::Level()
 {
 	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
 	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
-	completeScreen = new LevelCompleteScreen(player.getHUD());
+	completeScreen = new LevelCompleteScreen(player.getHUD(), &view);
 	failedScreen = new LevelFailedScreen();
 }
 

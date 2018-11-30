@@ -15,10 +15,16 @@ void HUD::draw(RenderWindow & window)
 
 void HUD::setPosition(Vector2f position)
 {
+	this->position = position;
 	healthBar.setPosition(Vector2f(position));
 	itemsBar.setPosition(Vector2f(position.x + 200, position.y));
 	enemiesBar.setPosition(Vector2f(position.x + 350, position.y));
 	timeBar.setPosition(Vector2f(position.x + 500, position.y));
+}
+
+Vector2f HUD::getPosition()
+{
+	return position;
 }
 
 void HUD::move(Vector2f position)
