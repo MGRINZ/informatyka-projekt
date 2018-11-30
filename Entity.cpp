@@ -253,6 +253,7 @@ void Entity::reset()
 	isMovingX = 0;
 	isMovingY = 0;
 	alive = true;
+	setTextureRect(IntRect(0, WIDTH, WIDTH, WIDTH));
 }
 
 void Entity::setPosition(int x, int y)

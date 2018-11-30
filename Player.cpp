@@ -111,6 +111,9 @@ void Player::reset()
 
 	setHealth(3);
 	hud.getHealthBar()->setMaxHealth(3);
+	immunityTimer = 0;
+	setColor(Color::White);
+	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 
 void Player::immunity()
