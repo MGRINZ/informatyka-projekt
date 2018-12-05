@@ -4,6 +4,7 @@
 #include <sstream>
 #include "EJelly.h"
 #include "Game.h"
+#include "Frame.h"
 
 using namespace std;
 

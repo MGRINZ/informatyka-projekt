@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Frame.h"
 
 using namespace std;
 using namespace sf;
@@ -9,6 +10,7 @@ class LevelEndScreen
 private:
 	Vector2f position;
 	RectangleShape overlay;
+	Frame frame;
 	RectangleShape container;
 	Font headerFont;
 	Text header;

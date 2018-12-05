@@ -1,9 +1,10 @@
 #include "LevelEndScreen.h"
 #include "Game.h"
+#include "utils.h"
 
 LevelEndScreen::LevelEndScreen()
 {
-	overlay.setFillColor(Color(0, 0, 0, 192));
+	overlay.setFillColor(Color(0, 0, 0, 0));
 	overlay.setSize(Vector2f(Game::WIDTH, Game::HEIGHT));
 
 	container.setFillColor(Color::Blue);
@@ -18,17 +19,20 @@ LevelEndScreen::LevelEndScreen()
 
 void LevelEndScreen::draw(RenderWindow & window)
 {
+	fadeIn(overlay, 100, 192);
 	window.draw(overlay);
-	window.draw(container);
-	window.draw(header);
+	frame.draw(window);
+	//window.draw(container);
+	//window.draw(header);
 }
 
 void LevelEndScreen::setPosition(Vector2f position)
 {
 	this->position = position;
 	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
+	frame.setPosition(position);
 	container.setPosition(Vector2f(position.x, position.y));
-	header.setPosition(Vector2f(position.x, position.y - 120));
+	header.setPosition(Vector2f(position.x, position.y - container.getSize().y / 2 + 40));
 }
 
 void LevelEndScreen::setHeader(string header)
