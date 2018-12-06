@@ -1,5 +1,6 @@
 #include "Frame.h"
 #include "utils.h"
+#include "Game.h"
 
 Frame::Frame()
 {
@@ -24,14 +25,63 @@ Frame::Frame()
 		corners[i].setFillColor(Color(255, 255, 255, 0));
 		edges[i].setTexture(&edgesTextures[i]);
 	}
+
+	size = Vector2f(Game::WIDTH * 0.8, Game::HEIGHT * 0.5); //??? Czy tak zostanie
+}
+
+void Frame::showUp()
+{
+	if (shownUp)
+		return;
+
+	int fadedIn = 0;
+	for (int i = 0; i < 4; i++)
+		fadedIn = Utils::fadeIn(corners[i], 100);
+
+	if (!fadedIn)
+		return;
+
+	if (animationClock == NULL)
+		animationClock = new Clock();
+	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
+
+	if (elapsedTime <= 5000)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			Vector2f cp = corners[i].getPosition();
+
+			if (i == 0 || i == 3)
+				cp.x = position.x -(size.x / 2) / 5000 * elapsedTime; //(size.x / 2) / duration * elapsedTime
+			else
+				cp.x = position.x + (size.x / 2) / 5000 * elapsedTime; //(size.x / 2) / duration * elapsedTime
+			corners[i].setPosition(Vector2f(cp.x, cp.y));
+		}
+	}
+	else if (elapsedTime > 5000 && elapsedTime <= 10000)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			Vector2f cp = corners[i].getPosition();
+			if (i == 0 || i == 1)
+				cp.y = position.y -(size.y / 2) / 5000 * (elapsedTime - 5000); //(size.x / 2) / (duration - prevDuration) * elapsedTime
+			else
+				cp.y = position.y + (size.y / 2) / 5000 * (elapsedTime - 5000); //(size.x / 2) / (duration - prevDuration) * elapsedTime
+			corners[i].setPosition(Vector2f(cp.x, cp.y));
+		}
+	}
+	else
+	{
+		shownUp = true;
+		delete animationClock;
+	}
 }
 
 void Frame::draw(RenderWindow & window)
 {
+	showUp();
 	for(int i = 0; i < 4; i++)
 	{
-		fadeIn(corners[i], 100);
-		//fadeIn<RectangleShape>(corners[i], 5000, animationClock);
 		window.draw(corners[i]);
 		window.draw(edges[i]);
 	}
@@ -39,12 +89,15 @@ void Frame::draw(RenderWindow & window)
 
 void Frame::setPosition(Vector2f position)
 {
-	this->position = position;
-
 	for (int i = 0; i < 4; i++)
 	{
-		corners[i].setPosition(position);
+		Vector2f cp = corners[i].getPosition();
+		cp.x = position.x + cp.x - this->position.x;
+		cp.y = position.y + cp.y - this->position.y;
+		corners[i].setPosition(cp);
 	}
+
+	this->position = position;
 }
 
 Vector2f Frame::getPosition()

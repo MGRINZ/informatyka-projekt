@@ -19,7 +19,7 @@ LevelEndScreen::LevelEndScreen()
 
 void LevelEndScreen::draw(RenderWindow & window)
 {
-	fadeIn(overlay, 100, 192);
+	Utils::fadeIn(overlay, 100, 192);
 	window.draw(overlay);
 	frame.draw(window);
 	//window.draw(container);

@@ -7,11 +7,14 @@ class Frame
 {
 private:
 	Vector2f position;
+	Vector2f size;
 	RectangleShape corners[4];
 	RectangleShape edges[4];
 	Texture cornersTextures[4];
 	Texture edgesTextures[4];
-	Clock animationClock;
+	Clock *animationClock;
+	bool shownUp = false;
+	void showUp();
 public:
 	Frame();
 	//void showIn();

@@ -5,32 +5,39 @@
 using namespace sf;
 using namespace std;
 
-template <class T>
-void fadeIn1(T &object, int duration, Color &color, double maxTransparency = 255)
+class Utils
 {
-	static map<T*, Clock*> clockMap;
-
-	if (color.a >= maxTransparency)
-		return;
-
-	Clock *clock;
-
-	if (!clockMap.count(&object))
+private:
+	template <class T>
+	static int fadeIn1(T &object, int duration, Color &color, double maxTransparency = 255)
 	{
-		clock = new Clock();
-		clockMap.insert(pair<T*, Clock*>(&object, clock));
+		static map<T*, Clock*> clockMap;
+
+		if (color.a >= maxTransparency)
+			return 1;
+
+		Clock *clock;
+
+		if (!clockMap.count(&object))
+		{
+			clock = new Clock();
+			clockMap.insert(pair<T*, Clock*>(&object, clock));
+		}
+		else
+			clock = clockMap.at(&object);
+
+		color.a = (maxTransparency / duration) * clock->getElapsedTime().asMilliseconds();
+
+		if (clock->getElapsedTime().asMilliseconds() > duration)
+		{
+			color.a = maxTransparency;
+			clockMap.erase(&object);
+		}
+
+		return 0;
 	}
-	else
-		clock = clockMap.at(&object);
 
-	color.a = (maxTransparency / duration) * clock->getElapsedTime().asMilliseconds();
-
-	if (clock->getElapsedTime().asMilliseconds() > duration)
-	{
-		color.a = maxTransparency;
-		clockMap.erase(&object);
-	}
-}
-
-void fadeIn(Shape &object, int duration, int maxTransparency = 255);
-void fadeIn(Sprite &object, int duration, int maxTransparency = 255);
+public:
+	static int fadeIn(Shape &object, int duration, int maxTransparency = 255);
+	static int fadeIn(Sprite &object, int duration, int maxTransparency = 255);
+};
