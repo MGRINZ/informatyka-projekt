@@ -20,4 +20,5 @@ public:
 	virtual void draw(RenderWindow &window);
 	void setPosition(Vector2f position);
 	void setHeader(string header);
+	void setSize(Vector2f size);
 };

@@ -67,7 +67,7 @@ void Frame::showUp()
 		animationClock = new Clock();
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 
-	int duration = 5000;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
+	int duration = 250;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 
 	//Rozszerzanie szerokoœci
 	if (elapsedTime <= duration)
@@ -84,7 +84,7 @@ void Frame::showUp()
 			//Przesuwanie rogów po prawej
 			else
 			{
-				cp.x = position.x + (size.x / 2) / duration * elapsedTime;
+				cp.x = (position.x + (size.x / 2) / duration * elapsedTime);
 				ctr.left = 20 - ceil(20.0 / duration * elapsedTime);	//Rozszerzanie obszaru tekstury w poziomie (na potrzebê poprawnie wyœwietlanych naro¿ników)
 			}
 			ctr.width = 20 + ceil(20.0 / duration * elapsedTime);	//Rozszerzanie obszaru tekstury (na potrzebê poprawnie wyœwietlanych naro¿ników)
@@ -98,19 +98,20 @@ void Frame::showUp()
 
 		cp = corners[0].getPosition();
 		etr = edges[0].getTextureRect();
-		etr.width = (position.x - cp.x) * 2 + 2;	//+ 2 - uzupe³nienie brakuj¹cych pikseli przy rozszerzaniu
+		etr.width = corners[1].getPosition().x - cp.x;
 		edges[0].setPosition(cp);
 		edges[0].setTextureRect(etr);
 
 		cp = corners[3].getPosition();
 		etr = edges[2].getTextureRect();
-		etr.width = (position.x - cp.x) * 2 + 2;	//+ 2 - uzupe³nienie brakuj¹cych pikseli przy rozszerzaniu
+		etr.width = corners[2].getPosition().x - cp.x;
 		edges[2].setPosition(cp);
 		edges[2].setTextureRect(etr);
 
 		//Rozszerzanie zawartoœci
 		IntRect ctr = container.getTextureRect();
-		ctr.width = (position.x - cp.x + 10) * 2;
+		etr = edges[0].getTextureRect();
+		ctr.width = etr.width;
 		container.setTextureRect(ctr);
 	}
 	//Rozszerzanie wysokoœci
@@ -136,21 +137,35 @@ void Frame::showUp()
 			corners[i].setTextureRect(ctr);
 		}
 
-		//Rozszerzanie pionowych krawêdzi
+		//Wyrównanie rogów w poziomie
 		Vector2f cp;
-		IntRect etr;
-
-		cp = corners[1].getPosition();
-		etr = edges[1].getTextureRect();
-		etr.height = (position.y - cp.y) * 2 + 2;	//+ 2 - uzupe³nienie brakuj¹cych pikseli przy rozszerzaniu
-		edges[1].setPosition(cp);
-		edges[1].setTextureRect(etr);
 
 		cp = corners[0].getPosition();
-		etr = edges[3].getTextureRect();
-		etr.height = (position.y - cp.y) * 2 + 2;	//+ 2 - uzupe³nienie brakuj¹cych pikseli przy rozszerzaniu
-		edges[3].setPosition(cp);
-		edges[3].setTextureRect(etr);
+		cp.x = position.x - (size.x / 2);
+		corners[0].setPosition(cp);
+
+		cp = corners[3].getPosition();
+		cp.x = position.x - (size.x / 2);
+		corners[3].setPosition(cp);
+
+		cp = corners[1].getPosition();
+		cp.x = position.x + (size.x / 2) - 20;
+		corners[1].setPosition(cp);
+
+		cp = corners[2].getPosition();
+		cp.x = position.x + (size.x / 2) - 20;
+		corners[2].setPosition(cp);
+
+		//Wyrównianie poziomych krawêdzi
+		IntRect etr;
+
+		etr = edges[0].getTextureRect();
+		etr.width = corners[1].getPosition().x - corners[0].getPosition().x;
+		edges[0].setTextureRect(etr);
+
+		etr = edges[2].getTextureRect();
+		etr.width = corners[2].getPosition().x - corners[3].getPosition().x;
+		edges[2].setTextureRect(etr);
 
 		//Przesuniêcie poziomych krawêdzi
 		cp = corners[0].getPosition();
@@ -159,10 +174,30 @@ void Frame::showUp()
 		cp = corners[3].getPosition();
 		cp.y += corners[3].getTextureRect().height - 20;	//Przesuniêcie obiektu ze wzglêdu na zmianê rozmiaru naro¿nika
 		edges[2].setPosition(cp);
+		
+		//Wyrównanie szerokoœci zawartoœci
+		IntRect ctr = container.getTextureRect();
+		etr = edges[0].getTextureRect();
+		ctr.width = etr.width + 20;
+		container.setTextureRect(ctr);
+
+		//Rozszerzanie pionowych krawêdzi
+
+		cp = corners[1].getPosition();
+		etr = edges[1].getTextureRect();
+		etr.height = corners[2].getPosition().y - cp.y + 20;
+		edges[1].setPosition(cp);
+		edges[1].setTextureRect(etr);
+
+		cp = corners[0].getPosition();
+		etr = edges[3].getTextureRect();
+		etr.height = corners[3].getPosition().y - cp.y + 20;
+		edges[3].setPosition(cp);
+		edges[3].setTextureRect(etr);
 
 		//Rozszerzanie zawartoœci
 		cp = corners[0].getPosition();
-		IntRect ctr = container.getTextureRect();
+		ctr = container.getTextureRect();
 		ctr.top = size.y / 2 - (position.y - cp.y);
 		ctr.height = (position.y - cp.y) * 2;
 		container.setTextureRect(ctr);
@@ -170,7 +205,57 @@ void Frame::showUp()
 	//Po zakoñczeniu animacji
 	else
 	{
-		setPosition(position);	//Wyrównanie wszystkiego
+		//Wyrównanie rogów w pionie
+		Vector2f cp;
+
+		cp = corners[0].getPosition();
+		cp.y = position.y - (size.y / 2);
+		corners[0].setPosition(cp);
+
+		cp = corners[3].getPosition();
+		cp.y = position.y + (size.y / 2) - 20;
+		corners[3].setPosition(cp);
+		
+		cp = corners[1].getPosition();
+		cp.y = position.y - (size.y / 2);
+		corners[1].setPosition(cp);
+
+		cp = corners[2].getPosition();
+		cp.y = position.y + (size.y / 2) - 20;
+		corners[2].setPosition(cp);
+
+		//Wyrównianie pionowych krawêdzi
+		IntRect etr;
+
+		etr = edges[1].getTextureRect();
+		etr.height = corners[2].getPosition().y - corners[1].getPosition().y;
+		edges[1].setTextureRect(etr);
+
+		etr = edges[3].getTextureRect();
+		etr.height = corners[3].getPosition().y - corners[0].getPosition().y;
+		edges[3].setTextureRect(etr);
+
+		//Przesuniêcie pionowych krawêdzi
+		cp = corners[0].getPosition();
+		edges[3].setPosition(cp);
+
+		cp = corners[1].getPosition();
+		edges[1].setPosition(cp);
+		
+		//Przesuniêcie poziomych krawêdzi
+		cp = corners[0].getPosition();
+		edges[0].setPosition(cp);
+
+		cp = corners[3].getPosition();
+		cp.y += corners[3].getTextureRect().height - 20;	//Przesuniêcie obiektu ze wzglêdu na zmianê rozmiaru naro¿nika
+		edges[2].setPosition(cp);
+
+		//Wyrównanie wysokoœci zawartoœci
+		IntRect ctr = container.getTextureRect();
+		etr = edges[3].getTextureRect();
+		ctr.height = etr.height + 20;
+		container.setTextureRect(ctr);
+		
 		shownUp = true;
 		delete animationClock;
 	}
@@ -179,13 +264,13 @@ void Frame::showUp()
 void Frame::draw(RenderWindow & window)
 {
 	showUp();
-	
+	window.draw(container);
 	for(int i = 0; i < 4; i++)
 	{
 		window.draw(edges[i]);
 		window.draw(corners[i]);
 	}
-	window.draw(container);
+	
 }
 
 void Frame::setPosition(Vector2f position)

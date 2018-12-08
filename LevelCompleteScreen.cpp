@@ -1,10 +1,12 @@
 #include "LevelCompleteScreen.h"
+#include "Game.h"
 #include <iostream>
 
 using namespace std;
 
 LevelCompleteScreen::LevelCompleteScreen(HUD * hud, View * view)
 {
+	setSize(Vector2f(Game::WIDTH * 0.8, Game::HEIGHT * 0.5));
 	setHeader("Poziom ukonczony");
 	this->hud = hud;
 	this->view = view;
