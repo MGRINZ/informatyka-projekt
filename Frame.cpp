@@ -67,7 +67,7 @@ void Frame::showUp()
 		animationClock = new Clock();
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 
-	int duration = 250;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
+	int duration = 50;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 
 	//Rozszerzanie szerokoœci
 	if (elapsedTime <= duration)
@@ -156,6 +156,16 @@ void Frame::showUp()
 		cp.x = position.x + (size.x / 2) - 20;
 		corners[2].setPosition(cp);
 
+		//Rozszerzenie obszaru tekstury rogów w poziomie
+		IntRect ctr;
+		for (int i = 0; i < 4; i++)
+		{
+			ctr = corners[i].getTextureRect();
+			ctr.left = 0;
+			ctr.width = 40;
+			corners[i].setTextureRect(ctr);
+		}
+
 		//Wyrównianie poziomych krawêdzi
 		IntRect etr;
 
@@ -176,7 +186,7 @@ void Frame::showUp()
 		edges[2].setPosition(cp);
 		
 		//Wyrównanie szerokoœci zawartoœci
-		IntRect ctr = container.getTextureRect();
+		ctr = container.getTextureRect();
 		etr = edges[0].getTextureRect();
 		ctr.width = etr.width + 20;
 		container.setTextureRect(ctr);
@@ -224,6 +234,16 @@ void Frame::showUp()
 		cp.y = position.y + (size.y / 2) - 20;
 		corners[2].setPosition(cp);
 
+		//Rozszerzenie obszaru tekstury rogów w pionie
+		IntRect ctr;
+		for (int i = 0; i < 4; i++)
+		{
+			ctr = corners[i].getTextureRect();
+			ctr.top = 0;
+			ctr.height = 40;
+			corners[i].setTextureRect(ctr);
+		}
+
 		//Wyrównianie pionowych krawêdzi
 		IntRect etr;
 
@@ -251,7 +271,7 @@ void Frame::showUp()
 		edges[2].setPosition(cp);
 
 		//Wyrównanie wysokoœci zawartoœci
-		IntRect ctr = container.getTextureRect();
+		ctr = container.getTextureRect();
 		etr = edges[3].getTextureRect();
 		ctr.height = etr.height + 20;
 		container.setTextureRect(ctr);
