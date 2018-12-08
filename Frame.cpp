@@ -37,6 +37,10 @@ Frame::Frame()
 	edges[2].setTextureRect(IntRect(0, 20, 0, 20));
 	edges[3].setTextureRect(IntRect(0, 0, 40, 0));
 
+	//Ustawienie domyœlnego rozwiniêcia zawartoœci
+	container.setTexture(Texture());	//setTextureRect nie zadzia³a dopóki nie bêdzie ¿adnej tekstury
+	container.setTextureRect(IntRect(0, 0, 0, 0));
+
 	for (int i = 0; i < 4; i++)
 	{
 		corners[i].setTexture(cornersTextures[i]);
@@ -44,8 +48,6 @@ Frame::Frame()
 		edges[i].setTexture(edgesTextures[i]);
 		edgesTextures[i].setRepeated(true);
 	}
-
-	size = Vector2f(Game::WIDTH * 0.8, Game::HEIGHT * 0.5); //??? Czy tak zostanie
 }
 
 void Frame::showUp()
@@ -65,7 +67,7 @@ void Frame::showUp()
 		animationClock = new Clock();
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 
-	int duration = 250;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
+	int duration = 5000;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 
 	//Rozszerzanie szerokoœci
 	if (elapsedTime <= duration)
@@ -107,7 +109,9 @@ void Frame::showUp()
 		edges[2].setTextureRect(etr);
 
 		//Rozszerzanie zawartoœci
-
+		IntRect ctr = container.getTextureRect();
+		ctr.width = (position.x - cp.x + 10) * 2;
+		container.setTextureRect(ctr);
 	}
 	//Rozszerzanie wysokoœci
 	else if (elapsedTime > duration && elapsedTime <= duration * 2)
@@ -120,11 +124,11 @@ void Frame::showUp()
 
 			//Rozszerzanie rogów u góry
 			if (i == 0 || i == 1)
-				cp.y = position.y -(size.y / 2) / duration * (elapsedTime - duration); //(size.x / 2) / (duration - prevDuration) * elapsedTime
+				cp.y = position.y -(size.y / 2) / duration * (elapsedTime - duration); //(size.x / 2) / duration * (elapsedTime - prevDuration)
 			//Rozszerzanie rogów na dole
 			else
 			{
-				cp.y = position.y + (size.y / 2) / duration * (elapsedTime - duration); //(size.x / 2) / (duration - prevDuration) * elapsedTime
+				cp.y = position.y + (size.y / 2 - 20) / duration * (elapsedTime - duration); //(size.x / 2) / duration * (elapsedTime - prevDuration)
 				ctr.top = 20 - ceil(20.0 / duration * (elapsedTime - duration));	//Rozszerzanie obszaru tekstury w poziomie (na potrzebê poprawnie wyœwietlanych naro¿ników)
 			}
 			ctr.height = 20 + ceil(20.0 / duration * (elapsedTime - duration));	//Rozszerzanie obszaru tekstury w poziomie (na potrzebê poprawnie wyœwietlanych naro¿ników)
@@ -157,11 +161,16 @@ void Frame::showUp()
 		edges[2].setPosition(cp);
 
 		//Rozszerzanie zawartoœci
-
+		cp = corners[0].getPosition();
+		IntRect ctr = container.getTextureRect();
+		ctr.top = size.y / 2 - (position.y - cp.y);
+		ctr.height = (position.y - cp.y) * 2;
+		container.setTextureRect(ctr);
 	}
 	//Po zakoñczeniu animacji
 	else
 	{
+		setPosition(position);	//Wyrównanie wszystkiego
 		shownUp = true;
 		delete animationClock;
 	}
@@ -170,11 +179,13 @@ void Frame::showUp()
 void Frame::draw(RenderWindow & window)
 {
 	showUp();
+	
 	for(int i = 0; i < 4; i++)
 	{
 		window.draw(edges[i]);
 		window.draw(corners[i]);
 	}
+	window.draw(container);
 }
 
 void Frame::setPosition(Vector2f position)
@@ -192,10 +203,28 @@ void Frame::setPosition(Vector2f position)
 		edges[i].setPosition(ep);
 	}
 
+	Vector2f cp = corners[0].getPosition();
+	container.setPosition(cp);
+
 	this->position = position;
 }
 
 Vector2f Frame::getPosition()
 {
 	return position;
+}
+
+void Frame::setSize(Vector2f size)
+{
+	this -> size = size;
+}
+
+Vector2f Frame::getSize(Vector2f size)
+{
+	return size;
+}
+
+Sprite * Frame::getContainer()
+{
+	return &container;
 }

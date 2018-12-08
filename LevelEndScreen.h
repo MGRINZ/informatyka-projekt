@@ -11,7 +11,8 @@ private:
 	Vector2f position;
 	RectangleShape overlay;
 	Frame frame;
-	RectangleShape container;
+	//RectangleShape container;
+	RenderTexture container;
 	Font headerFont;
 	Text header;
 public:
