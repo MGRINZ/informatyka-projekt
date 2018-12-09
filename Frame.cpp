@@ -67,7 +67,7 @@ void Frame::showUp()
 		animationClock = new Clock();
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 
-	int duration = 50;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
+	int duration = 250;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 
 	//Rozszerzanie szerokoœci
 	if (elapsedTime <= duration)
@@ -281,14 +281,13 @@ void Frame::showUp()
 	}
 }
 
-void Frame::draw(RenderWindow & window)
+void Frame::draw(RenderTarget& target, RenderStates states) const
 {
-	showUp();
-	window.draw(container);
+	target.draw(container);
 	for(int i = 0; i < 4; i++)
 	{
-		window.draw(edges[i]);
-		window.draw(corners[i]);
+		target.draw(edges[i]);
+		target.draw(corners[i]);
 	}
 	
 }

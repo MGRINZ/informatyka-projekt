@@ -27,8 +27,8 @@ void LevelCompleteScreen::draw(RenderWindow & window)
 
 	healthBar.setPosition(Vector2f(refP.x + 100, refP.y + 300));
 
-	healthBar.draw(window);
-	itemBar.draw(window);
+	//healthBar.draw(window);
+	/*itemBar.draw(window);
 	enemiesBar.draw(window);
-	timeBar.draw(window);
+	timeBar.draw(window);*/
 }

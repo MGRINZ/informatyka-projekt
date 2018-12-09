@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Frame.h"
+#include "Container.h"
 
 using namespace std;
 using namespace sf;
@@ -12,9 +13,11 @@ private:
 	RectangleShape overlay;
 	Frame frame;
 	//RectangleShape container;
-	RenderTexture container;
+	//RenderTexture container;
 	Font headerFont;
 	Text header;
+protected:
+	Container container;
 public:
 	LevelEndScreen();
 	virtual void draw(RenderWindow &window);

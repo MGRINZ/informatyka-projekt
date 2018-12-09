@@ -7,7 +7,7 @@
 using namespace std;
 using namespace sf;
 
-class HUDBar
+class HUDBar : public Drawable
 {
 protected:
 	Texture iconTexture;
@@ -18,7 +18,7 @@ protected:
 	Vector2f position;
 public:
 	HUDBar();
-	void draw(RenderWindow &window);
+	void draw(RenderTarget& target, RenderStates states) const override;
 	void setPosition(Vector2f position);
 	void move(Vector2f position);
 };

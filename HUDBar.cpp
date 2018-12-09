@@ -10,10 +10,10 @@ HUDBar::HUDBar()
 	counter.setOutlineThickness(1);
 }
 
-void HUDBar::draw(RenderWindow & window)
+void HUDBar::draw(RenderTarget& target, RenderStates states) const
 {
-	window.draw(icon);
-	window.draw(counter);
+	target.draw(icon);
+	target.draw(counter);
 }
 
 void HUDBar::setPosition(Vector2f position)

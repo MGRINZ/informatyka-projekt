@@ -70,7 +70,7 @@ void Level::draw(RenderWindow &window)
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
 
-	player.getHUD()->draw(window);
+	window.draw(*player.getHUD());
 
 	if (getStatus() == Status::FINISHED || getStatus() == Status::FAILED)
 		if(endScreen != NULL)

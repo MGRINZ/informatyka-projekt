@@ -5,12 +5,12 @@ HUD::HUD()
 	setPosition(Vector2f(50, 20));
 }
 
-void HUD::draw(RenderWindow & window)
+void HUD::draw(RenderTarget& target, RenderStates states) const
 {
-	healthBar.draw(window);
-	itemsBar.draw(window);
-	enemiesBar.draw(window);
-	timeBar.draw(window);
+	target.draw(healthBar);
+	target.draw(itemsBar);
+	target.draw(enemiesBar);
+	target.draw(timeBar);
 }
 
 void HUD::setPosition(Vector2f position)

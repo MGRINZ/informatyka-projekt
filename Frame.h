@@ -3,7 +3,7 @@
 
 using namespace sf;
 
-class Frame
+class Frame : public Drawable
 {
 private:
 	Vector2f position;
@@ -15,14 +15,14 @@ private:
 	Texture edgesTextures[4];
 	Clock *animationClock;
 	bool shownUp = false;
-	void showUp();
 public:
 	Frame();
-	void draw(RenderWindow &window);
+	void draw(RenderTarget& target, RenderStates states) const override;
 	void setPosition(Vector2f position);
 	Vector2f getPosition();
 	void setSize(Vector2f size);
 	Vector2f getSize(Vector2f size);
 	Sprite* getContainer();
+	void showUp();
 };
 

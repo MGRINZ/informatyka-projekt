@@ -7,12 +7,15 @@ LevelEndScreen::LevelEndScreen()
 	overlay.setFillColor(Color(0, 0, 0, 0));
 	overlay.setSize(Vector2f(Game::WIDTH, Game::HEIGHT));
 	
-	frame.getContainer()->setTexture(container.getTexture(), false);
+	frame.getContainer()->setTexture(*container.getTexture(), false);
 
 	headerFont.loadFromFile("resources/fonts/verdana.ttf");
 	header.setFont(headerFont);
 
-	setSize(Vector2f(0,0));
+	container.append(header);
+	container.setBackground(Color(0, 0, 0, 96));
+
+	setSize(Vector2f(1,1));
 	setPosition(Vector2f(0, 0));
 }
 
@@ -20,12 +23,11 @@ void LevelEndScreen::draw(RenderWindow & window)
 {
 	Utils::fadeIn(overlay, 100, 192);
 	window.draw(overlay);
-
-	container.clear(Color(0, 0, 0, 96));
-	container.draw(header);
-	container.display();
 	
-	frame.draw(window);
+	container.draw();
+	
+	frame.showUp();
+	window.draw(frame);
 }
 
 void LevelEndScreen::setPosition(Vector2f position)
@@ -45,8 +47,7 @@ void LevelEndScreen::setHeader(string header)
 
 void LevelEndScreen::setSize(Vector2f size)
 {
-	container.create(size.x, size.y);
 	frame.setSize(size);
-
+	container.setSize(size);
 	header.setPosition(Vector2f(container.getSize().x / 2, 40));
 }
