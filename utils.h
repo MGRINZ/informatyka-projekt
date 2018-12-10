@@ -38,6 +38,22 @@ private:
 	}
 
 public:
-	static int fadeIn(Shape &object, int duration, int maxTransparency = 255);
 	static int fadeIn(Sprite &object, int duration, int maxTransparency = 255);
+	template <class T>
+	static int fadeIn(T &object, int duration, int maxTransparency = 255);
 };
+
+template<class T>
+inline int Utils::fadeIn(T & object, int duration, int maxTransparency)
+{
+	Color color = object.getFillColor();
+	Color outlineColor = object.getOutlineColor();
+	
+	int status = fadeIn1(object, duration, color, maxTransparency);
+	fadeIn1(object, duration, outlineColor, maxTransparency);
+
+	object.setFillColor(color);
+	object.setOutlineColor(outlineColor);
+
+	return status;
+}

@@ -282,6 +282,11 @@ void Frame::showUp()
 	}
 }
 
+bool Frame::isShownUp()
+{
+	return shownUp;
+}
+
 void Frame::draw(RenderTarget& target, RenderStates states) const
 {
 	target.draw(container);

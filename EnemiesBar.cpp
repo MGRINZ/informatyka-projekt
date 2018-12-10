@@ -9,7 +9,6 @@ EnemiesBar::EnemiesBar() : HUDBar()
 
 void EnemiesBar::setItems(vector<Entity*>* items)
 {
-	this->items = items;
 	int count = 0;
 	for (auto &item : *items)
 	{
@@ -17,7 +16,5 @@ void EnemiesBar::setItems(vector<Entity*>* items)
 			count++;
 	}
 
-	stringstream ss;
-	ss << count << "/" << items->size();
-	counter.setString(ss.str());
+	HUDBar::setItems(count, items->size());
 }

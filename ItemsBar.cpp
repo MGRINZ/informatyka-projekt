@@ -9,7 +9,6 @@ ItemsBar::ItemsBar() : HUDBar()
 
 void ItemsBar::setItems(vector<Item>* items)
 {
-	this->items = items;
 	int count = 0;
 	for (auto &item : *items)
 	{
@@ -17,7 +16,5 @@ void ItemsBar::setItems(vector<Item>* items)
 			count++;
 	}
 
-	stringstream ss;
-	ss << count << "/" << items->size();
-	counter.setString(ss.str());
+	HUDBar::setItems(count, items->size());
 }

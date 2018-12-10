@@ -3,7 +3,6 @@
 
 TimeBar::TimeBar() : HUDBar()
 {
-	delete items;
 	iconTexture.loadFromFile("resources/textures/hud/clock.png");
 	icon.setTexture(iconTexture);
 }

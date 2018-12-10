@@ -1,4 +1,5 @@
 #include "HealthBar.h"
+#include "utils.h"
 
 HealthBar::HealthBar()
 {
@@ -25,9 +26,24 @@ void HealthBar::setHealth(int hp)
 	}
 }
 
+int HealthBar::getHealth()
+{
+	for (int i = 0; i < maxHealth; i++)
+	{
+		if (health[i].getTexture() == &healthTextureEmpty)
+			return i;
+	}
+	return maxHealth;
+}
+
 void HealthBar::setMaxHealth(int maxHealth)
 {
 	this->maxHealth = maxHealth;
+}
+
+int HealthBar::getMaxHealth()
+{
+	return maxHealth;
 }
 
 void HealthBar::setPosition(Vector2f position)
@@ -43,4 +59,18 @@ void HealthBar::move(Vector2f position)
 	this->position.y += position.y;
 	for (int i = 0; i < maxHealth; i++)
 		health[i].move(position);
+}
+
+bool HealthBar::fadeIn(int duration)
+{
+	bool status = false;
+	for(int i = 0; i < maxHealth; i++)
+		status = Utils::fadeIn(health[i], duration);
+	return status;
+}
+
+void HealthBar::hide()
+{
+	for (int i = 0; i < maxHealth; i++)
+		health[i].setColor(Color(255,255,255,0));
 }

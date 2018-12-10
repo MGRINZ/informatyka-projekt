@@ -26,8 +26,6 @@ private:
 	View view;
 	Vector2u endPosition[2];
 	LevelEndScreen *endScreen;
-	LevelCompleteScreen *completeScreen;
-	LevelFailedScreen *failedScreen;
 	int status;
 
 public:

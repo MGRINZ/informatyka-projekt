@@ -11,13 +11,11 @@ class LevelEndScreen
 private:
 	Vector2f position;
 	RectangleShape overlay;
-	Frame frame;
-	//RectangleShape container;
-	//RenderTexture container;
 	Font headerFont;
 	Text header;
 protected:
 	Container container;
+	Frame frame;
 public:
 	LevelEndScreen();
 	virtual void draw(RenderWindow &window);

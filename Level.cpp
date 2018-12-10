@@ -19,8 +19,6 @@ Level::Level()
 {
 	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
 	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
-	completeScreen = new LevelCompleteScreen(player.getHUD(), &view);
-	failedScreen = new LevelFailedScreen();
 }
 
 void Level::addSolidBlock(Block block)
@@ -87,6 +85,12 @@ int Level::load(string levelName)
 	enemies.clear();
 	items.clear();
 	player.reset();
+
+	if (endScreen != NULL)
+	{
+		delete endScreen;
+		endScreen = NULL;
+	}
 
 	ifstream levelInputStream("resources/levels/" + levelName);
 	if (!levelInputStream.is_open())
@@ -227,6 +231,7 @@ int Level::load(string levelName)
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 	player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
+
 	status = Status::IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
 }
@@ -264,12 +269,14 @@ void Level::handleFinish()
 
 	if (gb.intersects(endArea)) {
 		setStatus(Status::FINISHED);
-		endScreen = completeScreen;
+		if(endScreen == NULL)
+			endScreen = new LevelCompleteScreen(player.getHUD());
 	}
 	if(!player.isAlive())
 	{
 		setStatus(Status::FAILED);
-		endScreen = failedScreen;
+		if (endScreen == NULL)
+			endScreen = new LevelFailedScreen();
 	}
 
 	if(endScreen != NULL)

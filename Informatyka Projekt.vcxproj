@@ -23,6 +23,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlocksVector.cpp" />
     <ClCompile Include="Container.cpp" />
+    <ClCompile Include="Counter.cpp" />
     <ClCompile Include="EJelly.cpp" />
     <ClCompile Include="EnemiesBar.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlocksVector.h" />
     <ClInclude Include="Container.h" />
+    <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />
     <ClInclude Include="EnemiesBar.h" />
     <ClInclude Include="Entity.h" />
