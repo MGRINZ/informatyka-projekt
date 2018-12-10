@@ -273,6 +273,7 @@ void Frame::showUp()
 		//Wyrównanie wysokoœci zawartoœci
 		ctr = container.getTextureRect();
 		etr = edges[3].getTextureRect();
+		ctr.top = 0;
 		ctr.height = etr.height + 20;
 		container.setTextureRect(ctr);
 		

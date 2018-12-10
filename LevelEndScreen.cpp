@@ -49,5 +49,5 @@ void LevelEndScreen::setSize(Vector2f size)
 {
 	frame.setSize(size);
 	container.setSize(size);
-	header.setPosition(Vector2f(container.getSize().x / 2, 40));
+	header.setPosition(Vector2f(container.getSize().x / 2, 20));
 }
