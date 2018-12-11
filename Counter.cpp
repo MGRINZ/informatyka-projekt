@@ -16,7 +16,7 @@ Counter::Counter() : Counter(0, 0)
 
 }
 
-Counter::Counter(int max, int current)
+Counter::Counter(int end, int start)
 {
 	font.loadFromFile("resources/fonts/verdana.ttf");
 	setFont(font);
@@ -24,19 +24,19 @@ Counter::Counter(int max, int current)
 	setOutlineColor(Color::Black);
 	setOutlineThickness(1);
 
-	set(max, current);
+	set(end, start);
 	reset();
 }
 
-void Counter::set(int max)
+void Counter::set(int end)
 {
-	this->max = max;
+	set(end, 0);
 }
 
-void Counter::set(int max, int current)
+void Counter::set(int end, int start)
 {
-	this->current = current;
-	this->max = max;
+	this->start = start;
+	this->end = end;
 }
 
 void Counter::reset()
@@ -47,31 +47,33 @@ void Counter::reset()
 
 void Counter::count(int duration)
 {
-	if (current == max)
+	if (current == end)
 		return;
 
 	if (animationClock == NULL)
 		animationClock = new Clock();
 
-	current = (double) max / duration * animationClock->getElapsedTime().asMilliseconds();
+	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
+
+	current = start + (double)(end - start) / duration * elapsedTime;
 	update();
 
-	if (current >= max)
+	if (elapsedTime >= duration)
 	{
-		current = max;
+		current = end;
 		update();
 		delete animationClock;
 		animationClock = NULL;
 	}
 }
 
-int Counter::getCurrent()
+int Counter::getStart()
 {
-	return current;
+	return start;
 }
 
-int Counter::getMax()
+int Counter::getEnd()
 {
-	return max;
+	return end;
 }
 

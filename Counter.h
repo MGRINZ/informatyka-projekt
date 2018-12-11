@@ -7,18 +7,21 @@ class Counter : public Text
 {
 private:
 	Font font;
+	int start;
 	int current;
-	int max;
+	int end;
+	//Clock animationClock;
 	Clock *animationClock;
 	void update();
 public:
 	Counter();
-	Counter(int max, int current = 0);
-	void set(int max);
-	void set(int max, int current);
+	Counter(int end, int start = 0);
+	void set(int end);
+	void set(int end, int start);
 	void reset();
 	void count(int duration);
-	int getCurrent();
-	int getMax();
+	int getStart();
+	//int getCurrent();
+	int getEnd();
 };
 
