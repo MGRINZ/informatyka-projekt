@@ -44,8 +44,9 @@ void LevelCompleteScreen::showUpItemsBar()
 		return;
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
+	int health = hud->getHealthBar()->getHealth();
 
-	if (elapsedTime < ANIMATION_TIME_CONSTANT * 0.5)
+	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3))
 		return;
 
 	bool fadedIn = false;
@@ -56,27 +57,9 @@ void LevelCompleteScreen::showUpItemsBar()
 	if (!fadedIn)
 		return;
 
-	elapsedTime -= ANIMATION_TIME_CONSTANT * 0.5;
+	elapsedTime -= ANIMATION_TIME_CONSTANT * (health + 3);
 
-	int items = hud->getItemsBar()->getCurrentItems();
-	int maxItems = hud->getItemsBar()->getMaxItems();
-
-	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 2)
-		itemsBar.HUDBar::setItems((double) items / (ANIMATION_TIME_CONSTANT) * (elapsedTime - ANIMATION_TIME_CONSTANT), maxItems);
-	else
-		itemsBar.HUDBar::setItems(items, maxItems);
-
-	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 3)
-	{
-		counters[1].set(items * Game::ITEMS_SCORE);
-		counters[1].count(ANIMATION_TIME_CONSTANT);
-	}
-	else if (elapsedTime >= ANIMATION_TIME_CONSTANT * 3)
-	{
-		if (items == maxItems)
-			counters[1].set(items * Game::ITEMS_SCORE + Game::ITEMS_SCORE_BONUS, items * Game::ITEMS_SCORE);
-		counters[1].count(ANIMATION_TIME_CONSTANT);
-	}
+	hudBarCounting(*hud->getItemsBar(), itemsBar, elapsedTime, 1, Game::ITEMS_SCORE, Game::ITEMS_SCORE_BONUS);
 }
 
 void LevelCompleteScreen::showUpEnemiesBar()
@@ -85,8 +68,9 @@ void LevelCompleteScreen::showUpEnemiesBar()
 		return;
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
+	int health = hud->getHealthBar()->getHealth();
 
-	if (elapsedTime < ANIMATION_TIME_CONSTANT)
+	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3 + 3))
 		return;
 
 	bool fadedIn = false;
@@ -97,7 +81,32 @@ void LevelCompleteScreen::showUpEnemiesBar()
 	if (!fadedIn)
 		return;
 
-	elapsedTime -= ANIMATION_TIME_CONSTANT;
+	elapsedTime -= ANIMATION_TIME_CONSTANT * (health + 3 + 3);
+
+	hudBarCounting(*hud->getEnemiesBar(), enemiesBar, elapsedTime, 2, Game::ENEMIES_SCORE, Game::ENEMIES_SCORE_BONUS);
+}
+
+void LevelCompleteScreen::hudBarCounting(HUDBar &sourceHUDBar, HUDBar &targetHUDBar, int elapsedTime, int counterIndex, int score, int bonusScore)
+{
+	int items = sourceHUDBar.getCurrentItems();
+	int maxItems = sourceHUDBar.getMaxItems();
+
+	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 2)
+		targetHUDBar.HUDBar::setItems((double)items / (ANIMATION_TIME_CONSTANT) * (elapsedTime - ANIMATION_TIME_CONSTANT), maxItems);
+	else
+		targetHUDBar.HUDBar::setItems(items, maxItems);
+
+	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 3)
+	{
+		counters[counterIndex].set(items * score);
+		counters[counterIndex].count(ANIMATION_TIME_CONSTANT);
+	}
+	else if (elapsedTime >= ANIMATION_TIME_CONSTANT * 3)
+	{
+		if (items == maxItems)
+			counters[counterIndex].set(items * score + bonusScore, items * score);
+		counters[counterIndex].count(ANIMATION_TIME_CONSTANT);
+	}
 }
 
 void LevelCompleteScreen::showUpTimeBar()
@@ -106,8 +115,9 @@ void LevelCompleteScreen::showUpTimeBar()
 		return;
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
+	int health = hud->getHealthBar()->getHealth();
 
-	if (elapsedTime < ANIMATION_TIME_CONSTANT * 1.5)
+	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3 + 3 + 3))
 		return;
 
 	bool fadedIn = false;
@@ -118,7 +128,53 @@ void LevelCompleteScreen::showUpTimeBar()
 	if (!fadedIn)
 		return;
 
-	elapsedTime -= ANIMATION_TIME_CONSTANT * 1.5;
+	elapsedTime -= ANIMATION_TIME_CONSTANT * (health + 3 + 3 + 3);
+
+	int timeLeft = hud->getTimeBar()->getTimeLeft();
+
+	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 2)
+		timeBar.setTimeLeft((double)-timeLeft / ANIMATION_TIME_CONSTANT * (elapsedTime - ANIMATION_TIME_CONSTANT) + timeLeft);
+	else
+		timeBar.setTimeLeft(0);
+
+	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 3)
+	{
+		counters[3].set(timeLeft * Game::TIME_SCORE);
+		counters[3].count(ANIMATION_TIME_CONSTANT);
+	}
+}
+
+void LevelCompleteScreen::showUpScore()
+{
+	if (!frame.isShownUp())
+		return;
+
+	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
+	int health = hud->getHealthBar()->getHealth();
+
+	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3 + 3 + 3 + 3))
+		return;
+
+	bool fadedIn = false;
+
+	fadedIn = Utils::fadeIn(scoreText, ANIMATION_TIME_CONSTANT);
+	fadedIn = Utils::fadeIn(counters[4], ANIMATION_TIME_CONSTANT);
+
+	if (!fadedIn)
+		return;
+
+	elapsedTime -= ANIMATION_TIME_CONSTANT * (health + 3 + 3 + 3 + 3);
+	
+	int score = 0;
+	
+	for (int i = 0; i < 4; i++)
+		score += counters[i].getEnd();
+
+	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 3)
+	{
+		counters[4].set(score);
+		counters[4].count(ANIMATION_TIME_CONSTANT);
+	}
 }
 
 LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
@@ -136,18 +192,30 @@ LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
 	itemsBar.setPosition(Vector2f(50, 120));
 	itemsBar.hide();
 
+	enemiesBar.HUDBar::setItems(0, hud->getEnemiesBar()->getMaxItems());
 	enemiesBar.setPosition(Vector2f(50, 180));
 	enemiesBar.hide();
 	
+	timeBar.setTimeLeft(hud->getTimeBar()->getTimeLeft());
 	timeBar.setPosition(Vector2f(50, 240));
 	timeBar.hide();
+
+	font.loadFromFile("resources/fonts/verdana.ttf");
+	scoreText.setFont(font);
+	scoreText.setString("Wynik:");
+	scoreText.setPosition(Vector2f(50, 300));
+	scoreText.setFillColor(Color(255, 255, 255, 0));
+	scoreText.setOutlineColor(Color(0, 0, 0, 0));
+	scoreText.setOutlineThickness(1);
+	scoreText.setStyle(Text::Bold);
 
 	container.append(healthBar);
 	container.append(itemsBar);
 	container.append(enemiesBar);
 	container.append(timeBar);
+	container.append(scoreText);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		counters[i].setPosition(Vector2f(400, 60 + i * 60));
 		Color color = counters[i].getFillColor();
@@ -161,6 +229,8 @@ LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
 
 		container.append(counters[i]);
 	}
+
+	counters[4].setStyle(Text::Bold);
 }
 
 void LevelCompleteScreen::draw(RenderWindow & window)
@@ -173,9 +243,7 @@ void LevelCompleteScreen::draw(RenderWindow & window)
 	showUpItemsBar();
 	showUpEnemiesBar();
 	showUpTimeBar();
-
-	enemiesBar.HUDBar::setItems(hud->getEnemiesBar()->getCurrentItems(), hud->getEnemiesBar()->getMaxItems());
-	timeBar.setTimeLeft(hud->getTimeBar()->getTimeLeft());
+	showUpScore();
 
 	LevelEndScreen::draw(window);
 }

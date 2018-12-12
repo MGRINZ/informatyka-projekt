@@ -13,13 +13,16 @@ private:
 	ItemsBar itemsBar;
 	EnemiesBar enemiesBar;
 	TimeBar timeBar;
+	Font font;
+	Text scoreText;
 	Clock *animationClock;
-	Sprite arrows[4];
-	Counter counters[4];
+	Counter counters[5];
 	void showUpHealtBar();
 	void showUpItemsBar();
 	void showUpEnemiesBar();
+	void hudBarCounting(HUDBar & sourceHUDBar, HUDBar & targetHUDBar, int elapsedTime, int counterIndex, int score, int bonusScore);
 	void showUpTimeBar();
+	void showUpScore();
 
 public:
 	LevelCompleteScreen(HUD * hud);
