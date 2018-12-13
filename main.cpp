@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "Level.h"
 
+#include "Button.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 using namespace std;
 using namespace sf;
 
@@ -13,7 +15,10 @@ int main()
 	
 	Level level;
 	level.load("level3.lvl");
-	
+
+	Button btn(Vector2f(100, 50));
+	btn.setPositiion(Vector2f(50, 50));
+
 	while (window.isOpen())
 	{
 		Event event;
@@ -43,7 +48,7 @@ int main()
 		level.handleTimers();
 
 		level.draw(window);
-
+		window.draw(btn);
 		window.display();
 	}
 	return 0;

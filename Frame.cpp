@@ -4,14 +4,14 @@
 
 Frame::Frame()
 {
-	cornersTextures[0].loadFromFile("resources/textures/frame/frame_01.png");
-	cornersTextures[1].loadFromFile("resources/textures/frame/frame_03.png");
-	cornersTextures[2].loadFromFile("resources/textures/frame/frame_09.png");
-	cornersTextures[3].loadFromFile("resources/textures/frame/frame_07.png");
-	edgesTextures[0].loadFromFile("resources/textures/frame/frame_02.png");
-	edgesTextures[1].loadFromFile("resources/textures/frame/frame_06.png");
-	edgesTextures[2].loadFromFile("resources/textures/frame/frame_08.png");
-	edgesTextures[3].loadFromFile("resources/textures/frame/frame_04.png");
+	cornersTextures[0].loadFromFile("resources/textures/gui/frame/frame_01.png");
+	cornersTextures[1].loadFromFile("resources/textures/gui/frame/frame_03.png");
+	cornersTextures[2].loadFromFile("resources/textures/gui/frame/frame_09.png");
+	cornersTextures[3].loadFromFile("resources/textures/gui/frame/frame_07.png");
+	edgesTextures[0].loadFromFile("resources/textures/gui/frame/frame_02.png");
+	edgesTextures[1].loadFromFile("resources/textures/gui/frame/frame_06.png");
+	edgesTextures[2].loadFromFile("resources/textures/gui/frame/frame_08.png");
+	edgesTextures[3].loadFromFile("resources/textures/gui/frame/frame_04.png");
 
 	//Ustawienie punktów odniesienia w œrodku tekstury
 	corners[0].setOrigin(Vector2f(20, 20));
