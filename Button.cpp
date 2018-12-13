@@ -36,6 +36,7 @@ Button::Button(Vector2f size)
 	fillingTextureRect = IntRect(15, 15, 70, 20);
 
 	setSize(size);
+	setOrigin(Vector2f(0, 0));
 }
 
 void Button::draw(RenderTarget & target, RenderStates states) const
@@ -43,13 +44,11 @@ void Button::draw(RenderTarget & target, RenderStates states) const
 	for (int i = 0; i < 4; i++)
 	{
 		target.draw(corners[i]);
-		//target.draw(edges[i]);	//!!!!!!!!!!!!!!!!!!!!!!
 		for(auto &edge : edgesGroups[i])
 			target.draw(edge);
 		for(auto &part : fillingGroup)
 			target.draw(part);
 	}
-	//target.draw(filling);
 }
 
 void Button::setSize(Vector2f size)
@@ -65,6 +64,11 @@ void Button::setSize(Vector2f size)
 
 void Button::setPositiion(Vector2f position)
 {
+	this->position = position;
+
+	position.x += 15 - origin.x;
+	position.y += 15 - origin.y;
+
 	corners[0].setPosition(Vector2f(position.x, position.y));
 	corners[1].setPosition(Vector2f(position.x + (size.x - 30), position.y));
 	corners[2].setPosition(Vector2f(position.x + (size.x - 30), position.y + (size.y - 30)));
@@ -141,8 +145,6 @@ void Button::setPositiion(Vector2f position)
 	edgesGroups[1].resize(verticalEdges + 1);
 	edgesGroups[2].resize(horizontalEdges + 1);
 	edgesGroups[3].resize(verticalEdges + 1);
-
-	this->position = position;
 }
 
 void Button::setOrigin(Vector2f origin)
