@@ -4,6 +4,7 @@
 #include "Level.h"
 
 #include "Button.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "ButtonOnClickListener.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 using namespace std;
 using namespace sf;
@@ -17,8 +18,11 @@ int main()
 	level.load("level3.lvl");
 
 	Button btn(Vector2f(100, 50), "text");
-	btn.setOrigin(Vector2f(50, 25));
+	Button btn2(Vector2f(100, 50), "dsa");
 	btn.setPositiion(Vector2f(400, 300));
+	btn2.setPositiion(Vector2f(400, 400));
+	btn.setOrigin(Vector2f(50, 25));
+	btn2.setOrigin(Vector2f(50, 25));
 
 
 	while (window.isOpen())
@@ -28,7 +32,10 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 		}
-		
+
+		for (auto &button : Button::buttons)
+			button->handleEvents(window, &level.getView());
+
 		window.clear();
 
 		switch (level.getStatus())
@@ -51,6 +58,7 @@ int main()
 
 		level.draw(window);
 		window.draw(btn);
+		window.draw(btn2);
 		window.display();
 	}
 	return 0;

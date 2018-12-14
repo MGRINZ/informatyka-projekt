@@ -1,8 +1,38 @@
 #include "Button.h"
 
+vector<Button*> Button::buttons;
+
+void Button::setState(State state)
+{
+	if (this->state == state)
+		return;
+
+	Texture *texture;
+	texture = &normalTexture;
+	if (state == State::MOUSE_OVER)
+		texture = &hoverTexture;
+	else if (state == State::MOUSE_DOWN)
+		texture = &pushedTexture;
+
+	for (int i = 0; i < 4; i++)
+	{
+		corners[i].setTexture(*texture);
+		for (auto &edge : edgesGroups[i])
+			edge.setTexture(*texture);
+		for (auto &part : fillingGroup)
+			part.setTexture(*texture);
+	}
+	this->state = state;
+}
+
 Button::Button(Vector2f size)
 {
+	buttons.push_back(this);
+
+	onClickListener = nullptr;
+
 	normalTexture.loadFromFile("resources/textures/gui/button.png");
+	hoverTexture.loadFromFile("resources/textures/gui/button-h.png");
 	pushedTexture.loadFromFile("resources/textures/gui/button-d.png");
 
 	corners[0].setOrigin(Vector2f(15, 15));
@@ -14,12 +44,6 @@ Button::Button(Vector2f size)
 	edges[1].setOrigin(Vector2f(0, 0));
 	edges[2].setOrigin(Vector2f(0, 0));
 	edges[3].setOrigin(Vector2f(15, 0));
-
-	for (int i = 0; i < 4; i++)
-	{
-		corners[i].setTexture(normalTexture);
-		edges[i].setTexture(normalTexture);
-	}
 
 	filling.setTexture(normalTexture);
 
@@ -41,6 +65,8 @@ Button::Button(Vector2f size)
 
 	setSize(size);
 	setOrigin(Vector2f(0, 0));
+
+	setState(State::NONE);
 }
 
 Button::Button(Vector2f size, string text) : Button(size)
@@ -171,4 +197,42 @@ void Button::setText(string text)
 {
 	this->text.setString(text);
 	setPositiion(position);
+}
+
+void Button::handleEvents(Window &window, View *view)
+{
+	Vector2i mousePosition;
+	mousePosition.x = Mouse::getPosition(window).x + view->getCenter().x - view->getSize().x / 2;
+	mousePosition.y = Mouse::getPosition(window).y + view->getCenter().y - view->getSize().y / 2;
+
+	if (mousePosition.x >= position.x - origin.x && mousePosition.x <= position.x - origin.x + size.x
+		&&
+		mousePosition.y >= position.y - origin.y && mousePosition.y <= position.y - origin.y + size.y)
+	{
+		if (state == State::MOUSE_UP)
+			setState(State::NONE);
+		if (!Mouse::isButtonPressed(Mouse::Left))
+		{
+			if (state == State::MOUSE_DOWN)
+			{
+				setState(State::MOUSE_UP);
+				if(onClickListener != NULL)
+					onClickListener->onClick();
+			}
+			if (state == State::NONE)
+				setState(State::MOUSE_OVER);
+		}
+		if(Mouse::isButtonPressed(Mouse::Left))
+			if(state == State::MOUSE_OVER)
+				setState(State::MOUSE_DOWN);
+	}
+	else
+	{
+		setState(State::NONE);
+	}
+}
+
+void Button::setOnClickListener(ButtonOnClickListener & onClickListener)
+{
+	this->onClickListener = &onClickListener;
 }

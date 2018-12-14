@@ -49,6 +49,7 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlocksVector.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonOnClickListener.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />
