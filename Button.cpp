@@ -35,8 +35,17 @@ Button::Button(Vector2f size)
 
 	fillingTextureRect = IntRect(15, 15, 70, 20);
 
+	font.loadFromFile("resources/fonts/verdana.ttf");
+	text.setFont(font);
+	text.setCharacterSize(20);
+
 	setSize(size);
 	setOrigin(Vector2f(0, 0));
+}
+
+Button::Button(Vector2f size, string text) : Button(size)
+{
+	setText(text);
 }
 
 void Button::draw(RenderTarget & target, RenderStates states) const
@@ -49,6 +58,7 @@ void Button::draw(RenderTarget & target, RenderStates states) const
 		for(auto &part : fillingGroup)
 			target.draw(part);
 	}
+	target.draw(text);
 }
 
 void Button::setSize(Vector2f size)
@@ -145,10 +155,20 @@ void Button::setPositiion(Vector2f position)
 	edgesGroups[1].resize(verticalEdges + 1);
 	edgesGroups[2].resize(horizontalEdges + 1);
 	edgesGroups[3].resize(verticalEdges + 1);
+
+	FloatRect gb = text.getGlobalBounds();
+	text.setOrigin(Vector2f(gb.width / 2, gb.height / 2));
+	text.setPosition(Vector2f(this->position.x, this->position.y - 5));
 }
 
 void Button::setOrigin(Vector2f origin)
 {
 	this->origin = origin;
+	setPositiion(position);
+}
+
+void Button::setText(string text)
+{
+	this->text.setString(text);
 	setPositiion(position);
 }

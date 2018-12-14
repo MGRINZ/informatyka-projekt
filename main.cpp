@@ -16,7 +16,7 @@ int main()
 	Level level;
 	level.load("level3.lvl");
 
-	Button btn(Vector2f(100, 50));
+	Button btn(Vector2f(100, 50), "text");
 	btn.setOrigin(Vector2f(50, 25));
 	btn.setPositiion(Vector2f(400, 300));
 
