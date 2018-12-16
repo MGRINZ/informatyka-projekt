@@ -167,6 +167,12 @@
     <ClInclude Include="ButtonsGroup.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonsGroupOnClickListener.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\dirt.jpg">
@@ -185,5 +191,10 @@
   <ItemGroup>
     <None Include="resources\levels\level1.lvl" />
     <None Include="resources\levels\level2.lvl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Informatyka Projekt.rc">
+      <Filter>Pliki zasobów</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

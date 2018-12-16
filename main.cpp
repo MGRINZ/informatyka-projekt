@@ -6,6 +6,7 @@
 #include "Button.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include "ButtonsGroup.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include "ButtonOnClickListener.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "ButtonsGroupOnClickListener.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 using namespace std;
 using namespace sf;
@@ -27,9 +28,19 @@ int main()
 	//btn.setOrigin(Vector2f(50, 25));
 	btn2.setOrigin(Vector2f(50, 25));
 	ButtonsGroup btngrp;
+	class a : public ButtonsGroupOnClickListener
+	{
+	public:
+		void onClick(int index)
+		{
+			cout << index << endl;
+		}
+	};
+	a A;
 	btngrp.add(btn);
 	btngrp.add(btn2);
 	btngrp.add(btn3);
+	btngrp.setOnClickListener(A);
 	btngrp.setSpacing(Vector2f(10, 20));
 	btngrp.setPosition(Vector2f(400, 300));
 

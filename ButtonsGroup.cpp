@@ -1,7 +1,5 @@
 #include "ButtonsGroup.h"
 
-
-
 ButtonsGroup::ButtonsGroup()
 {
 	setLayout(Layout::HORIZONTAL);
@@ -24,6 +22,8 @@ void ButtonsGroup::add(Button button)
 		}
 	}
 	
+	SelectedButtonOnClickListener *sbClickListener = new SelectedButtonOnClickListener(buttons.size(), &onClickListener);
+	button.setOnClickListener(*sbClickListener);
 	buttons.push_back(button);	//vector reallocuje pamiêæ, wiêc adresy elementów siê zmieniaj¹ ...(1)
 
 	//(2)..., by dodaæ nowe adresy.
@@ -63,4 +63,23 @@ void ButtonsGroup::draw(RenderTarget & target, RenderStates states) const
 {
 	for (auto &button : buttons)
 		target.draw(button);
+}
+
+void ButtonsGroup::setOnClickListener(ButtonsGroupOnClickListener & onClickListener)
+{
+	if (this->onClickListener != NULL && &onClickListener != this->onClickListener)
+		delete this->onClickListener;
+	this->onClickListener = &onClickListener;
+}
+
+ButtonsGroup::SelectedButtonOnClickListener::SelectedButtonOnClickListener(int index, ButtonsGroupOnClickListener **onClickListener)
+{
+	this->index = index;
+	this->onClickListener = onClickListener;
+}
+
+void ButtonsGroup::SelectedButtonOnClickListener::onClick()
+{
+	if (onClickListener != NULL)
+		(*onClickListener)->onClick(index);
 }

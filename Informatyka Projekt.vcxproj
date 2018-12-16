@@ -52,6 +52,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonOnClickListener.h" />
     <ClInclude Include="ButtonsGroup.h" />
+    <ClInclude Include="ButtonsGroupOnClickListener.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />
@@ -69,6 +70,7 @@
     <ClInclude Include="LevelEndScreen.h" />
     <ClInclude Include="LevelFailedScreen.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="TimeBar.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -81,6 +83,9 @@
   <ItemGroup>
     <None Include="resources\levels\level1.lvl" />
     <None Include="resources\levels\level2.lvl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Informatyka Projekt.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

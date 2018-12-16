@@ -244,5 +244,7 @@ void Button::handleEvents(Window &window, View *view)
 
 void Button::setOnClickListener(ButtonOnClickListener & onClickListener)
 {
+	if(this->onClickListener != NULL && &onClickListener != this->onClickListener)
+		delete this->onClickListener;
 	this->onClickListener = &onClickListener;
 }
