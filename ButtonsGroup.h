@@ -17,7 +17,7 @@ private:
 	};
 public:
 	ButtonsGroup();
-	void add(Button &button);
+	void add(Button button);
 	void setLayout(Layout layout);
 	void setSpacing(Vector2f spacing);
 	void setPosition(Vector2f position);

@@ -19,16 +19,19 @@ int main()
 	level.load("level3.lvl");
 
 	Button btn(Vector2f(100, 50), "Text");
-	Button btn2(Vector2f(100, 50), "Dsa");
+	Button btn2(Vector2f(101, 50), "Dsa");
+	Button btn3(Vector2f(102, 50), "Qwe");
 	btn.setPositiion(Vector2f(400, 300));
 	btn2.setPositiion(Vector2f(400, 400));
+	btn3.setPositiion(Vector2f(400, 500));
 	//btn.setOrigin(Vector2f(50, 25));
 	btn2.setOrigin(Vector2f(50, 25));
 	ButtonsGroup btngrp;
 	btngrp.add(btn);
 	btngrp.add(btn2);
+	btngrp.add(btn3);
 	btngrp.setSpacing(Vector2f(10, 20));
-	//btngrp.setPosition(Vector2f(400, 300));
+	btngrp.setPosition(Vector2f(400, 300));
 
 	while (window.isOpen())
 	{
@@ -63,8 +66,8 @@ int main()
 
 		level.draw(window);
 		window.draw(btngrp);
-		window.draw(btn);
-		window.draw(btn2);
+		//window.draw(btn);
+		//window.draw(btn2);
 		window.display();
 	}
 	return 0;

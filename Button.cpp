@@ -211,7 +211,6 @@ void Button::setText(string text)
 
 void Button::handleEvents(Window &window, View *view)
 {
-	cout << (int)this << endl;
 	Vector2i mousePosition;
 	mousePosition.x = Mouse::getPosition(window).x + view->getCenter().x - view->getSize().x / 2;
 	mousePosition.y = Mouse::getPosition(window).y + view->getCenter().y - view->getSize().y / 2;

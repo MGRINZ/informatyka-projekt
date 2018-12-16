@@ -8,13 +8,28 @@ ButtonsGroup::ButtonsGroup()
 	setPosition(Vector2f(0, 0));
 }
 
-void ButtonsGroup::add(Button &button)
+void ButtonsGroup::add(Button button)
 {
-	Button *btn = new Button(button);
-	cout << (int)btn << endl << endl;
-	Button::buttons.push_back(btn);
-	//button.setOnClickListener();
-	buttons.push_back(*btn);
+	//(1)..., wiêc wskaŸniki w Button::buttons bêd¹ wskazywa³y na stare adresy elementów...
+	for (auto &btn : buttons)
+	{
+		for (int i = 0; i < Button::buttons.size(); i++)
+		{
+			if (Button::buttons[i] == &btn)
+			{
+				//...dlatego trzeba je usun¹æ...(2)
+				Button::buttons.erase(Button::buttons.begin() + i);
+				break;
+			}
+		}
+	}
+	
+	buttons.push_back(button);	//vector reallocuje pamiêæ, wiêc adresy elementów siê zmieniaj¹ ...(1)
+
+	//(2)..., by dodaæ nowe adresy.
+	for (auto &btn : buttons)
+		Button::buttons.push_back(&btn);
+
 	setPosition(position);
 }
 
