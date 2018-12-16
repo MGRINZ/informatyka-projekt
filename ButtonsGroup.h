@@ -11,20 +11,23 @@ private:
 	vector<Button> buttons;
 	Vector2f spacing;
 	Vector2f position;
+	Vector2f origin;
 	int layout;
+	class SelectedButtonOnClickListener;
+	ButtonsGroupOnClickListener *onClickListener;
+public:
 	enum Layout
 	{
 		HORIZONTAL,
 		VERTICAL
 	};
-	class SelectedButtonOnClickListener;
-	ButtonsGroupOnClickListener *onClickListener;
-public:
 	ButtonsGroup();
 	void add(Button button);
 	void setLayout(Layout layout);
 	void setSpacing(Vector2f spacing);
 	void setPosition(Vector2f position);
+	Vector2f getSize();
+	void setOrigin(Vector2f origin);
 	void draw(RenderTarget& target, RenderStates states) const;
 	void setOnClickListener(ButtonsGroupOnClickListener &onClickListener);
 };

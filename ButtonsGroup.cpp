@@ -48,6 +48,8 @@ void ButtonsGroup::setSpacing(Vector2f spacing)
 void ButtonsGroup::setPosition(Vector2f position)
 {
 	this->position = position;
+	position.x -= origin.x;
+	position.y -= origin.y;
 	Vector2f bp(position);
 	Vector2f bs;
 	for (int i = 0; i < buttons.size(); i++)
@@ -55,9 +57,51 @@ void ButtonsGroup::setPosition(Vector2f position)
 		buttons[i].setOrigin(Vector2f(0, 0));
 		bs = buttons[i].getSize();
 		buttons[i].setPositiion(position);
-		position.x += bs.x + spacing.x;
+		if(layout == Layout::HORIZONTAL)
+			position.x += bs.x + spacing.x;
+		else
+			position.y += bs.y + spacing.y;
 	}
 }
+
+Vector2f ButtonsGroup::getSize()
+{
+	Vector2f size(0, 0);
+	Vector2f bs;
+	double max = 0;
+	if (layout == Layout::HORIZONTAL)
+	{
+		for (auto &button : buttons)
+		{
+			bs = button.getSize();
+			size.x += bs.x + spacing.x;
+			if(bs.y > max)
+				max = bs.y;
+		}
+		size.x -= spacing.x;
+		size.y = max;
+	}
+	else
+	{
+		for (auto &button : buttons)
+		{
+			bs = button.getSize();
+			size.y += bs.y + spacing.y;
+			if (bs.x > max)
+				max = bs.x;
+		}
+		size.y -= spacing.y;
+		size.x = max;
+	}
+	return size;
+}
+
+void ButtonsGroup::setOrigin(Vector2f origin)
+{
+	this->origin = origin;
+	setPosition(position);
+}
+
 
 void ButtonsGroup::draw(RenderTarget & target, RenderStates states) const
 {
