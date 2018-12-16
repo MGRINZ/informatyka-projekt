@@ -4,6 +4,7 @@
 #include "Level.h"
 
 #include "Button.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "ButtonsGroup.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include "ButtonOnClickListener.h"	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 using namespace std;
@@ -17,13 +18,17 @@ int main()
 	Level level;
 	level.load("level3.lvl");
 
-	Button btn(Vector2f(100, 50), "text");
-	Button btn2(Vector2f(100, 50), "dsa");
+	Button btn(Vector2f(100, 50), "Text");
+	Button btn2(Vector2f(100, 50), "Dsa");
 	btn.setPositiion(Vector2f(400, 300));
 	btn2.setPositiion(Vector2f(400, 400));
-	btn.setOrigin(Vector2f(50, 25));
+	//btn.setOrigin(Vector2f(50, 25));
 	btn2.setOrigin(Vector2f(50, 25));
-
+	ButtonsGroup btngrp;
+	btngrp.add(btn);
+	btngrp.add(btn2);
+	btngrp.setSpacing(Vector2f(10, 20));
+	//btngrp.setPosition(Vector2f(400, 300));
 
 	while (window.isOpen())
 	{
@@ -57,6 +62,7 @@ int main()
 		level.handleTimers();
 
 		level.draw(window);
+		window.draw(btngrp);
 		window.draw(btn);
 		window.draw(btn2);
 		window.display();

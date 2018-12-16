@@ -23,6 +23,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlocksVector.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonsGroup.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="EJelly.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="BlocksVector.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonOnClickListener.h" />
+    <ClInclude Include="ButtonsGroup.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />

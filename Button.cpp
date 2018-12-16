@@ -98,6 +98,11 @@ void Button::setSize(Vector2f size)
 	setPositiion(position);
 }
 
+Vector2f Button::getSize()
+{
+	return size;
+}
+
 void Button::setPositiion(Vector2f position)
 {
 	this->position = position;
@@ -184,7 +189,12 @@ void Button::setPositiion(Vector2f position)
 
 	FloatRect gb = text.getGlobalBounds();
 	text.setOrigin(Vector2f(gb.width / 2, gb.height / 2));
-	text.setPosition(Vector2f(this->position.x, this->position.y - 5));
+	text.setPosition(Vector2f(this->position.x - origin.x + size.x / 2 - 5, this->position.y - origin.y + size.y / 2 - 5));
+}
+
+Vector2f Button::getPositiion()
+{
+	return position;
 }
 
 void Button::setOrigin(Vector2f origin)
@@ -201,6 +211,7 @@ void Button::setText(string text)
 
 void Button::handleEvents(Window &window, View *view)
 {
+	cout << (int)this << endl;
 	Vector2i mousePosition;
 	mousePosition.x = Mouse::getPosition(window).x + view->getCenter().x - view->getSize().x / 2;
 	mousePosition.y = Mouse::getPosition(window).y + view->getCenter().y - view->getSize().y / 2;

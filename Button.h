@@ -41,7 +41,9 @@ public:
 	Button(Vector2f size, string text);
 	void draw(RenderTarget& target, RenderStates states) const;
 	void setSize(Vector2f size);
+	Vector2f getSize();
 	void setPositiion(Vector2f position);
+	Vector2f getPositiion();
 	void setOrigin(Vector2f origin);
 	void setText(string text);
 	void handleEvents(Window &window, View *view);
