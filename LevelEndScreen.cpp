@@ -10,9 +10,12 @@ LevelEndScreen::LevelEndScreen()
 	frame.getContainer()->setTexture(*container.getTexture(), false);
 
 	headerFont.loadFromFile("resources/fonts/verdana.ttf");
-	header.setFont(headerFont);
+	header.setFont(Game::getInstance().getMainFont());
+
+	menu.setSpacing(Vector2f(20, 0));
 
 	container.append(header);
+	container.append(menu);
 	container.setBackground(Color(0, 0, 0, 96));
 
 	setSize(Vector2f(1,1));
@@ -50,4 +53,10 @@ void LevelEndScreen::setSize(Vector2f size)
 	frame.setSize(size);
 	container.setSize(size);
 	header.setPosition(Vector2f(container.getSize().x / 2, 20));
+	menu.setPosition(Vector2f(container.getSize().x / 2, container.getSize().y - 40));
+}
+
+Vector2f LevelEndScreen::getPosition()
+{
+	return position;
 }

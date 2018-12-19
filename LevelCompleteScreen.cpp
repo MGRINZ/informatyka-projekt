@@ -209,6 +209,17 @@ LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
 	scoreText.setOutlineThickness(1);
 	scoreText.setStyle(Text::Bold);
 
+	Button mainMenuButton(Vector2f(100, 50), "Menu");
+	Button restartButton(Vector2f(100, 50), "Restart");
+	Button nextLevelButton(Vector2f(200, 50), "Nastepny poziom");
+
+	menu.add(mainMenuButton);
+	menu.add(restartButton);
+	menu.add(nextLevelButton);
+
+	Vector2f mp = menu.getSize();
+	menu.setOrigin(Vector2f(mp.x / 2, mp.y / 2));
+
 	container.append(healthBar);
 	container.append(itemsBar);
 	container.append(enemiesBar);

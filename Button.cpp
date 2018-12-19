@@ -1,6 +1,19 @@
 #include "Button.h"
+#include "Game.h"
 
 vector<Button*> Button::buttons;
+Texture * Button::normalTexture;
+Texture * Button::pushedTexture;
+Texture * Button::hoverTexture;
+
+void Button::loadTextures(Texture * &texture, const string filename)
+{
+	if (texture == NULL)
+	{
+		texture = new Texture();
+		texture->loadFromFile("resources/textures/gui/" + filename);
+	}
+}
 
 void Button::setState(State state)
 {
@@ -8,11 +21,11 @@ void Button::setState(State state)
 		return;
 
 	Texture *texture;
-	texture = &normalTexture;
+	texture = normalTexture;
 	if (state == State::MOUSE_OVER)
-		texture = &hoverTexture;
+		texture = hoverTexture;
 	else if (state == State::MOUSE_DOWN)
-		texture = &pushedTexture;
+		texture = pushedTexture;
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -31,9 +44,9 @@ Button::Button(Vector2f size)
 
 	onClickListener = nullptr;
 
-	normalTexture.loadFromFile("resources/textures/gui/button.png");
-	hoverTexture.loadFromFile("resources/textures/gui/button-h.png");
-	pushedTexture.loadFromFile("resources/textures/gui/button-d.png");
+	loadTextures(normalTexture, "button.png");
+	loadTextures(hoverTexture, "button-h.png");
+	loadTextures(pushedTexture, "button-d.png");
 
 	corners[0].setOrigin(Vector2f(15, 15));
 	corners[1].setOrigin(Vector2f(0, 15));
@@ -45,7 +58,7 @@ Button::Button(Vector2f size)
 	edges[2].setOrigin(Vector2f(0, 0));
 	edges[3].setOrigin(Vector2f(15, 0));
 
-	filling.setTexture(normalTexture);
+	filling.setTexture(*normalTexture);
 
 	corners[0].setTextureRect(IntRect(0, 0, 15, 15));
 	corners[1].setTextureRect(IntRect(85, 0, 15, 15));
@@ -59,12 +72,12 @@ Button::Button(Vector2f size)
 
 	fillingTextureRect = IntRect(15, 15, 70, 20);
 
-	font.loadFromFile("resources/fonts/verdana.ttf");
-	text.setFont(font);
+	text.setFont(Game::getInstance().getMainFont());
 	text.setCharacterSize(20);
 
 	setSize(size);
 	setOrigin(Vector2f(0, 0));
+	setOffset(Vector2f(0, 0));
 
 	setState(State::NONE);
 }
@@ -215,9 +228,12 @@ void Button::handleEvents(Window &window, View *view)
 	mousePosition.x = Mouse::getPosition(window).x + view->getCenter().x - view->getSize().x / 2;
 	mousePosition.y = Mouse::getPosition(window).y + view->getCenter().y - view->getSize().y / 2;
 
-	if (mousePosition.x >= position.x - origin.x && mousePosition.x <= position.x - origin.x + size.x
+	cout << text.getString().toAnsiString() << endl;
+	cout << offset.x << endl << offset.y << endl;
+
+	if (mousePosition.x >= position.x - origin.x + offset.x && mousePosition.x <= position.x - origin.x + size.x + offset.x
 		&&
-		mousePosition.y >= position.y - origin.y && mousePosition.y <= position.y - origin.y + size.y)
+		mousePosition.y >= position.y - origin.y + offset.y && mousePosition.y <= position.y - origin.y + size.y + offset.y)
 	{
 		if (state == State::MOUSE_UP)
 			setState(State::NONE);
@@ -247,4 +263,18 @@ void Button::setOnClickListener(ButtonOnClickListener & onClickListener)
 	if(this->onClickListener != NULL && &onClickListener != this->onClickListener)
 		delete this->onClickListener;
 	this->onClickListener = &onClickListener;
+}
+
+void Button::setOffset(Vector2f offset)
+{
+	this->offset = offset;
+}
+
+Button::~Button()
+{
+	for (int i = 0; i < Button::buttons.size(); i++)
+	{
+		if (Button::buttons[i] == this)
+			Button::buttons.erase(Button::buttons.begin() + i);
+	}
 }

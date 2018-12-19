@@ -124,6 +124,6 @@ ButtonsGroup::SelectedButtonOnClickListener::SelectedButtonOnClickListener(int i
 
 void ButtonsGroup::SelectedButtonOnClickListener::onClick()
 {
-	if (onClickListener != NULL)
+	if (*onClickListener != NULL)
 		(*onClickListener)->onClick(index);
 }

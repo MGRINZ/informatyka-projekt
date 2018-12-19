@@ -10,9 +10,9 @@ using namespace sf;
 class Button : public Drawable
 {
 private:
-	Texture normalTexture;
-	Texture hoverTexture;
-	Texture pushedTexture;
+	static Texture *normalTexture;
+	static Texture *hoverTexture;
+	static Texture *pushedTexture;
 	Sprite corners[4];
 	Sprite edges[4];
 	Sprite filling;
@@ -20,11 +20,11 @@ private:
 	vector<Sprite> fillingGroup;
 	IntRect edgesTextureRects[4];
 	IntRect fillingTextureRect;
-	Font font;
 	Text text;
 	Vector2f size;
 	Vector2f position;
 	Vector2f origin;
+	Vector2f offset;
 	int state = -1;
 	enum State
 	{
@@ -33,12 +33,14 @@ private:
 		MOUSE_DOWN,
 		MOUSE_UP,
 	};
+	void loadTextures(Texture * &texture, const string filename);
 	void setState(State state);
 	ButtonOnClickListener *onClickListener;
 public:
 	static vector<Button*> buttons;
 	Button(Vector2f size);
 	Button(Vector2f size, string text);
+	~Button();
 	void draw(RenderTarget& target, RenderStates states) const;
 	void setSize(Vector2f size);
 	Vector2f getSize();
@@ -48,5 +50,6 @@ public:
 	void setText(string text);
 	void handleEvents(Window &window, View *view);
 	void setOnClickListener(ButtonOnClickListener &onClickListener);
+	void setOffset(Vector2f offset);
 };
 

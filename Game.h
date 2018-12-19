@@ -1,7 +1,14 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+#include <iostream>
+
+using namespace sf;
 
 class Game
 {
+private:
+	Game();
+	Font MAIN_FONT;
 public:
 	static const int WIDTH = 800;
 	static const int HEIGHT = 600;
@@ -12,4 +19,9 @@ public:
 	static const int HEALTH_SCORE_BONUS = 3000;
 	static const int ITEMS_SCORE_BONUS = 4000;
 	static const int ENEMIES_SCORE_BONUS = 5000;
+	static Game& getInstance();
+	Game(Game const&) = delete;
+	void operator=(Game const&) = delete;
+	void init();
+	Font& getMainFont();
 };
