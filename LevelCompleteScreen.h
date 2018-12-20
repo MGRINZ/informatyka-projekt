@@ -1,5 +1,6 @@
 #pragma once
 #include "LevelEndScreen.h"
+#include "LevelCompleteOnClickListener.h"
 #include "HUD.h"
 #include "Counter.h"
 
@@ -23,9 +24,10 @@ private:
 	void hudBarCounting(HUDBar & sourceHUDBar, HUDBar & targetHUDBar, int elapsedTime, int counterIndex, int score, int bonusScore);
 	void showUpTimeBar();
 	void showUpScore();
+	LevelCompleteOnClickListener onClickListener;
 
 public:
-	LevelCompleteScreen(HUD * hud);
+	LevelCompleteScreen(HUD * hud, Vector2f position);
 	void draw(RenderWindow &window);
 };
 

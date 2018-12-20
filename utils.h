@@ -41,6 +41,7 @@ public:
 	static int fadeIn(Sprite &object, int duration, int maxTransparency = 255);
 	template <class T>
 	static int fadeIn(T &object, int duration, int maxTransparency = 255);
+	static bool fexists(string filename);
 };
 
 template<class T>

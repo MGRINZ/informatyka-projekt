@@ -12,6 +12,7 @@ private:
 	Vector2f spacing;
 	Vector2f position;
 	Vector2f origin;
+	Vector2f offset;
 	int layout;
 	class SelectedButtonOnClickListener;
 	ButtonsGroupOnClickListener *onClickListener;
@@ -26,6 +27,7 @@ public:
 	void setLayout(Layout layout);
 	void setSpacing(Vector2f spacing);
 	void setPosition(Vector2f position);
+	void setOffset(Vector2f offset);
 	Vector2f getSize();
 	void setOrigin(Vector2f origin);
 	void draw(RenderTarget& target, RenderStates states) const;

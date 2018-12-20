@@ -31,6 +31,7 @@ void ButtonsGroup::add(Button button)
 		Button::buttons.push_back(&btn);
 
 	setPosition(position);
+	setOffset(offset);
 }
 
 void ButtonsGroup::setLayout(Layout layout)
@@ -62,6 +63,13 @@ void ButtonsGroup::setPosition(Vector2f position)
 		else
 			position.y += bs.y + spacing.y;
 	}
+}
+
+void ButtonsGroup::setOffset(Vector2f offset)
+{
+	this->offset = offset;
+	for (auto &button : buttons)
+		button.setOffset(offset);
 }
 
 Vector2f ButtonsGroup::getSize()
@@ -101,7 +109,6 @@ void ButtonsGroup::setOrigin(Vector2f origin)
 	this->origin = origin;
 	setPosition(position);
 }
-
 
 void ButtonsGroup::draw(RenderTarget & target, RenderStates states) const
 {

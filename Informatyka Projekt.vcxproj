@@ -37,8 +37,10 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemsBar.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelCompleteOnClickListener.cpp" />
     <ClCompile Include="LevelCompleteScreen.cpp" />
     <ClCompile Include="LevelEndScreen.cpp" />
+    <ClCompile Include="LevelFailedOnClickListener.cpp" />
     <ClCompile Include="LevelFailedScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -66,8 +68,10 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemsBar.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelCompleteOnClickListener.h" />
     <ClInclude Include="LevelCompleteScreen.h" />
     <ClInclude Include="LevelEndScreen.h" />
+    <ClInclude Include="LevelFailedOnClickListener.h" />
     <ClInclude Include="LevelFailedScreen.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />

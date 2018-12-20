@@ -12,6 +12,7 @@
 class Level
 {
 private:
+	string levelFilename;
 	BlocksVector solidBlocks;
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
@@ -31,6 +32,7 @@ private:
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
+	static const string LEVEL_PATH;
 	static const string LEVEL_PROPERTY_SETTINGS;
 	static const string LEVEL_PROPERTY_TERRAIN;
 	static const string LEVEL_PROPERTY_BACKGROUND;
@@ -51,7 +53,8 @@ public:
 	void addItem(Item item);
 	void addEnemy(Entity* entity);
 	void draw(RenderWindow &window);
-	int load(string levelName);
+	int load(string levelFilename);
+	void restart();
 	void handleEntities();
 	void handleItems();
 	void handleFinish();
@@ -59,4 +62,5 @@ public:
 	View getView();
 	int getStatus();
 	void setStatus(int status);
+	string getLevelFilename();
 };

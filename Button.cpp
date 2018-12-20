@@ -17,6 +17,7 @@ void Button::loadTextures(Texture * &texture, const string filename)
 
 void Button::setState(State state)
 {
+	cout << state << endl;
 	if (this->state == state)
 		return;
 
@@ -228,9 +229,6 @@ void Button::handleEvents(Window &window, View *view)
 	mousePosition.x = Mouse::getPosition(window).x + view->getCenter().x - view->getSize().x / 2;
 	mousePosition.y = Mouse::getPosition(window).y + view->getCenter().y - view->getSize().y / 2;
 
-	cout << text.getString().toAnsiString() << endl;
-	cout << offset.x << endl << offset.y << endl;
-
 	if (mousePosition.x >= position.x - origin.x + offset.x && mousePosition.x <= position.x - origin.x + size.x + offset.x
 		&&
 		mousePosition.y >= position.y - origin.y + offset.y && mousePosition.y <= position.y - origin.y + size.y + offset.y)
@@ -242,8 +240,11 @@ void Button::handleEvents(Window &window, View *view)
 			if (state == State::MOUSE_DOWN)
 			{
 				setState(State::MOUSE_UP);
-				if(onClickListener != NULL)
+				if (onClickListener != NULL)
+				{
 					onClickListener->onClick();
+					return;
+				}
 			}
 			if (state == State::NONE)
 				setState(State::MOUSE_OVER);

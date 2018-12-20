@@ -177,9 +177,10 @@ void LevelCompleteScreen::showUpScore()
 	}
 }
 
-LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
+LevelCompleteScreen::LevelCompleteScreen(HUD * hud, Vector2f position)
 {
 	setSize(Vector2f(Game::WIDTH * 0.8, Game::HEIGHT * 0.7));
+	setPosition(position);
 	setHeader("Poziom ukonczony");
 	this->hud = hud;
 	
@@ -215,10 +216,14 @@ LevelCompleteScreen::LevelCompleteScreen(HUD * hud)
 
 	menu.add(mainMenuButton);
 	menu.add(restartButton);
-	menu.add(nextLevelButton);
+
+	if(Utils::fexists(Level::LEVEL_PATH + Game::getInstance().getNextLevelFilename()))
+		menu.add(nextLevelButton);
 
 	Vector2f mp = menu.getSize();
 	menu.setOrigin(Vector2f(mp.x / 2, mp.y / 2));
+
+	menu.setOnClickListener(onClickListener);
 
 	container.append(healthBar);
 	container.append(itemsBar);

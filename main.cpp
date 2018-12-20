@@ -8,47 +8,7 @@ using namespace sf;
 
 int main()
 {
-	RenderWindow window(VideoMode(Game::WIDTH, Game::HEIGHT), "Gra");
-	window.setFramerateLimit(60);
-
 	Game::getInstance().init();
-
-	Level level;
-	level.load("level3.lvl");
-
-	while (window.isOpen())
-	{
-		Event event;
-		while (window.pollEvent(event)) {
-			if (event.type == Event::Closed)
-				window.close();
-		}
-
-		for (auto &button : Button::buttons)
-			button->handleEvents(window, &level.getView());
-
-		window.clear();
-
-		switch (level.getStatus())
-		{
-			case Level::Status::FINISHED:
-			case Level::Status::FAILED:
-			{
-				break;
-			}
-			default:
-			{
-				level.handleEntities();
-				level.handleItems();
-				window.setView(level.getView());
-			}
-		}
-
-		level.handleFinish();
-		level.handleTimers();
-
-		level.draw(window);
-		window.display();
-	}
+	Game::getInstance().run();
 	return 0;
 }

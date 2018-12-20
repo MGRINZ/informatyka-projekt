@@ -26,9 +26,10 @@ void LevelEndScreen::draw(RenderWindow & window)
 {
 	Utils::fadeIn(overlay, 100, 192);
 	window.draw(overlay);
-	
+
 	container.draw();
 	
+	frame.setPosition(position);
 	frame.showUp();
 	window.draw(frame);
 }
@@ -37,7 +38,7 @@ void LevelEndScreen::setPosition(Vector2f position)
 {
 	this->position = position;
 	overlay.setPosition(Vector2f(position.x - Game::WIDTH / 2, position.y - Game::HEIGHT / 2));
-	frame.setPosition(position);
+	menu.setOffset(Vector2f(position.x - size.x / 2, position.y - size.y / 2));
 }
 
 void LevelEndScreen::setHeader(string header)
@@ -50,6 +51,7 @@ void LevelEndScreen::setHeader(string header)
 
 void LevelEndScreen::setSize(Vector2f size)
 {
+	this->size = size;
 	frame.setSize(size);
 	container.setSize(size);
 	header.setPosition(Vector2f(container.getSize().x / 2, 20));

@@ -21,7 +21,7 @@ public:
 	void setPosition(Vector2f position);
 	Vector2f getPosition();
 	void setSize(Vector2f size);
-	Vector2f getSize(Vector2f size);
+	Vector2f getSize();
 	Sprite* getContainer();
 	void showUp();
 	bool isShownUp();

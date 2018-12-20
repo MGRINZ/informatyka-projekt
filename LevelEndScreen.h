@@ -11,6 +11,7 @@ class LevelEndScreen
 {
 private:
 	Vector2f position;
+	Vector2f size;
 	RectangleShape overlay;
 	Font headerFont;
 	Text header;

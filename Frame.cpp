@@ -329,7 +329,7 @@ void Frame::setSize(Vector2f size)
 	this -> size = size;
 }
 
-Vector2f Frame::getSize(Vector2f size)
+Vector2f Frame::getSize()
 {
 	return size;
 }
