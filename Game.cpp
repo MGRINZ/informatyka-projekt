@@ -31,11 +31,9 @@ void Game::run()
 				window.close();
 		}
 
+		//zwyk³y for zamiast foreach ¿eby nie wywo³ywaæ metod zniszczonych obiektów
 		for (int i = 0; i < Button::buttons.size(); i++)
-		{
-			cout << (int)Button::buttons[i] << endl;
 			Button::buttons[i]->handleEvents(window, &level.getView());
-		}
 
 		window.clear();
 

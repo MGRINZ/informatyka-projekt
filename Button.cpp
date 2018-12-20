@@ -17,7 +17,6 @@ void Button::loadTextures(Texture * &texture, const string filename)
 
 void Button::setState(State state)
 {
-	cout << state << endl;
 	if (this->state == state)
 		return;
 
