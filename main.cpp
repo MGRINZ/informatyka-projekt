@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
+#include "Level.h"
 
 using namespace std;
 using namespace sf;
@@ -25,7 +26,8 @@ int main()
 
 		switch (level.getStatus())
 		{
-			case Level::LEVEL_STATUS_FINISHED:
+			case Level::Status::FINISHED:
+			case Level::Status::FAILED:
 			{
 				break;
 			}
