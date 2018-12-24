@@ -19,7 +19,8 @@ private:
 	{
 		LOADING,
 		IN_MENU,
-		IN_GAME
+		IN_GAME,
+		EXIT
 	};
 	Status status;
 public:
@@ -41,4 +42,5 @@ public:
 	Level& getLevel();
 	string getNextLevelFilename();
 	void nextLevel();
+	void exit();
 };

@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include "Background.h"
 #include "Menu.h"
-#include "MainMenu.h"
 
 using namespace sf;
 
@@ -12,8 +11,18 @@ private:
 	View view;
 	Background bg;
 	Menu *menu;
+	int status;
 public:
+	enum Status
+	{
+		MAIN_MENU,
+		NEW_GAME_MENU,
+		NEW_GAME_DIFFICULTY_MENU,
+		LOAD_MENU,
+		HELP_MENU
+	};
 	GameMenu();
 	void draw(RenderWindow &window);
+	void setStatus(Status status);
 };
 

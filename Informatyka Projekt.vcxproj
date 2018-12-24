@@ -45,7 +45,10 @@
     <ClCompile Include="LevelFailedScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MainMenuOnClickListener.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="NewGameMenu.cpp" />
+    <ClCompile Include="NewGameMenuOnClickListener.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TimeBar.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -78,7 +81,10 @@
     <ClInclude Include="LevelFailedOnClickListener.h" />
     <ClInclude Include="LevelFailedScreen.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="MainMenuOnClickListener.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="NewGameMenu.h" />
+    <ClInclude Include="NewGameMenuOnClickListener.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="TimeBar.h" />

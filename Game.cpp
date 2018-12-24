@@ -34,6 +34,7 @@ void Game::run()
 				window.close();
 		}
 
+		//Obs³uga zdarzeñ przycisków
 		//zwyk³y for zamiast foreach ¿eby nie wywo³ywaæ metod zniszczonych obiektów
 		for (int i = 0; i < Button::buttons.size(); i++)
 			Button::buttons[i]->handleEvents(window, &level.getView());
@@ -53,23 +54,28 @@ void Game::run()
 			{
 				switch (level.getStatus())
 				{
-				case Level::Status::FINISHED:
-				case Level::Status::FAILED:
-				{
-					break;
-				}
-				default:
-				{
-					level.handleEntities();
-					level.handleItems();
-					window.setView(level.getView());
-				}
+					case Level::Status::FINISHED:
+					case Level::Status::FAILED:
+					{
+						break;
+					}
+					default:
+					{
+						level.handleEntities();
+						level.handleItems();
+						window.setView(level.getView());
+					}
 				}
 
 				level.handleFinish();
 				level.handleTimers();
 
 				level.draw(window);
+				break;
+			}
+			case EXIT:
+			{
+				window.close();
 				break;
 			}
 		}
@@ -99,6 +105,11 @@ string Game::getNextLevelFilename()
 void Game::nextLevel()
 {
 	level.load(getNextLevelFilename());
+}
+
+void Game::exit()
+{
+	status = Status::EXIT;
 }
 
 Game::Game()
