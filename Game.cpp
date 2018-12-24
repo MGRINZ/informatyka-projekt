@@ -9,9 +9,12 @@ Game& Game::getInstance()
 
 void Game::init()
 {
+	status = Status::LOADING;
 	window.create(VideoMode(Game::WIDTH, Game::HEIGHT), "Gra");
 	window.setFramerateLimit(60);
 	MAIN_FONT.loadFromFile("resources/fonts/verdana.ttf");
+	menu = new GameMenu();
+	status = Status::IN_MENU;
 }
 
 void Game::run()
@@ -21,7 +24,7 @@ void Game::run()
 
 	running = true;
 
-	level.load("level3.lvl");
+	//level.load("level3.lvl");
 
 	while (window.isOpen())
 	{
@@ -37,25 +40,40 @@ void Game::run()
 
 		window.clear();
 
-		switch (level.getStatus())
+		switch (status)
 		{
-			case Level::Status::FINISHED:
-			case Level::Status::FAILED:
+			case LOADING:
+				break;
+			case IN_MENU:
 			{
+				menu->draw(window);
 				break;
 			}
-			default:
+			case IN_GAME:
 			{
-				level.handleEntities();
-				level.handleItems();
-				window.setView(level.getView());
+				switch (level.getStatus())
+				{
+				case Level::Status::FINISHED:
+				case Level::Status::FAILED:
+				{
+					break;
+				}
+				default:
+				{
+					level.handleEntities();
+					level.handleItems();
+					window.setView(level.getView());
+				}
+				}
+
+				level.handleFinish();
+				level.handleTimers();
+
+				level.draw(window);
+				break;
 			}
 		}
 
-		level.handleFinish();
-		level.handleTimers();
-
-		level.draw(window);
 		window.display();
 	}
 }

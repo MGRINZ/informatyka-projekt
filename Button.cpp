@@ -32,9 +32,9 @@ void Button::setState(State state)
 		corners[i].setTexture(*texture);
 		for (auto &edge : edgesGroups[i])
 			edge.setTexture(*texture);
-		for (auto &part : fillingGroup)
-			part.setTexture(*texture);
 	}
+	for (auto &part : fillingGroup)
+		part.setTexture(*texture);
 	this->state = state;
 }
 

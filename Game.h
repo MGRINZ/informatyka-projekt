@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "GameMenu.h"
 #include "Level.h"
 
 using namespace sf;
@@ -12,7 +13,15 @@ private:
 	RenderWindow window;
 	Font MAIN_FONT;
 	bool running = false;
+	GameMenu *menu;
 	Level level;
+	enum Status
+	{
+		LOADING,
+		IN_MENU,
+		IN_GAME
+	};
+	Status status;
 public:
 	static const int WIDTH = 800;
 	static const int HEIGHT = 600;
