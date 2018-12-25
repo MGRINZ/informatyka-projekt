@@ -88,12 +88,7 @@ int Level::load(string levelFilename)
 	enemies.clear();
 	items.clear();
 	player.reset();
-
-	if (endScreen != NULL)
-	{
-		delete endScreen;
-		endScreen = NULL;
-	}
+	resetEndScreen();
 
 	ifstream levelInputStream("resources/levels/" + levelFilename);
 	if (!levelInputStream.is_open())
@@ -244,6 +239,15 @@ void Level::restart()
 	load(levelFilename);
 }
 
+void Level::resetEndScreen()
+{
+	if (endScreen != NULL)
+	{
+		delete endScreen;
+		endScreen = NULL;
+	}
+}
+
 void Level::handleEntities()
 {
 	for (auto &enemy : enemies)
@@ -303,6 +307,11 @@ void Level::handleTimers()
 	}
 
 	levelClock.restart();
+}
+
+void Level::setView(View view)
+{
+	this->view = view;
 }
 
 View Level::getView()

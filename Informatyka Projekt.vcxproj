@@ -47,9 +47,12 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuOnClickListener.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="NewGameDifficultyMenu.cpp" />
+    <ClCompile Include="NewGameDifficultyMenuOnClickListener.cpp" />
     <ClCompile Include="NewGameMenu.cpp" />
     <ClCompile Include="NewGameMenuOnClickListener.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Save.cpp" />
     <ClCompile Include="TimeBar.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
@@ -83,10 +86,13 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainMenuOnClickListener.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="NewGameDifficultyMenu.h" />
+    <ClInclude Include="NewGameDifficultyMenuOnClickListener.h" />
     <ClInclude Include="NewGameMenu.h" />
     <ClInclude Include="NewGameMenuOnClickListener.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Save.h" />
     <ClInclude Include="TimeBar.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

@@ -28,7 +28,6 @@ private:
 	Vector2u endPosition[2];
 	LevelEndScreen *endScreen;
 	int status;
-
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
@@ -55,10 +54,12 @@ public:
 	void draw(RenderWindow &window);
 	int load(string levelFilename);
 	void restart();
+	void resetEndScreen();
 	void handleEntities();
 	void handleItems();
 	void handleFinish();
 	void handleTimers();
+	void setView(View view);
 	View getView();
 	int getStatus();
 	void setStatus(int status);

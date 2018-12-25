@@ -5,7 +5,7 @@
 class MainMenuOnClickListener : public ButtonsGroupOnClickListener
 {
 private:
-	GameMenu *menu;
+	GameMenu *gameMenu;
 	enum Selection
 	{
 		NEW_GAME,
@@ -14,7 +14,7 @@ private:
 		EXIT
 	};
 public:
-	MainMenuOnClickListener(GameMenu &menu);
+	MainMenuOnClickListener(GameMenu &gameMenu);
 	void onClick(int index);
 };
 

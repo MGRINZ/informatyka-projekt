@@ -11,6 +11,7 @@ NewGameMenu::NewGameMenu(GameMenu & gameMenu)
 		ss << "Miejsce zapisu " << i << ".";
 		slots[i] = new Button(Vector2f(300, 50), ss.str());
 		menu.add(*slots[i]);
+		delete slots[i];
 	}
 	Button backButton(Vector2f(300, 50), "Powrot");
 	menu.add(backButton);

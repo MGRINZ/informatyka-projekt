@@ -24,8 +24,6 @@ void Game::run()
 
 	running = true;
 
-	//level.load("level3.lvl");
-
 	while (window.isOpen())
 	{
 		Event event;
@@ -105,6 +103,31 @@ string Game::getNextLevelFilename()
 void Game::nextLevel()
 {
 	level.load(getNextLevelFilename());
+}
+
+void Game::startLevel(int levelId)
+{
+	stringstream ss;
+	ss << "level" << levelId << ".lvl";
+	level.load(ss.str());
+	status = Status::IN_GAME;
+	menu->setStatus(menu->NONE);
+}
+
+void Game::backToMenu()
+{
+	menu->setStatus(menu->MAIN_MENU);
+	status = Status::IN_MENU;
+}
+
+void Game::loadSave(Save save)
+{
+	this->save = save;
+}
+
+Save Game::getSave()
+{
+	return save;
 }
 
 void Game::exit()

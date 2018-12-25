@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "MainMenu.h"
 #include "NewGameMenu.h"
+#include "NewGameDifficultyMenu.h"
 
 GameMenu::GameMenu()
 {
@@ -13,6 +14,7 @@ GameMenu::GameMenu()
 void GameMenu::draw(RenderWindow & window)
 {
 	window.setView(view);
+	Game::getInstance().getLevel().setView(view);
 	menu->setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT / 2));
 
 	window.draw(bg);
@@ -32,6 +34,7 @@ void GameMenu::setStatus(Status status)
 	{
 		case GameMenu::MAIN_MENU:
 		{
+			Game::getInstance().getLevel().resetEndScreen();
 			menu = new MainMenu(*this);
 			break;
 		}
@@ -42,7 +45,7 @@ void GameMenu::setStatus(Status status)
 		}
 		case GameMenu::NEW_GAME_DIFFICULTY_MENU:
 		{
-
+			menu = new NewGameDifficultyMenu(*this);
 			break;
 		}
 		case GameMenu::LOAD_MENU:

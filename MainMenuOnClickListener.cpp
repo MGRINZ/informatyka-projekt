@@ -1,9 +1,9 @@
 #include "MainMenuOnClickListener.h"
 #include "Game.h"
 
-MainMenuOnClickListener::MainMenuOnClickListener(GameMenu &menu)
+MainMenuOnClickListener::MainMenuOnClickListener(GameMenu &gameMenu)
 {
-	this->menu = &menu;
+	this->gameMenu = &gameMenu;
 }
 
 void MainMenuOnClickListener::onClick(int index)
@@ -12,7 +12,7 @@ void MainMenuOnClickListener::onClick(int index)
 	{
 		case NEW_GAME:
 		{
-			menu->setStatus(menu->NEW_GAME_MENU);
+			gameMenu->setStatus(gameMenu->NEW_GAME_MENU);
 			break;
 		}
 		case LOAD_GAME:

@@ -1,9 +1,10 @@
 #include "NewGameMenuOnClickListener.h"
-#include <iostream>
+#include "Game.h"
+#include "Save.h"
 
-NewGameMenuOnClickListener::NewGameMenuOnClickListener(GameMenu &menu)
+NewGameMenuOnClickListener::NewGameMenuOnClickListener(GameMenu &gameMenu)
 {
-	this->menu = &menu;
+	this->gameMenu = &gameMenu;
 }
 
 void NewGameMenuOnClickListener::onClick(int index)
@@ -14,12 +15,15 @@ void NewGameMenuOnClickListener::onClick(int index)
 		case 1:
 		case 2:
 		{
-
+			gameMenu->setStatus(gameMenu->NEW_GAME_DIFFICULTY_MENU);
+			Save save;
+			save.setSlot(index);
+			Game::getInstance().loadSave(save);
 			break;
 		}
 		case BACK:
 		{
-			menu->setStatus(menu->MAIN_MENU);
+			gameMenu->setStatus(gameMenu->MAIN_MENU);
 			break;
 		}
 	}

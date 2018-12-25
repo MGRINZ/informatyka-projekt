@@ -5,13 +5,13 @@
 class NewGameMenuOnClickListener : public ButtonsGroupOnClickListener
 {
 private:
-	GameMenu *menu;
+	GameMenu *gameMenu;
 	enum Selection
 	{
 		BACK = 3
 	};
 public:
-	NewGameMenuOnClickListener(GameMenu &menu);
+	NewGameMenuOnClickListener(GameMenu &gameMenu);
 	void onClick(int index);
 };
 

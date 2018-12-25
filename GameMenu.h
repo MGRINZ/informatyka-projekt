@@ -15,6 +15,7 @@ private:
 public:
 	enum Status
 	{
+		NONE,
 		MAIN_MENU,
 		NEW_GAME_MENU,
 		NEW_GAME_DIFFICULTY_MENU,
