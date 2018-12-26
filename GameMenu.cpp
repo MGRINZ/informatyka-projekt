@@ -6,6 +6,10 @@
 
 GameMenu::GameMenu()
 {
+	difficultyNames[0] = "Ijzi";
+	difficultyNames[1] = "Midjum";
+	difficultyNames[2] = "Hard";
+
 	bg.setTexture("resources/textures/gui/menu_bg.png");
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 	setStatus(Status::MAIN_MENU);

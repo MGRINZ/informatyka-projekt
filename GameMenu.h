@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Background.h"
 #include "Menu.h"
+#include <string>
 
 using namespace sf;
 
@@ -22,6 +23,7 @@ public:
 		LOAD_MENU,
 		HELP_MENU
 	};
+	string difficultyNames[3];
 	GameMenu();
 	void draw(RenderWindow &window);
 	void setStatus(Status status);

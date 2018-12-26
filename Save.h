@@ -14,5 +14,7 @@ public:
 	int getLevel();
 	int getDifficulty();
 	void write();
+	void read();
+	bool exists();
 };
 

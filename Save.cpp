@@ -1,4 +1,10 @@
 #include "Save.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include "utils.h"
+
+using namespace std;
 
 Save::Save()
 {
@@ -39,5 +45,35 @@ int Save::getDifficulty()
 
 void Save::write()
 {
-	//save file
+	stringstream saveFilePath;
+	saveFilePath << "saves/save" << slot << ".dat";
+	ofstream ofs(saveFilePath.str(), fstream::binary);
+
+	if (!ofs.is_open())
+		return;
+
+	ofs.write((char *) this, sizeof(*this));
+
+	ofs.close();
+}
+
+void Save::read()
+{
+	stringstream saveFilePath;
+	saveFilePath << "saves/save" << slot << ".dat";
+	ifstream ifs(saveFilePath.str(), fstream::binary);
+
+	if (!ifs.is_open())
+		return;
+
+	ifs.read((char *) this, sizeof(*this));
+
+	ifs.close();
+}
+
+bool Save::exists()
+{
+	stringstream saveFilePath;
+	saveFilePath << "saves/save" << slot << ".dat";
+	return Utils::fexists(saveFilePath.str());
 }
