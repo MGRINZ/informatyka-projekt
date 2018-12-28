@@ -26,10 +26,14 @@ void Game::run()
 
 	while (window.isOpen())
 	{
+		level.setEvent(nullptr);
+
 		Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed)
 				window.close();
+			if (event.type == Event::KeyPressed)
+				level.setEvent(&event);
 		}
 
 		//Obs³uga zdarzeñ przycisków
@@ -55,18 +59,25 @@ void Game::run()
 					case Level::Status::FINISHED:
 					case Level::Status::FAILED:
 					{
+						level.handleFinish();
+						level.handleTimers();
 						break;
 					}
-					default:
+					case Level::Status::PAUSED:
+					{
+						level.handlePause();
+						break;
+					}
+					case Level::Status::IN_GAME:
 					{
 						level.handleEntities();
 						level.handleItems();
+						level.handleFinish();
+						level.handleTimers();
+						level.handlePause();
 						window.setView(level.getView());
 					}
 				}
-
-				level.handleFinish();
-				level.handleTimers();
 
 				level.draw(window);
 				break;

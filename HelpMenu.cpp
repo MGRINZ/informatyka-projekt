@@ -1,18 +1,19 @@
 #include "HelpMenu.h"
 #include "HelpMenuOnClickListener.h"
+#include "HelpMenuPausedOnClickListener.h"
 #include "Game.h"
 
-HelpMenu::HelpMenu(GameMenu &gameMenu)
+HelpMenu::HelpMenu()
 {
 	menuId = "HelpMenu";
 	frame.setSize(Vector2f(Game::WIDTH - 140, Game::HEIGHT - 140));
 	frame.setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT / 2));
 	frame.getContainer()->setTexture(*container.getTexture(), false);
 	frame.show();
-	
+
 	container.setSize(Vector2f(Game::WIDTH - 140, Game::HEIGHT - 140));
 	container.setBackground(Color(0, 0, 0, 96));
-	
+
 	headers[0].setPosition(Vector2f(10, 10));
 	paragraphs[0].setPosition(Vector2f(10, 50));
 	paragraphs[1].setPosition(Vector2f(10, 100));
@@ -47,7 +48,7 @@ HelpMenu::HelpMenu(GameMenu &gameMenu)
 		paragraphs[i].setCharacterSize(15);
 		container.append(paragraphs[i]);
 	}
-	
+
 	container.draw();
 
 	Button backButton(Vector2f(300, 50), "Powrot");
@@ -55,6 +56,13 @@ HelpMenu::HelpMenu(GameMenu &gameMenu)
 
 	setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT - 150));
 
+	onClickListener = new HelpMenuPausedOnClickListener();
+
+	menu.setOnClickListener(*onClickListener);
+}
+
+HelpMenu::HelpMenu(GameMenu &gameMenu) : HelpMenu()
+{
 	onClickListener = new HelpMenuOnClickListener(gameMenu);
 
 	menu.setOnClickListener(*onClickListener);

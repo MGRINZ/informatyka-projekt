@@ -5,6 +5,7 @@
 #include "EJelly.h"
 #include "Game.h"
 #include "Frame.h"
+#include "PauseMenu.h"
 
 using namespace std;
 
@@ -74,6 +75,12 @@ void Level::draw(RenderWindow &window)
 	if (getStatus() == Status::FINISHED || getStatus() == Status::FAILED)
 		if(endScreen != NULL)
 			endScreen->draw(window);
+	if (getStatus() == Status::PAUSED)
+		if (pauseMenu != NULL)
+			pauseMenu->draw(window);
+	if (getStatus() == Status::HELP_MENU)
+		if (helpMenu != NULL)
+			window.draw(*helpMenu);
 }
 
 int Level::load(string levelFilename)
@@ -89,6 +96,7 @@ int Level::load(string levelFilename)
 	items.clear();
 	player.reset();
 	resetEndScreen();
+	resetPauseMenu();
 
 	ifstream levelInputStream("resources/levels/" + levelFilename);
 	if (!levelInputStream.is_open())
@@ -242,10 +250,22 @@ void Level::restart()
 void Level::resetEndScreen()
 {
 	if (endScreen != NULL)
-	{
 		delete endScreen;
-		endScreen = NULL;
-	}
+	endScreen = NULL;
+}
+
+void Level::resetPauseMenu()
+{
+	if (pauseMenu != NULL)
+		delete pauseMenu;
+	pauseMenu = NULL;
+}
+
+void Level::resetHelpMenu()
+{
+	if (helpMenu != NULL)
+		delete helpMenu;
+	helpMenu = NULL;
 }
 
 void Level::handleEntities()
@@ -313,6 +333,26 @@ void Level::handleTimers()
 	levelClock.restart();
 }
 
+void Level::handlePause()
+{
+	if (event != NULL)
+	{
+		if (event->key.code == Keyboard::Escape)
+		{
+			if (status == Status::IN_GAME)
+			{
+				showPauseMenu();
+				setStatus(Status::PAUSED);
+			}
+			else if (status == Status::PAUSED)
+			{
+				resetPauseMenu();
+				setStatus(Status::IN_GAME);
+			}
+		}
+	}
+}
+
 void Level::setView(View view)
 {
 	this->view = view;
@@ -336,4 +376,25 @@ void Level::setStatus(int status)
 string Level::getLevelFilename()
 {
 	return levelFilename;
+}
+
+void Level::setEvent(Event *event)
+{
+	if (this->event != nullptr)
+		delete this->event;
+
+	if (event == nullptr)
+		this->event = event;
+	else
+		this->event = new Event(*event);
+}
+
+void Level::showPauseMenu()
+{
+	pauseMenu = new PauseMenu();
+}
+
+void Level::showHelpMenu()
+{
+	helpMenu = new HelpMenu();
 }

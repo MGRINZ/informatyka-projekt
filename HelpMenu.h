@@ -12,6 +12,7 @@ private:
 	Text headers[2];
 	Text paragraphs[3];
 public:
+	HelpMenu();
 	HelpMenu(GameMenu &gameMenu);
 	void draw(RenderTarget& target, RenderStates states) const;
 };

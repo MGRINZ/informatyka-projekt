@@ -43,6 +43,7 @@ void GameMenu::setStatus(Status status)
 		case GameMenu::MAIN_MENU:
 		{
 			Game::getInstance().getLevel().resetEndScreen();
+			Game::getInstance().getLevel().resetPauseMenu();
 			menu = new MainMenu(*this);
 			break;
 		}

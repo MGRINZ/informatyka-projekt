@@ -8,6 +8,7 @@
 #include "LevelEndScreen.h"
 #include "LevelCompleteScreen.h"
 #include "LevelFailedScreen.h"
+#include "HelpMenu.h"
 
 class Level
 {
@@ -27,7 +28,10 @@ private:
 	View view;
 	Vector2u endPosition[2];
 	LevelEndScreen *endScreen;
+	LevelEndScreen *pauseMenu;
 	int status;
+	Event *event;
+	HelpMenu *helpMenu;
 public:
 	static const int LEVEL_LOAD_SUCCESS = 0;
 	static const int LEVEL_LOAD_ERROR_OPEN_FILE = 1;
@@ -42,6 +46,7 @@ public:
 		LOADING,
 		IN_GAME,
 		PAUSED,
+		HELP_MENU,
 		FINISHED,
 		FAILED
 	};
@@ -55,13 +60,19 @@ public:
 	int load(string levelFilename);
 	void restart();
 	void resetEndScreen();
+	void resetPauseMenu();
+	void resetHelpMenu();
 	void handleEntities();
 	void handleItems();
 	void handleFinish();
 	void handleTimers();
+	void handlePause();
 	void setView(View view);
 	View getView();
 	int getStatus();
 	void setStatus(int status);
 	string getLevelFilename();
+	void setEvent(Event *event);
+	void showPauseMenu();
+	void showHelpMenu();
 };
