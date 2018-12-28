@@ -33,6 +33,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="HealthBar.cpp" />
+    <ClCompile Include="HelpMenu.cpp" />
+    <ClCompile Include="HelpMenuOnClickListener.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="HUDBar.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -43,6 +45,10 @@
     <ClCompile Include="LevelEndScreen.cpp" />
     <ClCompile Include="LevelFailedOnClickListener.cpp" />
     <ClCompile Include="LevelFailedScreen.cpp" />
+    <ClCompile Include="LoadLevelMenu.cpp" />
+    <ClCompile Include="LoadLevelMenuOnClickListener.cpp" />
+    <ClCompile Include="LoadMenu.cpp" />
+    <ClCompile Include="LoadMenuOnClickListener.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainMenuOnClickListener.cpp" />
@@ -73,6 +79,8 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="HealthBar.h" />
+    <ClInclude Include="HelpMenu.h" />
+    <ClInclude Include="HelpMenuOnClickListener.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="HUDBar.h" />
     <ClInclude Include="Item.h" />
@@ -83,6 +91,10 @@
     <ClInclude Include="LevelEndScreen.h" />
     <ClInclude Include="LevelFailedOnClickListener.h" />
     <ClInclude Include="LevelFailedScreen.h" />
+    <ClInclude Include="LoadLevelMenu.h" />
+    <ClInclude Include="LoadLevelMenuOnClickListener.h" />
+    <ClInclude Include="LoadMenu.h" />
+    <ClInclude Include="LoadMenuOnClickListener.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainMenuOnClickListener.h" />
     <ClInclude Include="Menu.h" />

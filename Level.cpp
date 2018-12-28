@@ -284,7 +284,8 @@ void Level::handleFinish()
 		if(endScreen == NULL)
 			endScreen = new LevelCompleteScreen(player.getHUD(), view.getCenter());
 		Save save = Game::getInstance().getSave();
-		save.setLevel(save.getLevel() + 1);
+		if(atoi(levelFilename.substr(5, 1).c_str()) == save.getLevel())
+			save.setLevel(save.getLevel() + 1);
 		save.write();
 	}
 	if(!player.isAlive())

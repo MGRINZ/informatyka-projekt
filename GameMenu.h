@@ -21,6 +21,7 @@ public:
 		NEW_GAME_MENU,
 		NEW_GAME_DIFFICULTY_MENU,
 		LOAD_MENU,
+		LOAD_LEVEL_MENU,
 		HELP_MENU
 	};
 	string difficultyNames[3];

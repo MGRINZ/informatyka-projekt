@@ -2,16 +2,16 @@
 #include "ButtonsGroupOnClickListener.h"
 #include "GameMenu.h"
 
-class NewGameMenuOnClickListener : public ButtonsGroupOnClickListener
+class HelpMenuOnClickListener : public ButtonsGroupOnClickListener
 {
-protected:
+private:
 	GameMenu *gameMenu;
 	enum Selection
 	{
-		BACK = 3
+		BACK
 	};
 public:
-	NewGameMenuOnClickListener(GameMenu &gameMenu);
+	HelpMenuOnClickListener(GameMenu &gameMenu);
 	void onClick(int index);
 };
 

@@ -17,8 +17,8 @@ void NewGameDifficultyMenuOnClickListener::onClick(int index)
 			Game *game = &Game::getInstance();
 			Save save = game->getSave();
 			save.setDifficulty(index);
-			game->loadSave(save);
 			save.write();
+			game->loadSave(save);
 			game->startLevel(1);
 			break;
 		}

@@ -20,6 +20,10 @@ void Save::setSlot(int slot)
 
 void Save::setLevel(int level)
 {
+	stringstream levelPath;
+	levelPath << "resources/levels/level" << level << ".lvl";
+	if (!Utils::fexists(levelPath.str()))
+		level--;
 	this->level = level;
 }
 

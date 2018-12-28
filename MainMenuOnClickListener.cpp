@@ -17,10 +17,12 @@ void MainMenuOnClickListener::onClick(int index)
 		}
 		case LOAD_GAME:
 		{
+			gameMenu->setStatus(gameMenu->LOAD_MENU);
 			break;
 		}
 		case HELP:
 		{
+			gameMenu->setStatus(gameMenu->HELP_MENU);
 			break;
 		}
 		case EXIT:

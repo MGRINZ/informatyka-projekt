@@ -3,6 +3,9 @@
 #include "MainMenu.h"
 #include "NewGameMenu.h"
 #include "NewGameDifficultyMenu.h"
+#include "LoadMenu.h"
+#include "LoadLevelMenu.h"
+#include "HelpMenu.h"
 
 GameMenu::GameMenu()
 {
@@ -19,7 +22,8 @@ void GameMenu::draw(RenderWindow & window)
 {
 	window.setView(view);
 	Game::getInstance().getLevel().setView(view);
-	menu->setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT / 2));
+	if(menu->getMenuId().empty())
+		menu->setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT / 2 - 50));
 
 	window.draw(bg);
 	window.draw(*menu);
@@ -54,12 +58,17 @@ void GameMenu::setStatus(Status status)
 		}
 		case GameMenu::LOAD_MENU:
 		{
-
+			menu = new LoadMenu(*this);
+			break;
+		}
+		case GameMenu::LOAD_LEVEL_MENU:
+		{
+			menu = new LoadLevelMenu(*this);
 			break;
 		}
 		case GameMenu::HELP_MENU:
 		{
-
+			menu = new HelpMenu(*this);
 			break;
 		}
 	}	
