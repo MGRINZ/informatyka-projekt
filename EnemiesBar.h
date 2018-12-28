@@ -5,8 +5,6 @@
 
 class EnemiesBar : public HUDBar
 {
-private:
-	vector <Entity*>* items;
 public:
 	EnemiesBar();
 	void setItems(vector<Entity*>* items);

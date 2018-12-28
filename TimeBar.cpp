@@ -3,7 +3,6 @@
 
 TimeBar::TimeBar() : HUDBar()
 {
-	delete items;
 	iconTexture.loadFromFile("resources/textures/hud/clock.png");
 	icon.setTexture(iconTexture);
 }
@@ -28,4 +27,9 @@ void TimeBar::setTimeLeft(int timeLeft)
 	ss << ((s < 10) ? "0" : "") << s;
 
 	counter.setString(ss.str());
+}
+
+int TimeBar::getTimeLeft()
+{
+	return timeLeft;
 }

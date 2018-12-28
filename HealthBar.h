@@ -4,7 +4,7 @@
 
 using namespace sf;
 
-class HealthBar
+class HealthBar : public Drawable
 {
 private:
 	Texture healthTexture;
@@ -14,10 +14,14 @@ private:
 	Vector2f position;
 public:
 	HealthBar();
-	void draw(RenderWindow &window);
+	void draw(RenderTarget& target, RenderStates states) const override;
 	void setHealth(int hp);
+	int getHealth();
 	void setMaxHealth(int maxHealth);
+	int getMaxHealth();
 	void setPosition(Vector2f position);
 	void move(Vector2f position);
+	bool fadeIn(int duration);
+	void hide();
 };
 

@@ -22,9 +22,14 @@
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlocksVector.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonsGroup.cpp" />
+    <ClCompile Include="Container.cpp" />
+    <ClCompile Include="Counter.cpp" />
     <ClCompile Include="EJelly.cpp" />
     <ClCompile Include="EnemiesBar.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="HUD.cpp" />
@@ -32,18 +37,30 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemsBar.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelCompleteOnClickListener.cpp" />
+    <ClCompile Include="LevelCompleteScreen.cpp" />
     <ClCompile Include="LevelEndScreen.cpp" />
+    <ClCompile Include="LevelFailedOnClickListener.cpp" />
+    <ClCompile Include="LevelFailedScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TimeBar.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlocksVector.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonOnClickListener.h" />
+    <ClInclude Include="ButtonsGroup.h" />
+    <ClInclude Include="ButtonsGroupOnClickListener.h" />
+    <ClInclude Include="Container.h" />
+    <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />
     <ClInclude Include="EnemiesBar.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Frame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="HUD.h" />
@@ -51,9 +68,15 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemsBar.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="LevelCompleteOnClickListener.h" />
+    <ClInclude Include="LevelCompleteScreen.h" />
     <ClInclude Include="LevelEndScreen.h" />
+    <ClInclude Include="LevelFailedOnClickListener.h" />
+    <ClInclude Include="LevelFailedScreen.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="TimeBar.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\backgrounds\bg1.jpg" />
@@ -64,6 +87,9 @@
   <ItemGroup>
     <None Include="resources\levels\level1.lvl" />
     <None Include="resources\levels\level2.lvl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Informatyka Projekt.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -151,10 +177,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\Michu\Documents\Visual Studio 2017\Libraries\SFML-2.5.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\Michu\Documents\Visual Studio 2017\Libraries\SFML-2.5.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-window.lib;sfml-audio.lib;sfml-graphics.lib;sfml-system.lib;sfml-main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

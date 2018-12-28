@@ -1,9 +1,14 @@
+#include <iostream>
 #include "Level.h"
 #include <fstream>
 #include <sstream>
 #include "EJelly.h"
 #include "Game.h"
+#include "Frame.h"
 
+using namespace std;
+
+const string Level::LEVEL_PATH = "resources/levels/";
 const string Level::LEVEL_PROPERTY_SETTINGS = ";settings";
 const string Level::LEVEL_PROPERTY_TERRAIN = ";terrain";
 const string Level::LEVEL_PROPERTY_BACKGROUND = ";background";
@@ -13,8 +18,6 @@ const string Level::LEVEL_PROPERTY_ENTITIES = ";entities";
 
 Level::Level()
 {
-	addBackgroundBlock(Block(endPosition[0].x, endPosition[0].y));
-	addBackgroundBlock(Block(endPosition[1].x, endPosition[1].y));
 }
 
 void Level::addSolidBlock(Block block)
@@ -44,6 +47,8 @@ void Level::addEnemy(Entity * entity)
 
 void Level::draw(RenderWindow &window)
 {
+	if (status == Status::LOADING)
+		return;
 	window.draw(background);
 
 	for (auto &block : backgroundBlocks)
@@ -64,15 +69,18 @@ void Level::draw(RenderWindow &window)
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
 
-	player.getHUD()->draw(window);
+	window.draw(*player.getHUD());
 
 	if (getStatus() == Status::FINISHED || getStatus() == Status::FAILED)
-		endScreen.draw(window);
+		if(endScreen != NULL)
+			endScreen->draw(window);
 }
 
-int Level::load(string levelName)
+int Level::load(string levelFilename)
 {
 	status = Status::LOADING;
+	
+	this->levelFilename = levelFilename;
 
 	solidBlocks.clear();
 	backgroundBlocks.clear();
@@ -81,7 +89,13 @@ int Level::load(string levelName)
 	items.clear();
 	player.reset();
 
-	ifstream levelInputStream("resources/levels/" + levelName);
+	if (endScreen != NULL)
+	{
+		delete endScreen;
+		endScreen = NULL;
+	}
+
+	ifstream levelInputStream("resources/levels/" + levelFilename);
 	if (!levelInputStream.is_open())
 		return LEVEL_LOAD_ERROR_OPEN_FILE;
 
@@ -220,8 +234,14 @@ int Level::load(string levelName)
 
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 	player.getHUD()->getTimeBar()->setTimeLeft(timeLeft);
+
 	status = Status::IN_GAME;
 	return LEVEL_LOAD_SUCCESS;
+}
+
+void Level::restart()
+{
+	load(levelFilename);
 }
 
 void Level::handleEntities()
@@ -257,18 +277,15 @@ void Level::handleFinish()
 
 	if (gb.intersects(endArea)) {
 		setStatus(Status::FINISHED);
-		endScreen.setHeader("Poziom ukonczony");
+		if(endScreen == NULL)
+			endScreen = new LevelCompleteScreen(player.getHUD(), view.getCenter());
 	}
 	if(!player.isAlive())
 	{
 		setStatus(Status::FAILED);
-		endScreen.setHeader("Poziom nieukonczony");
+		if (endScreen == NULL)
+			endScreen = new LevelFailedScreen(view.getCenter());
 	}
-
-	endScreen.setPosition(view.getCenter());
-
-	if (Keyboard::isKeyPressed(Keyboard::Enter))
-		load("level3.lvl");
 }
 
 void Level::handleTimers()
@@ -301,4 +318,9 @@ int Level::getStatus()
 void Level::setStatus(int status)
 {
 	this->status = status;
+}
+
+string Level::getLevelFilename()
+{
+	return levelFilename;
 }
