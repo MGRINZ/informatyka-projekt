@@ -10,6 +10,6 @@ void EJumpJelly::handleMovement(BlocksVector & solidBlocks)
 	if (!isAlive())
 		return;
 
-	jump();
+	jump(0.10);
 	Entity::handleMovement(solidBlocks);
 }

@@ -5,6 +5,16 @@ const float Entity::WIDTH = Block::WIDTH;
 
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
+	if (yVelocityDown == yVelocityUp)
+		yVelocityDown = 0.0;
+
+	yVelocityDown += gravity * 0.0017;
+	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
+	if (yVelocityDown + yVelocityUp > 0)
+		setMovingDirectionY(1);
+	else if (yVelocityDown + yVelocityUp < 0)
+		setMovingDirectionY(-1);
+
 	Vector2f entityPosition = getPosition();
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
@@ -23,7 +33,6 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(0);
 	}
 
-
 	if (blockDL != NULL || blockDR != NULL)
 	{
 		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
@@ -32,16 +41,6 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(0);
 		return;
 	}
-
-	if (yVelocityDown == yVelocityUp)
-		yVelocityDown = 0.0;
-
-	yVelocityDown += gravity * 0.0017;
-	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
-	if (yVelocityDown + yVelocityUp > 0)
-		setMovingDirectionY(1);
-	else if (yVelocityDown + yVelocityUp < 0)
-		setMovingDirectionY(-1);
 
 	if (entityPosition.y > Game::HEIGHT + WIDTH)
 		alive = false;
@@ -116,13 +115,13 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 	move(velocity);
 }
 
-void Entity::jump()
+void Entity::jump(double offset)
 {
 	if (!isJumping() && yVelocityDown > 0)
 		return;
 	if (yVelocityUp == 0)
-		yVelocityUp = -0.27;
-	else if (yVelocityUp > -0.37)
+		yVelocityUp = -0.27 + offset;
+	else if (yVelocityUp > -0.37 + offset)
 		yVelocityUp -= 10 * 0.001;
 	move(Vector2f(0, -0.025 * Block::WIDTH));
 	jumping = true;

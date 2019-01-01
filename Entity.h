@@ -33,7 +33,7 @@ public:
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
 	virtual void handleMovement(BlocksVector &solidBlocks);
-	void jump();
+	void jump(double offset = 0);
 	void setJumping(bool jumping);
 	bool isJumping();
 	void animate();

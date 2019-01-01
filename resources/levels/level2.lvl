@@ -366,6 +366,8 @@ time=360
 36;18;dirt.jpg
 37;18;dirt.jpg
 38;18;dirt.jpg
+9;15;grass.jpg
+10;15;grass.jpg
 ;background
 27;12;black.jpg
 28;12;black.jpg
@@ -386,7 +388,5 @@ time=360
 10;4;egg
 14;4;egg
 17;4;egg
-9;15;egg
-10;15;egg
 9;16;egg
 10;16;egg
