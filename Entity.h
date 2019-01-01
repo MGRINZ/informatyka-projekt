@@ -32,7 +32,7 @@ public:
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
-	void handleMovement(BlocksVector &solidBlocks);
+	virtual void handleMovement(BlocksVector &solidBlocks);
 	void jump();
 	void setJumping(bool jumping);
 	bool isJumping();

@@ -27,6 +27,7 @@
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="EJelly.cpp" />
+    <ClCompile Include="EJumpJelly.cpp" />
     <ClCompile Include="EnemiesBar.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Frame.cpp" />
@@ -76,6 +77,7 @@
     <ClInclude Include="Container.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />
+    <ClInclude Include="EJumpJelly.h" />
     <ClInclude Include="EnemiesBar.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Frame.h" />
