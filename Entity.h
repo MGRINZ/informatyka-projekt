@@ -18,6 +18,7 @@ protected:
 	Clock animateClock;
 	bool flags[1] = { 0 };
 	bool alive;
+	int animationStep;
 
 public:
 	static const float WIDTH;

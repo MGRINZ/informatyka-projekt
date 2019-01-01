@@ -11,7 +11,7 @@ private:
 	int health;
 	int immunityTimer;
 public:
-	Player() : Entity("easteregg-man.png") {};
+	Player();
 	HUD* getHUD();
 	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
 	void takingItem(Item &item);

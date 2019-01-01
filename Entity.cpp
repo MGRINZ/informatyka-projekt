@@ -140,8 +140,18 @@ bool Entity::isJumping()
 
 void Entity::animate()
 {
+
 	Vector2u txtSize = texture.getSize();
-	int jumpFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê skoku
+	int deathFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê œmierci
+	int jumpFrame = (txtSize.x / WIDTH - 2);	//Przedostatnia klatka tekstury przeznaczona na animacjê skoku
+
+	if (!isAlive())
+	{
+		IntRect txtRect = getTextureRect();
+		txtRect.left = deathFrame * WIDTH;
+		setTextureRect(txtRect);
+		return;
+	}
 
 	if (isMovingY) {
 		IntRect txtRect = getTextureRect();
@@ -161,11 +171,11 @@ void Entity::animate()
 		return;
 	}
 
-	if (animateClock.getElapsedTime().asMilliseconds() >= 50)
+	if (animateClock.getElapsedTime().asMilliseconds() >= animationStep)
 	{
 		IntRect txtRect = getTextureRect();
-		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
-		if (txtRect.left >= (jumpFrame - 1) * WIDTH)
+		txtRect.left = WIDTH * ((txtRect.left / WIDTH) + 1);
+		if (txtRect.left >= jumpFrame * WIDTH)
 			txtRect.left = 0;
 		if (isMovingX == 1)
 			txtRect.top = 0;

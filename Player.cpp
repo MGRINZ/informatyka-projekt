@@ -43,6 +43,11 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
 }
 
+Player::Player() : Entity("easteregg-man.png")
+{
+	animationStep = 50;
+}
+
 HUD * Player::getHUD()
 {
 	return &hud;

@@ -273,7 +273,7 @@ void Level::handleEntities()
 	for (auto &enemy : enemies)
 	{
 		enemy->handleGravity(solidBlocks);
-		//enemy->animate();
+		enemy->animate();
 		enemy->handleMovement(solidBlocks);
 		player.takingDamage(*enemy);
 	}

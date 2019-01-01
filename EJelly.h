@@ -5,5 +5,5 @@
 class EJelly : public Entity
 {
 public:
-	EJelly() : Entity("") {};
+	EJelly();
 };
