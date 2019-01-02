@@ -4,6 +4,7 @@
 #include <sstream>
 #include "EJelly.h"
 #include "EJumpJelly.h"
+#include "ESleepingJelly.h"
 #include "Game.h"
 #include "Frame.h"
 #include "PauseMenu.h"
@@ -217,6 +218,8 @@ int Level::load(string levelFilename)
 					enemy = new EJelly();
 				else if (type == "jumpjelly")
 					enemy = new EJumpJelly();
+				else if (type == "sleepingjelly")
+					enemy = new ESleepingJelly();
 				enemy->setPosition(x, y);
 
 				if (!flags.empty())

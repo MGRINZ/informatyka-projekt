@@ -30,6 +30,7 @@
     <ClCompile Include="EJumpJelly.cpp" />
     <ClCompile Include="EnemiesBar.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="ESleepingJelly.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMenu.cpp" />
@@ -80,6 +81,7 @@
     <ClInclude Include="EJumpJelly.h" />
     <ClInclude Include="EnemiesBar.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="ESleepingJelly.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameMenu.h" />
