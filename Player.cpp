@@ -3,6 +3,9 @@
 
 void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
 {
+	if (!isActive())
+		return;
+
 	Vector2f velocity(0, 0);
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
@@ -67,6 +70,7 @@ void Player::takingDamage(Entity & enemy)
 {
 	if (!enemy.isAlive())
 		return;
+
 	FloatRect egb = enemy.getGlobalBounds();
 	Vector2f ppos = getPosition();
 	if (!egb.intersects(getGlobalBounds()))
@@ -119,6 +123,7 @@ void Player::reset()
 	immunityTimer = 0;
 	setColor(Color::White);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+	activate();
 }
 
 void Player::immunity()

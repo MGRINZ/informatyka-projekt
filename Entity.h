@@ -17,6 +17,7 @@ protected:
 	int isMovingY;	//-1 w górê, 0 false, 1 w dó³
 	Clock animateClock;
 	bool flags[1] = { 0 };
+	bool active;
 	bool alive;
 	int animationStep;
 
@@ -46,6 +47,8 @@ public:
 	void setFlag(Flags flag, bool value);
 	void setFlag(string flag, bool value);
 	Flags getFlagByName(string name);
+	bool isActive();
+	void activate();
 	bool isAlive();
 	void die();
 };

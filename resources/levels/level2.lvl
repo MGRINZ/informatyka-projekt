@@ -386,6 +386,7 @@ time=360
 11;14;jelly;
 13;14;jumpjelly;
 15;14;sleepingjelly;
+25;13;jelly;
 ;items
 10;4;egg
 14;4;egg

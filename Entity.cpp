@@ -5,6 +5,9 @@ const float Entity::WIDTH = Block::WIDTH;
 
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
+	if (!isActive())
+		return;
+
 	if (yVelocityDown == yVelocityUp)
 		yVelocityDown = 0.0;
 
@@ -90,8 +93,13 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 
 void Entity::handleMovement(BlocksVector &solidBlocks)
 {
+
+	if (!isActive())
+		return;
+
 	if (!isAlive())
 		return;
+
 	if (getMovingDirectionX() == 0)
 		setMovingDirectionX(-1);
 
@@ -117,6 +125,10 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 
 void Entity::jump(double offset)
 {
+
+	if (!isActive())
+		return;
+
 	if (!isJumping() && yVelocityDown > 0)
 		return;
 	if (yVelocityUp == 0)
@@ -139,6 +151,9 @@ bool Entity::isJumping()
 
 void Entity::animate()
 {
+
+	if (!isActive())
+		return;
 
 	Vector2u txtSize = texture.getSize();
 	int deathFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê œmierci
@@ -231,6 +246,16 @@ Entity::Flags Entity::getFlagByName(string name)
 		return Flags::SMART;
 }
 
+bool Entity::isActive()
+{
+	return active;
+}
+
+void Entity::activate()
+{
+	active = true;
+}
+
 bool Entity::isAlive()
 {
 	return alive;
@@ -261,6 +286,7 @@ void Entity::reset()
 	jumping = false;
 	isMovingX = 0;
 	isMovingY = 0;
+	active = false;
 	alive = true;
 	setTextureRect(IntRect(0, WIDTH, WIDTH, WIDTH));
 }

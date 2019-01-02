@@ -276,12 +276,20 @@ void Level::resetHelpMenu()
 
 void Level::handleEntities()
 {
+	Vector2f ep, pp;
+	pp = player.getPosition();
+
 	for (auto &enemy : enemies)
 	{
 		enemy->handleGravity(solidBlocks);
 		enemy->animate();
 		enemy->handleMovement(solidBlocks);
 		player.takingDamage(*enemy);
+
+		ep = enemy->getPosition();
+		
+		if (ep.x > pp.x && ep.x - pp.x < Game::WIDTH)	//TODO: Do przemyœlenia po utworzeniu pe³nego poziomu
+			enemy->activate();
 	}
 	player.handleGravity(solidBlocks);
 	player.animate();
