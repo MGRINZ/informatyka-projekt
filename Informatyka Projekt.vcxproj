@@ -30,6 +30,7 @@
     <ClCompile Include="EJumpJelly.cpp" />
     <ClCompile Include="EnemiesBar.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EShootingJelly.cpp" />
     <ClCompile Include="ESleepingJelly.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -63,6 +64,7 @@
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="PauseMenuOnClickListener.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Save.cpp" />
     <ClCompile Include="TimeBar.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -81,6 +83,7 @@
     <ClInclude Include="EJumpJelly.h" />
     <ClInclude Include="EnemiesBar.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EShootingJelly.h" />
     <ClInclude Include="ESleepingJelly.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Game.h" />
@@ -113,6 +116,7 @@
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="PauseMenuOnClickListener.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Save.h" />
     <ClInclude Include="TimeBar.h" />

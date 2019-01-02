@@ -266,6 +266,11 @@ void Entity::die()
 	alive = false;
 }
 
+bool Entity::isImmortal()
+{
+	return immortal;
+}
+
 Entity::Entity()
 {
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
@@ -288,6 +293,7 @@ void Entity::reset()
 	isMovingY = 0;
 	active = false;
 	alive = true;
+	immortal = false;
 	setTextureRect(IntRect(0, WIDTH, WIDTH, WIDTH));
 }
 

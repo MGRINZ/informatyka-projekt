@@ -92,6 +92,9 @@ void Player::takingDamage(Entity & enemy)
 
 void Player::dealDamage(Entity & enemy)
 {
+	if (enemy.isImmortal())
+		return;
+
 	enemy.die();
 	setJumping(false);
 	yVelocityDown = 0;

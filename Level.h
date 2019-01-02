@@ -75,4 +75,5 @@ public:
 	void setEvent(Event *event);
 	void showPauseMenu();
 	void showHelpMenu();
+	const Player & getPlayer();
 };

@@ -19,6 +19,7 @@ protected:
 	bool flags[1] = { 0 };
 	bool active;
 	bool alive;
+	bool immortal;
 	int animationStep;
 
 public:
@@ -51,4 +52,5 @@ public:
 	void activate();
 	bool isAlive();
 	void die();
+	bool isImmortal();
 };

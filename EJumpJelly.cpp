@@ -7,6 +7,9 @@ EJumpJelly::EJumpJelly() : Entity::Entity("jelly2.png")
 
 void EJumpJelly::handleMovement(BlocksVector & solidBlocks)
 {
+	if (!isActive())
+		return;
+
 	if (!isAlive())
 		return;
 
