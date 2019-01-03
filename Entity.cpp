@@ -256,6 +256,11 @@ void Entity::activate()
 	active = true;
 }
 
+void Entity::deactivate()
+{
+	active = false;
+}
+
 bool Entity::isAlive()
 {
 	return alive;

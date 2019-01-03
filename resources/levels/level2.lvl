@@ -1,6 +1,6 @@
 ;settings
 background=bg1.jpg
-start=3;8
+start=5;14
 end=30;12;30;14
 time=360
 ;terrain
@@ -386,7 +386,7 @@ time=360
 11;14;jelly;
 13;14;jumpjelly;
 15;14;sleepingjelly;
-16;8;shootingjelly;
+16;10;shootingjelly;
 25;13;jelly;
 ;items
 10;4;egg

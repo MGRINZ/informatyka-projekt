@@ -66,28 +66,32 @@ void Player::takingItem(Item &item)
 	}
 }
 
-void Player::takingDamage(Entity & enemy)
+bool Player::takingDamage(Entity & enemy) //Zwraca true jeœli obra¿enia zosta³y zadane, w przeciwnym razie – false
 {
+	if (!enemy.isActive())
+		return false;
+
 	if (!enemy.isAlive())
-		return;
+		return false;
 
 	FloatRect egb = enemy.getGlobalBounds();
 	Vector2f ppos = getPosition();
 	if (!egb.intersects(getGlobalBounds()))
-		return;
+		return false;
 
 	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
 	{
 		dealDamage(enemy);
-		return;
+		return false;
 	}
 
 	if (immunityTimer)
-		return;
+		return false;
 
 	setHealth(getHealth() - 1);
 	immunityTimer = 2;
 	setColor(Color::Transparent);
+	return true;
 }
 
 void Player::dealDamage(Entity & enemy)

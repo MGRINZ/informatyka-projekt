@@ -15,7 +15,7 @@ public:
 	HUD* getHUD();
 	void handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background);
 	void takingItem(Item &item);
-	void takingDamage(Entity &enemy);
+	bool takingDamage(Entity &enemy);
 	void dealDamage(Entity &enemy);
 	void setHealth(int health);
 	int getHealth();

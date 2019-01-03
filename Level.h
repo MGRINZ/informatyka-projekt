@@ -2,6 +2,7 @@
 
 #include "BlocksVector.h"
 #include "Entity.h"
+#include "Projectile.h"
 #include "Item.h"
 #include "Player.h"
 #include "Background.h"
@@ -18,6 +19,7 @@ private:
 	vector<Block> backgroundBlocks;
 	vector<Block> foregroundBlocks;
 	vector<Entity*> enemies;
+	vector<Projectile*> projectiles;
 	vector<Item> items;
 	Player player;
 	string name;
@@ -56,6 +58,7 @@ public:
 	void addForegroundBlock(Block block);
 	void addItem(Item item);
 	void addEnemy(Entity* entity);
+	void addProjectile(Projectile* projectile);
 	void draw(RenderWindow &window);
 	int load(string levelFilename);
 	void restart();

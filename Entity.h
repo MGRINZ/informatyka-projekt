@@ -50,6 +50,7 @@ public:
 	Flags getFlagByName(string name);
 	bool isActive();
 	void activate();
+	void deactivate();
 	bool isAlive();
 	void die();
 	bool isImmortal();

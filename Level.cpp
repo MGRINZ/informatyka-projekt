@@ -49,6 +49,11 @@ void Level::addEnemy(Entity * entity)
 	enemies.push_back(entity);
 }
 
+void Level::addProjectile(Projectile * projectile)
+{
+	projectiles.push_back(projectile);
+}
+
 void Level::draw(RenderWindow &window)
 {
 	if (status == Status::LOADING)
@@ -69,6 +74,12 @@ void Level::draw(RenderWindow &window)
 
 	for (auto &enemy : enemies)
 		window.draw(*enemy);
+
+	for (auto &projectile : projectiles)
+	{
+		if (projectile->isActive())
+		window.draw(*projectile);
+	}
 
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
@@ -96,6 +107,7 @@ int Level::load(string levelFilename)
 	backgroundBlocks.clear();
 	foregroundBlocks.clear();
 	enemies.clear();
+	projectiles.clear();
 	items.clear();
 	player.reset();
 	resetEndScreen();
@@ -291,9 +303,18 @@ void Level::handleEntities()
 
 		ep = enemy->getPosition();
 		
-		if (ep.x > pp.x && ep.x - pp.x < Game::WIDTH)	//TODO: Do przemyœlenia po utworzeniu pe³nego poziomu
+		if (ep.x > pp.x && ep.x - pp.x < Game::WIDTH ||
+			ep.x < pp.x && pp.x - ep.x < Game::WIDTH)	//TODO: Do przemyœlenia po utworzeniu pe³nego poziomu
 			enemy->activate();
 	}
+
+	for (auto &projectile : projectiles)
+	{
+		projectile->shoot(solidBlocks);
+		if (player.takingDamage(*projectile))
+			projectile->deactivate();
+	}
+
 	player.handleGravity(solidBlocks);
 	player.animate();
 	player.handleMovement(solidBlocks, view, background);

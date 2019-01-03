@@ -5,6 +5,7 @@ EShootingJelly::EShootingJelly() : Entity::Entity("jelly4.png")
 {
 	animationStep = 100;
 	projectile = new Projectile("");
+	Game::getInstance().getLevel().addProjectile(projectile);
 }
 
 void EShootingJelly::handleMovement(BlocksVector & solidBlocks)
@@ -25,19 +26,25 @@ void EShootingJelly::handleMovement(BlocksVector & solidBlocks)
 
 	if (!projectile->isActive())
 	{
+		if(delayClock == NULL)
+			delayClock = new Clock();
+
+		if (delayClock->getElapsedTime().asMilliseconds() < shootDelay)
+			return;
+
 		projectile->Sprite::setPosition(ep);
-		projectile->setTrajectory([] (double x, Vector2f start, Vector2f end) -> double {
+		projectile->setTrajectory([](double x, Vector2f start, Vector2f end) -> double {
 			double a = (start.y - end.y) / (start.x - end.x);
-			cout << a << endl;
 			return a * (x - start.x) + start.y;
 		}, ep, pp);
+		projectile->setMovingDirectionX(getMovingDirectionX());
 		projectile->activate();
 	}
 	else
 	{
-		projectile->shoot();
+		delete delayClock;
+		delayClock = NULL;
 	}
-
 }
 
 
