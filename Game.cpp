@@ -9,9 +9,12 @@ Game& Game::getInstance()
 
 void Game::init()
 {
+	status = Status::LOADING;
 	window.create(VideoMode(Game::WIDTH, Game::HEIGHT), "Gra");
 	window.setFramerateLimit(60);
 	MAIN_FONT.loadFromFile("resources/fonts/verdana.ttf");
+	menu = new GameMenu();
+	status = Status::IN_MENU;
 }
 
 void Game::run()
@@ -21,41 +24,71 @@ void Game::run()
 
 	running = true;
 
-	level.load("level3.lvl");
-
 	while (window.isOpen())
 	{
+		level.setEvent(nullptr);
+
 		Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed)
 				window.close();
+			if (event.type == Event::KeyPressed)
+				level.setEvent(&event);
 		}
 
+		//Obs³uga zdarzeñ przycisków
 		//zwyk³y for zamiast foreach ¿eby nie wywo³ywaæ metod zniszczonych obiektów
 		for (int i = 0; i < Button::buttons.size(); i++)
 			Button::buttons[i]->handleEvents(window, &level.getView());
 
 		window.clear();
 
-		switch (level.getStatus())
+		switch (status)
 		{
-			case Level::Status::FINISHED:
-			case Level::Status::FAILED:
+			case LOADING:
+				break;
+			case IN_MENU:
 			{
+				menu->draw(window);
 				break;
 			}
-			default:
+			case IN_GAME:
 			{
-				level.handleEntities();
-				level.handleItems();
-				window.setView(level.getView());
+				switch (level.getStatus())
+				{
+					case Level::Status::FINISHED:
+					case Level::Status::FAILED:
+					{
+						level.handleFinish();
+						level.handleTimers();
+						break;
+					}
+					case Level::Status::PAUSED:
+					{
+						level.handlePause();
+						break;
+					}
+					case Level::Status::IN_GAME:
+					{
+						level.handleEntities();
+						level.handleItems();
+						level.handleFinish();
+						level.handleTimers();
+						level.handlePause();
+						window.setView(level.getView());
+					}
+				}
+
+				level.draw(window);
+				break;
+			}
+			case EXIT:
+			{
+				window.close();
+				break;
 			}
 		}
 
-		level.handleFinish();
-		level.handleTimers();
-
-		level.draw(window);
 		window.display();
 	}
 }
@@ -81,6 +114,36 @@ string Game::getNextLevelFilename()
 void Game::nextLevel()
 {
 	level.load(getNextLevelFilename());
+}
+
+void Game::startLevel(int levelId)
+{
+	stringstream ss;
+	ss << "level" << levelId << ".lvl";
+	level.load(ss.str());
+	status = Status::IN_GAME;
+	menu->setStatus(menu->NONE);
+}
+
+void Game::backToMenu()
+{
+	menu->setStatus(menu->MAIN_MENU);
+	status = Status::IN_MENU;
+}
+
+void Game::loadSave(Save save)
+{
+	this->save = save;
+}
+
+Save Game::getSave()
+{
+	return save;
+}
+
+void Game::exit()
+{
+	status = Status::EXIT;
 }
 
 Game::Game()

@@ -65,6 +65,11 @@ void ButtonsGroup::setPosition(Vector2f position)
 	}
 }
 
+Vector2f ButtonsGroup::getPosition()
+{
+	return position;
+}
+
 void ButtonsGroup::setOffset(Vector2f offset)
 {
 	this->offset = offset;

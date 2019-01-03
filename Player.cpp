@@ -107,8 +107,10 @@ void Player::reset()
 	Entity::reset();
 	hud.setPosition(Vector2f(50, 20));
 
-	setHealth(3);
-	hud.getHealthBar()->setMaxHealth(3);
+	int difficulty = Game::getInstance().getSave().getDifficulty();
+
+	hud.getHealthBar()->setMaxHealth(3 - difficulty);
+	setHealth(3 - difficulty);
 	immunityTimer = 0;
 	setColor(Color::White);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));

@@ -50,7 +50,7 @@ Frame::Frame()
 	}
 }
 
-void Frame::showUp()
+void Frame::showUp(int duration) //duration – czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 {
 	if (shownUp)
 		return;
@@ -66,8 +66,6 @@ void Frame::showUp()
 	if (animationClock == NULL)
 		animationClock = new Clock();
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
-
-	int duration = 250;	//Czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 
 	//Rozszerzanie szerokoœci
 	if (elapsedTime <= duration)
@@ -280,6 +278,61 @@ void Frame::showUp()
 		shownUp = true;
 		delete animationClock;
 	}
+}
+
+void Frame::show()
+{
+	for (int i = 0; i < 4; i++)
+		corners[i].setColor(Color(255, 255, 255, 255));
+
+	corners[0].setPosition(Vector2f(position.x - (size.x / 2), position.y - (size.y / 2)));
+	corners[1].setPosition(Vector2f(position.x + (size.x / 2) - 20, position.y - (size.y / 2)));
+	corners[2].setPosition(Vector2f(position.x + (size.x / 2) - 20, position.y + (size.y / 2) - 20));
+	corners[3].setPosition(Vector2f(position.x - (size.x / 2), position.y + (size.y / 2) - 20));
+
+	for (int i = 0; i < 4; i++)
+		corners[i].setTextureRect(IntRect(0, 0, 40, 40));
+
+	Vector2f cp;
+	IntRect etr;
+
+	cp = corners[0].getPosition();
+	etr = edges[0].getTextureRect();
+	etr.width = corners[1].getPosition().x - cp.x;
+	edges[0].setPosition(cp);
+	edges[0].setTextureRect(etr);
+
+	cp = corners[3].getPosition();
+	cp.y += 20;
+	etr = edges[2].getTextureRect();
+	etr.width = corners[2].getPosition().x - cp.x;
+	edges[2].setPosition(cp);
+	edges[2].setTextureRect(etr);
+
+	cp = corners[1].getPosition();
+	etr = edges[1].getTextureRect();
+	etr.height = corners[2].getPosition().y - cp.y + 20;
+	edges[1].setPosition(cp);
+	edges[1].setTextureRect(etr);
+
+	cp = corners[0].getPosition();
+	etr = edges[3].getTextureRect();
+	etr.height = corners[3].getPosition().y - cp.y + 20;
+	edges[3].setPosition(cp);
+	edges[3].setTextureRect(etr);
+
+	IntRect ctr = container.getTextureRect();
+	etr = edges[0].getTextureRect();
+	ctr.top = 0;
+	ctr.width = etr.width + 20;
+	etr = edges[3].getTextureRect();
+	ctr.height = etr.height + 20;
+	container.setTextureRect(ctr);
+
+	setPosition(position);
+
+	shownUp = true;
+
 }
 
 bool Frame::isShownUp()

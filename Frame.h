@@ -23,7 +23,8 @@ public:
 	void setSize(Vector2f size);
 	Vector2f getSize();
 	Sprite* getContainer();
-	void showUp();
+	void showUp(int duration = 250);
+	void show();
 	bool isShownUp();
 };
 

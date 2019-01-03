@@ -27,6 +27,7 @@ public:
 	void setLayout(Layout layout);
 	void setSpacing(Vector2f spacing);
 	void setPosition(Vector2f position);
+	Vector2f getPosition();
 	void setOffset(Vector2f offset);
 	Vector2f getSize();
 	void setOrigin(Vector2f origin);
