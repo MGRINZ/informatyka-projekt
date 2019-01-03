@@ -4,7 +4,7 @@
 
 class EShootingJelly : public Entity
 {
-private:
+protected:
 	Projectile *projectile;
 	Clock *delayClock;
 	int shootDelay = 1000;

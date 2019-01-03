@@ -46,8 +46,9 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 	cout << (int) (getPosition().x / WIDTH) << ";" << (int) ((getPosition().y - 1) / WIDTH) << endl; //Debug: player position
 }
 
-Player::Player() : Entity("easteregg-man.png")
+Player::Player()
 {
+	setTexture("easteregg-man.png");
 	animationStep = 50;
 }
 
@@ -79,10 +80,13 @@ bool Player::takingDamage(Entity & enemy) //Zwraca true jeœli obra¿enia zosta³y 
 	if (!egb.intersects(getGlobalBounds()))
 		return false;
 
-	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
+	if ((ppos.x >= egb.left && ppos.x <= egb.left + enemy.getWidth() && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
 	{
-		dealDamage(enemy);
-		return false;
+		if (!enemy.isImmortal())
+		{
+			dealDamage(enemy);
+			return false;
+		}
 	}
 
 	if (immunityTimer)

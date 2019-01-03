@@ -1,8 +1,6 @@
 #include "Game.h"
 #include "Entity.h"
 
-const float Entity::WIDTH = Block::WIDTH;
-
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
 	if (!isActive())
@@ -10,6 +8,14 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 
 	if (yVelocityDown == yVelocityUp)
 		yVelocityDown = 0.0;
+
+	if (!canGoUp(blocks))
+	{
+		yVelocityUp = 0.0;
+		yVelocityDown = 0.0;
+		jumping = false;
+		setMovingDirectionY(0);
+	}
 
 	yVelocityDown += gravity * 0.0017;
 	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
@@ -22,21 +28,7 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 	float eX = entityPosition.x;
 	float eY = entityPosition.y;
 
-	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
-	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
-
-	Block *blockUL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
-	Block *blockUR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
-
-	if (blockUL != NULL || blockUR != NULL)
-	{
-		yVelocityUp = 0.0;
-		yVelocityDown = 0.0;
-		jumping = false;
-		setMovingDirectionY(0);
-	}
-
-	if (blockDL != NULL || blockDR != NULL)
+	if (!canGoDown(blocks))
 	{
 		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
 		yVelocityDown = 0.0;
@@ -91,6 +83,36 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 	return false;
 }
 
+bool Entity::canGoUp(BlocksVector & blocks)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	Block *blockUL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+	Block *blockUR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+
+	if (blockUL == NULL && blockUR == NULL)
+		return true;
+
+	return false;
+}
+
+bool Entity::canGoDown(BlocksVector & blocks)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+
+	if (blockDL == NULL && blockDR == NULL)
+		return true;
+
+	return false;
+}
+
 void Entity::handleMovement(BlocksVector &solidBlocks)
 {
 
@@ -125,7 +147,6 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 
 void Entity::jump(double offset)
 {
-
 	if (!isActive())
 		return;
 
@@ -151,7 +172,6 @@ bool Entity::isJumping()
 
 void Entity::animate()
 {
-
 	if (!isActive())
 		return;
 
@@ -276,16 +296,22 @@ bool Entity::isImmortal()
 	return immortal;
 }
 
+const float Entity::getWidth() const
+{
+	return WIDTH;
+}
+
 Entity::Entity()
 {
+	WIDTH = Block::WIDTH;
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
 	reset();
 }
 
-Entity::Entity(string texture) : Entity()
+void Entity::setTexture(string texture)
 {
 	this->texture.loadFromFile("resources/textures/entities/" + texture);
-	setTexture(this->texture);
+	Sprite::setTexture(this->texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 

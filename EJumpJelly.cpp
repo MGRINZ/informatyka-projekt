@@ -1,7 +1,8 @@
 #include "EJumpJelly.h"
 
-EJumpJelly::EJumpJelly() : Entity::Entity("jelly2.png")
+EJumpJelly::EJumpJelly()
 {
+	setTexture("jelly2.png");
 	animationStep = 100;
 }
 

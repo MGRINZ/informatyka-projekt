@@ -4,6 +4,7 @@
 #include <sstream>
 #include "EJelly.h"
 #include "EJumpJelly.h"
+#include "EMovingShootingJelly.h"
 #include "EShootingJelly.h"
 #include "ESleepingJelly.h"
 #include "Game.h"
@@ -78,7 +79,7 @@ void Level::draw(RenderWindow &window)
 	for (auto &projectile : projectiles)
 	{
 		if (projectile->isActive())
-		window.draw(*projectile);
+			window.draw(*projectile);
 	}
 
 	for (auto &block : foregroundBlocks)
@@ -235,6 +236,8 @@ int Level::load(string levelFilename)
 					enemy = new ESleepingJelly();
 				else if (type == "shootingjelly")
 					enemy = new EShootingJelly();
+				else if (type == "movingshootingjelly")
+					enemy = new EMovingShootingJelly();
 				enemy->setPosition(x, y);
 
 				if (!flags.empty())
@@ -310,6 +313,7 @@ void Level::handleEntities()
 
 	for (auto &projectile : projectiles)
 	{
+		projectile->animate();
 		projectile->shoot(solidBlocks);
 		if (player.takingDamage(*projectile))
 			projectile->deactivate();

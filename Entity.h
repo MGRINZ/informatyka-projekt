@@ -21,19 +21,21 @@ protected:
 	bool alive;
 	bool immortal;
 	int animationStep;
+	float WIDTH;
 
 public:
-	static const float WIDTH;
 	enum Flags {
 		SMART
 	};
 	Entity();
-	Entity(string texture);
+	void setTexture(string texture);
 	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
+	bool canGoUp(BlocksVector & blocks);
+	bool canGoDown(BlocksVector & blocks);
 	virtual void handleMovement(BlocksVector &solidBlocks);
 	void jump(double offset = 0);
 	void setJumping(bool jumping);
@@ -54,4 +56,5 @@ public:
 	bool isAlive();
 	void die();
 	bool isImmortal();
+	const float getWidth() const;
 };

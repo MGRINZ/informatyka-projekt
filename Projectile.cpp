@@ -1,13 +1,15 @@
 #include "Projectile.h"
+#include "Game.h"
 #include <iostream>
 
-const double Projectile::WIDTH = 16;
-
-Projectile::Projectile(string texture) : Entity::Entity(texture)
+Projectile::Projectile(string texture)
 {
+	WIDTH = 16;
+	setTexture(texture);
 	immortal = true;
 	setTextureRect(IntRect(0, WIDTH, WIDTH, WIDTH));
 	setOrigin(Vector2f(WIDTH / 2, WIDTH / 2));
+	animationStep = 50;
 }
 
 void Projectile::setTrajectory(double (*f)(double, Vector2f, Vector2f), Vector2f start, Vector2f end)
@@ -17,7 +19,7 @@ void Projectile::setTrajectory(double (*f)(double, Vector2f, Vector2f), Vector2f
 	trajectoryEnd = end;
 }
 
-void Projectile::shoot(BlocksVector & solidBlocks)
+void Projectile::shoot(BlocksVector & blocks)
 {
 	if (!isActive())
 		return;
@@ -42,16 +44,34 @@ void Projectile::shoot(BlocksVector & solidBlocks)
 		x += 0.001;
 	}
 
+	dposition.x = newPosition.x - trajectoryStart.x;
+	dposition.y = newPosition.y - trajectoryStart.y;
+
+	if (sqrt(dposition.x * dposition.x + dposition.y * dposition.y) > Game::WIDTH)
+		deactivate();
+
 	Sprite::setPosition(newPosition);
 
 	if (getMovingDirectionX() == -1)
 	{
-		if (!canGoLeft(solidBlocks))
+		if (!canGoLeft(blocks))
 			deactivate();
 	}
 	else
 	{
-		if (!canGoRight(solidBlocks))
+		if (!canGoRight(blocks))
 			deactivate();
 	}
+
+	if (dposition.y > 0)
+	{
+		if (!canGoDown(blocks))
+			deactivate();
+	}
+	else
+	{
+		if (!canGoUp(blocks))
+			deactivate();
+	}
+
 }

@@ -28,6 +28,7 @@
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="EJelly.cpp" />
     <ClCompile Include="EJumpJelly.cpp" />
+    <ClCompile Include="EMovingShootingJelly.cpp" />
     <ClCompile Include="EnemiesBar.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EShootingJelly.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="Counter.h" />
     <ClInclude Include="EJelly.h" />
     <ClInclude Include="EJumpJelly.h" />
+    <ClInclude Include="EMovingShootingJelly.h" />
     <ClInclude Include="EnemiesBar.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EShootingJelly.h" />
