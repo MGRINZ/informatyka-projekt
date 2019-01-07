@@ -7,7 +7,6 @@ HelpMenu::HelpMenu()
 {
 	menuId = "HelpMenu";
 	frame.setSize(Vector2f(Game::WIDTH - 140, Game::HEIGHT - 140));
-	frame.setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT / 2));
 	frame.getContainer()->setTexture(*container.getTexture(), false);
 	frame.show();
 
@@ -54,11 +53,11 @@ HelpMenu::HelpMenu()
 	Button backButton(Vector2f(300, 50), "Powrot");
 	menu.add(backButton);
 
-	setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT - 150));
-
 	onClickListener = new HelpMenuPausedOnClickListener();
 
 	menu.setOnClickListener(*onClickListener);
+
+	setPosition(Vector2f(Game::WIDTH / 2, Game::HEIGHT / 2));
 }
 
 HelpMenu::HelpMenu(GameMenu &gameMenu) : HelpMenu()
@@ -72,4 +71,11 @@ void HelpMenu::draw(RenderTarget & target, RenderStates states) const
 {
 	target.draw(frame);
 	Menu::draw(target, states);
+}
+
+void HelpMenu::setPosition(Vector2f position)
+{
+	this->position = position;
+	frame.setPosition(position);
+	Menu::setPosition(Vector2f(position.x, Game::HEIGHT - 150));
 }

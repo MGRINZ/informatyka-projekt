@@ -7,6 +7,7 @@
 class HelpMenu : public Menu
 {
 private:
+	Vector2f position;
 	Frame frame;
 	Container container;
 	Text headers[2];
@@ -15,5 +16,6 @@ public:
 	HelpMenu();
 	HelpMenu(GameMenu &gameMenu);
 	void draw(RenderTarget& target, RenderStates states) const;
+	void setPosition(Vector2f position);
 };
 

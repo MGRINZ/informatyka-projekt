@@ -439,6 +439,7 @@ void Level::showPauseMenu()
 void Level::showHelpMenu()
 {
 	helpMenu = new HelpMenu();
+	helpMenu->setPosition(view.getCenter());
 }
 
 const Player & Level::getPlayer()
