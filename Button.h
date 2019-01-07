@@ -13,6 +13,7 @@ private:
 	static Texture *normalTexture;
 	static Texture *hoverTexture;
 	static Texture *pushedTexture;
+	static Texture *disabledTexture;
 	Sprite corners[4];
 	Sprite edges[4];
 	Sprite filling;
@@ -32,6 +33,7 @@ private:
 		MOUSE_OVER,
 		MOUSE_DOWN,
 		MOUSE_UP,
+		DISABLED
 	};
 	void loadTextures(Texture * &texture, const string filename);
 	void setState(State state);
@@ -51,5 +53,6 @@ public:
 	void handleEvents(Window &window, View *view);
 	void setOnClickListener(ButtonOnClickListener &onClickListener);
 	void setOffset(Vector2f offset);
+	void disable();
 };
 

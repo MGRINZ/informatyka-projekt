@@ -33,6 +33,7 @@ public:
 	void setOrigin(Vector2f origin);
 	void draw(RenderTarget& target, RenderStates states) const;
 	void setOnClickListener(ButtonsGroupOnClickListener &onClickListener);
+	Button & getButton(int index);
 };
 
 class ButtonsGroup::SelectedButtonOnClickListener : public ButtonOnClickListener

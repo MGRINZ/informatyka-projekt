@@ -128,6 +128,11 @@ void ButtonsGroup::setOnClickListener(ButtonsGroupOnClickListener & onClickListe
 	this->onClickListener = &onClickListener;
 }
 
+Button & ButtonsGroup::getButton(int index)
+{
+	return buttons[index];
+}
+
 ButtonsGroup::SelectedButtonOnClickListener::SelectedButtonOnClickListener(int index, ButtonsGroupOnClickListener **onClickListener)
 {
 	this->index = index;

@@ -5,6 +5,7 @@ vector<Button*> Button::buttons;
 Texture * Button::normalTexture;
 Texture * Button::pushedTexture;
 Texture * Button::hoverTexture;
+Texture * Button::disabledTexture;
 
 void Button::loadTextures(Texture * &texture, const string filename)
 {
@@ -26,6 +27,8 @@ void Button::setState(State state)
 		texture = hoverTexture;
 	else if (state == State::MOUSE_DOWN)
 		texture = pushedTexture;
+	else if (state == State::DISABLED)
+		texture = disabledTexture;
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -33,6 +36,7 @@ void Button::setState(State state)
 		for (auto &edge : edgesGroups[i])
 			edge.setTexture(*texture);
 	}
+	filling.setTexture(*texture);
 	for (auto &part : fillingGroup)
 		part.setTexture(*texture);
 	this->state = state;
@@ -46,7 +50,8 @@ Button::Button(Vector2f size)
 
 	loadTextures(normalTexture, "button.png");
 	loadTextures(hoverTexture, "button-h.png");
-	loadTextures(pushedTexture, "button-d.png");
+	loadTextures(pushedTexture, "button-c.png");
+	loadTextures(disabledTexture, "button-d.png");
 
 	corners[0].setOrigin(Vector2f(15, 15));
 	corners[1].setOrigin(Vector2f(0, 15));
@@ -94,9 +99,9 @@ void Button::draw(RenderTarget & target, RenderStates states) const
 		target.draw(corners[i]);
 		for(auto &edge : edgesGroups[i])
 			target.draw(edge);
-		for(auto &part : fillingGroup)
-			target.draw(part);
 	}
+	for(auto &part : fillingGroup)
+		target.draw(part);
 	target.draw(text);
 }
 
@@ -224,6 +229,9 @@ void Button::setText(string text)
 
 void Button::handleEvents(Window &window, View *view)
 {
+	if (state == State::DISABLED)
+		return;
+
 	Vector2i mousePosition;
 	mousePosition.x = Mouse::getPosition(window).x + view->getCenter().x - view->getSize().x / 2;
 	mousePosition.y = Mouse::getPosition(window).y + view->getCenter().y - view->getSize().y / 2;
@@ -268,6 +276,11 @@ void Button::setOnClickListener(ButtonOnClickListener & onClickListener)
 void Button::setOffset(Vector2f offset)
 {
 	this->offset = offset;
+}
+
+void Button::disable()
+{
+	setState(State::DISABLED);
 }
 
 Button::~Button()

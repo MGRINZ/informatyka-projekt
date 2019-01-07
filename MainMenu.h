@@ -6,6 +6,6 @@
 class MainMenu : public Menu
 {
 public:
-	MainMenu(GameMenu &dsa);
+	MainMenu(GameMenu &gameMenu);
 };
 
