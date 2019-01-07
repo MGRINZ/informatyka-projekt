@@ -21,8 +21,8 @@ LoadLevelMenu::LoadLevelMenu(GameMenu &gameMenu)
 
 		Button levelButton(Vector2f(300, 50), ss.str());
 
-		/*if (i >= save.getLevel())
-			levelButton.disable();*/
+		if (i >= save.getLevel())
+			levelButton.disable();
 
 		menu.add(levelButton);
 	}

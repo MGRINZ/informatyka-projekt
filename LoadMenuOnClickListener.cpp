@@ -12,11 +12,11 @@ void LoadMenuOnClickListener::onClick(int index)
 		case 1:
 		case 2:
 		{
-			gameMenu->setStatus(gameMenu->LOAD_LEVEL_MENU);
 			Save save;
 			save.setSlot(index);
 			save.read();
 			Game::getInstance().loadSave(save);
+			gameMenu->setStatus(gameMenu->LOAD_LEVEL_MENU);
 			break;
 		}
 		case BACK:
