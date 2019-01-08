@@ -3,7 +3,7 @@
 #include "BlocksVector.h"
 #include "Entity.h"
 #include "Projectile.h"
-#include "IEgg.h"
+#include "Item.h"
 #include "Player.h"
 #include "Background.h"
 #include "LevelEndScreen.h"

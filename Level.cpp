@@ -2,6 +2,8 @@
 #include "Level.h"
 #include <fstream>
 #include <sstream>
+#include "IEgg.h"
+#include "IHealth.h"
 #include "EJelly.h"
 #include "EJumpJelly.h"
 #include "EMovingShootingJelly.h"
@@ -49,7 +51,8 @@ void Level::addItem(int x, int y, string type)
 		ItemsBar *itemsBar = player.getHUD()->getItemsBar();
 		itemsBar->setItems(itemsBar->getCurrentItems(), itemsBar->getMaxItems() + 1);
 	}
-	//else if(type == "health")
+	else if (type == "health")
+		item = new IHealth(x, y);
 	
 	if (item != nullptr)
 	{
