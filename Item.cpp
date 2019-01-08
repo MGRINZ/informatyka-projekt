@@ -2,10 +2,10 @@
 
 Item::Item(int x, int y) : Block(x, y)
 {
-
+	onPickUpListener = nullptr;
 }
 
-Item::Item(int x, int y, string txt) : Block(x, y)
+Item::Item(int x, int y, string txt) : Item(x, y)
 {
 	texture->loadFromFile("resources/textures/" + txt);
 	setTexture(texture);
@@ -34,4 +34,17 @@ void Item::animate()
 		setTextureRect(txtRect);
 		animateClock.restart();
 	}
+}
+
+void Item::triggerOnPickupEvent()
+{
+	if(onPickUpListener != nullptr)
+		onPickUpListener->onPickUp(*this);
+}
+
+void Item::setOnPickUpListener(ItemOnPickUpListener & onPickUpListener)
+{
+	if (this->onPickUpListener != NULL && &onPickUpListener != this->onPickUpListener)
+		delete this->onPickUpListener;
+	this->onPickUpListener = &onPickUpListener;
 }

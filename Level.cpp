@@ -40,9 +40,22 @@ void Level::addForegroundBlock(Block block)
 	foregroundBlocks.push_back(block);
 }
 
-void Level::addItem(Item item)
+void Level::addItem(int x, int y, string type)
 {
-	items.push_back(item);
+	Item *item = nullptr;
+	if (type == "egg")
+	{
+		item = new IEgg(x, y);
+		ItemsBar *itemsBar = player.getHUD()->getItemsBar();
+		itemsBar->setItems(itemsBar->getCurrentItems(), itemsBar->getMaxItems() + 1);
+	}
+	//else if(type == "health")
+	
+	if (item != nullptr)
+	{
+		items.push_back(*item);
+		delete item;
+	}
 }
 
 void Level::addEnemy(Entity * entity)
@@ -207,7 +220,8 @@ int Level::load(string levelFilename)
 				y = atoi(token.c_str());
 				getline(ss, token, ';');
 				type = token;
-				addItem(Item(x, y, "egg1.png"));
+
+				addItem(x, y, type);
 			}
 			else if (property == LEVEL_PROPERTY_ENTITIES)
 			{
@@ -333,7 +347,6 @@ void Level::handleItems()
 		item.animate();
 		player.takingItem(item);
 	}
-	player.getHUD()->getItemsBar()->setItems(&items);
 }
 
 void Level::handleFinish()
@@ -446,7 +459,7 @@ void Level::showHelpMenu()
 	helpMenu->setPosition(view.getCenter());
 }
 
-const Player & Level::getPlayer()
+Player & Level::getPlayer()
 {
 	return player;
 }

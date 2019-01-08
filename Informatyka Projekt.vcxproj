@@ -42,6 +42,8 @@
     <ClCompile Include="HelpMenuPausedOnClickListener.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="HUDBar.cpp" />
+    <ClCompile Include="IEgg.cpp" />
+    <ClCompile Include="IEggOnPickUpListener.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemsBar.cpp" />
     <ClCompile Include="Level.cpp" />
@@ -96,7 +98,10 @@
     <ClInclude Include="HelpMenuPausedOnClickListener.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="HUDBar.h" />
+    <ClInclude Include="IEgg.h" />
+    <ClInclude Include="IEggOnPickUpListener.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemOnPickUpListener.h" />
     <ClInclude Include="ItemsBar.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelCompleteOnClickListener.h" />

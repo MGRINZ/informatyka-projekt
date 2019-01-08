@@ -59,12 +59,12 @@ HUD * Player::getHUD()
 
 void Player::takingItem(Item &item)
 {
+	if (!item.isActive())
+		return;
+
 	FloatRect gb = item.getGlobalBounds();
 	if (getGlobalBounds().intersects(gb))
-	{
-		item.disable();
-
-	}
+		item.triggerOnPickupEvent();
 }
 
 bool Player::takingDamage(Entity & enemy) //Zwraca true jeœli obra¿enia zosta³y zadane, w przeciwnym razie – false
@@ -130,6 +130,7 @@ void Player::reset()
 	int difficulty = Game::getInstance().getSave().getDifficulty();
 
 	hud.getHealthBar()->setMaxHealth(3 - difficulty);
+	hud.getItemsBar()->setItems(0, 0);
 	setHealth(3 - difficulty);
 	immunityTimer = 0;
 	setColor(Color::White);

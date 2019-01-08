@@ -3,7 +3,7 @@
 #include "BlocksVector.h"
 #include "Entity.h"
 #include "Projectile.h"
-#include "Item.h"
+#include "IEgg.h"
 #include "Player.h"
 #include "Background.h"
 #include "LevelEndScreen.h"
@@ -56,7 +56,7 @@ public:
 	void addSolidBlock(Block block);
 	void addBackgroundBlock(Block block);
 	void addForegroundBlock(Block block);
-	void addItem(Item item);
+	void addItem(int x, int y, string type);
 	void addEnemy(Entity* entity);
 	void addProjectile(Projectile* projectile);
 	void draw(RenderWindow &window);
@@ -78,6 +78,6 @@ public:
 	void setEvent(Event *event);
 	void showPauseMenu();
 	void showHelpMenu();
-	const Player & getPlayer();
+	Player & getPlayer();
 	int countScore();
 };
