@@ -20,6 +20,7 @@ void LevelCompleteScreen::showUpHealtBar()
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 	int health = hud->getHealthBar()->getHealth();
+	int difficultyMultiplier = Game::getInstance().getDifficultyMultiplier();
 
 	for (int i = 1; i <= health; i++)
 		if (elapsedTime >= ANIMATION_TIME_CONSTANT + i * ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT + i * ANIMATION_TIME_CONSTANT * 2)
@@ -27,13 +28,13 @@ void LevelCompleteScreen::showUpHealtBar()
 
 	if (elapsedTime >= ANIMATION_TIME_CONSTANT * 2 && elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3))
 	{
-		counters[0].set(health * Game::HEALTH_SCORE);
+		counters[0].set(health * Game::HEALTH_SCORE * difficultyMultiplier);
 		counters[0].count(ANIMATION_TIME_CONSTANT * health);
 	}
 	else if (elapsedTime >= ANIMATION_TIME_CONSTANT * (health + 3))
 	{
 		if (health == healthBar.getMaxHealth())
-			counters[0].set(health * Game::HEALTH_SCORE + Game::HEALTH_SCORE_BONUS, health * Game::HEALTH_SCORE);
+			counters[0].set((health * Game::HEALTH_SCORE + Game::HEALTH_SCORE_BONUS) * difficultyMultiplier, health * Game::HEALTH_SCORE * difficultyMultiplier);
 		counters[0].count(ANIMATION_TIME_CONSTANT);
 	}
 }
@@ -45,6 +46,7 @@ void LevelCompleteScreen::showUpItemsBar()
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 	int health = hud->getHealthBar()->getHealth();
+	int difficultyMultiplier = Game::getInstance().getDifficultyMultiplier();
 
 	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3))
 		return;
@@ -59,7 +61,7 @@ void LevelCompleteScreen::showUpItemsBar()
 
 	elapsedTime -= ANIMATION_TIME_CONSTANT * (health + 3);
 
-	hudBarCounting(*hud->getItemsBar(), itemsBar, elapsedTime, 1, Game::ITEMS_SCORE, Game::ITEMS_SCORE_BONUS);
+	hudBarCounting(*hud->getItemsBar(), itemsBar, elapsedTime, 1, Game::ITEMS_SCORE * difficultyMultiplier, Game::ITEMS_SCORE_BONUS * difficultyMultiplier);
 }
 
 void LevelCompleteScreen::showUpEnemiesBar()
@@ -69,6 +71,7 @@ void LevelCompleteScreen::showUpEnemiesBar()
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 	int health = hud->getHealthBar()->getHealth();
+	int difficultyMultiplier = Game::getInstance().getDifficultyMultiplier();
 
 	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3 + 3))
 		return;
@@ -83,7 +86,7 @@ void LevelCompleteScreen::showUpEnemiesBar()
 
 	elapsedTime -= ANIMATION_TIME_CONSTANT * (health + 3 + 3);
 
-	hudBarCounting(*hud->getEnemiesBar(), enemiesBar, elapsedTime, 2, Game::ENEMIES_SCORE, Game::ENEMIES_SCORE_BONUS);
+	hudBarCounting(*hud->getEnemiesBar(), enemiesBar, elapsedTime, 2, Game::ENEMIES_SCORE * difficultyMultiplier, Game::ENEMIES_SCORE_BONUS * difficultyMultiplier);
 }
 
 void LevelCompleteScreen::hudBarCounting(HUDBar &sourceHUDBar, HUDBar &targetHUDBar, int elapsedTime, int counterIndex, int score, int bonusScore)
@@ -116,6 +119,7 @@ void LevelCompleteScreen::showUpTimeBar()
 
 	int elapsedTime = animationClock->getElapsedTime().asMilliseconds();
 	int health = hud->getHealthBar()->getHealth();
+	int difficultyMultiplier = Game::getInstance().getDifficultyMultiplier();
 
 	if (elapsedTime < ANIMATION_TIME_CONSTANT * (health + 3 + 3 + 3))
 		return;
@@ -139,7 +143,7 @@ void LevelCompleteScreen::showUpTimeBar()
 
 	if (elapsedTime >= ANIMATION_TIME_CONSTANT && elapsedTime < ANIMATION_TIME_CONSTANT * 3)
 	{
-		counters[3].set(timeLeft * Game::TIME_SCORE);
+		counters[3].set(timeLeft * Game::TIME_SCORE * difficultyMultiplier);
 		counters[3].count(ANIMATION_TIME_CONSTANT);
 	}
 }

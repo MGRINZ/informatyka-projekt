@@ -146,6 +146,16 @@ void Game::exit()
 	status = Status::EXIT;
 }
 
+int Game::getDifficultyMultiplier(int difficulty)
+{
+	return DIFFICULTY_MULTIPLIERS[difficulty];
+}
+
+int Game::getDifficultyMultiplier()
+{
+	return DIFFICULTY_MULTIPLIERS[save.getDifficulty()];
+}
+
 Game::Game()
 {
 }
