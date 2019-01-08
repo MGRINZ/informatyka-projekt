@@ -10,14 +10,18 @@ LoadLevelMenu::LoadLevelMenu(GameMenu &gameMenu)
 	Save save = Game::getInstance().getSave();
 	for (int i = 0; i < 5; i++)
 	{
-		stringstream levelPath;
+		stringstream levelName;
+		string levelPath = "resources/levels/";
 		stringstream ss;
-		levelPath << "resources/levels/level" << i + 1 << ".lvl";
+		levelName << "level" << i + 1 << ".lvl";
 		
-		if (!Utils::fexists(levelPath.str()))
+		if (!Utils::fexists(levelPath + levelName.str()))
 			break;
 
 		ss << "Poziom " << i + 1 << ".";
+
+		if (i < save.getLevel())
+			ss << " - Wynik: " << save.getHighScore(i);
 
 		Button levelButton(Vector2f(300, 50), ss.str());
 

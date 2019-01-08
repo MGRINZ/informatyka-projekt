@@ -346,8 +346,12 @@ void Level::handleFinish()
 		if(endScreen == NULL)
 			endScreen = new LevelCompleteScreen(player.getHUD(), view.getCenter());
 		Save save = Game::getInstance().getSave();
-		if(atoi(levelFilename.substr(5, 1).c_str()) == save.getLevel())
+		int level = atoi(levelFilename.substr(5, 1).c_str());
+		if(level == save.getLevel())
 			save.setLevel(save.getLevel() + 1);
+		int newHighScore = countScore();
+		if(save.getHighScore(level - 1) < newHighScore)
+			save.setHighScore(level - 1, newHighScore);
 		save.write();
 	}
 	if(!player.isAlive())
@@ -445,4 +449,33 @@ void Level::showHelpMenu()
 const Player & Level::getPlayer()
 {
 	return player;
+}
+
+int Level::countScore()
+{
+	HUD *hud = player.getHUD();
+	int health = hud->getHealthBar()->getHealth();
+	int items = hud->getItemsBar()->getCurrentItems();
+	int enemies = hud->getEnemiesBar()->getCurrentItems();
+	int timeLeft = hud->getTimeBar()->getTimeLeft();
+	int difficultyMultiplier = Game::getInstance().getDifficultyMultiplier();
+
+	int score = 0;
+
+	score += health * Game::HEALTH_SCORE;
+	if(health == hud->getHealthBar()->getMaxHealth())
+		score += Game::HEALTH_SCORE_BONUS;
+
+	score += items * Game::ITEMS_SCORE;
+	if (items == hud->getItemsBar()->getMaxItems())
+		score += Game::ITEMS_SCORE_BONUS;
+
+	score += enemies * Game::ENEMIES_SCORE;
+	if (enemies == hud->getEnemiesBar()->getMaxItems())
+		score += Game::ENEMIES_SCORE_BONUS;
+
+	score += timeLeft * Game::TIME_SCORE;
+
+	score *= difficultyMultiplier;
+	return score;
 }

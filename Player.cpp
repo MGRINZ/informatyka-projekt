@@ -43,7 +43,7 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 		setJumping(false);
 	}
 
-	cout << (int) (getPosition().x / WIDTH) << ";" << (int) ((getPosition().y - 1) / WIDTH) << endl; //Debug: player position
+	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) ((getPosition().y - 1) / WIDTH) << endl; //Debug: player position
 }
 
 Player::Player()

@@ -79,4 +79,5 @@ public:
 	void showPauseMenu();
 	void showHelpMenu();
 	const Player & getPlayer();
+	int countScore();
 };

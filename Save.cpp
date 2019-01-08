@@ -11,6 +11,9 @@ Save::Save()
 	slot = 1;
 	level = 1;
 	difficulty = 0;
+	
+	for (int i = 0; i < 5; i++)
+		highScores[i] = 0;
 }
 
 void Save::setSlot(int slot)
@@ -32,6 +35,11 @@ void Save::setDifficulty(int difficulty)
 	this->difficulty = difficulty;
 }
 
+void Save::setHighScore(int level, int highScore)
+{
+	highScores[level] = highScore;
+}
+
 int Save::getSlot()
 {
 	return slot;
@@ -45,6 +53,11 @@ int Save::getLevel()
 int Save::getDifficulty()
 {
 	return difficulty;
+}
+
+int Save::getHighScore(int level)
+{
+	return highScores[level];
 }
 
 void Save::write()
