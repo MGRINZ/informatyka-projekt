@@ -4,6 +4,7 @@
 #include <sstream>
 #include "IEgg.h"
 #include "IHealth.h"
+#include "NoFlagException.h"
 #include "EJelly.h"
 #include "EJumpJelly.h"
 #include "EMovingShootingJelly.h"
@@ -265,7 +266,14 @@ int Level::load(string levelFilename)
 					while (!ss.eof())
 					{
 						getline(ss, token, '|');
-						enemy->setFlag(token, true);
+						try
+						{
+							enemy->setFlag(token, true);
+						}
+						catch (NoFlagException &e)
+						{
+							cout << e.what();
+						}
 					}
 				}
 

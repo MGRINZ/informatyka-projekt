@@ -66,6 +66,7 @@
     <ClCompile Include="NewGameDifficultyMenuOnClickListener.cpp" />
     <ClCompile Include="NewGameMenu.cpp" />
     <ClCompile Include="NewGameMenuOnClickListener.cpp" />
+    <ClCompile Include="NoFlagException.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="PauseMenuOnClickListener.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="NewGameDifficultyMenuOnClickListener.h" />
     <ClInclude Include="NewGameMenu.h" />
     <ClInclude Include="NewGameMenuOnClickListener.h" />
+    <ClInclude Include="NoFlagException.h" />
     <ClInclude Include="PauseMenu.h" />
     <ClInclude Include="PauseMenuOnClickListener.h" />
     <ClInclude Include="Player.h" />

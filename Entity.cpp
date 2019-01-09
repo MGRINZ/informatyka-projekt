@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Entity.h"
+#include "NoFlagException.h"
 
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
@@ -264,6 +265,8 @@ Entity::Flags Entity::getFlagByName(string name)
 {
 	if (name == "SMART")
 		return Flags::SMART;
+	else
+		throw NoFlagException(name);
 }
 
 bool Entity::isActive()
