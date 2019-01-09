@@ -2,6 +2,8 @@
 #include "Entity.h"
 #include "NoFlagException.h"
 
+map<string, Texture*> Entity::textures;
+
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
 	if (!isActive())
@@ -176,7 +178,7 @@ void Entity::animate()
 	if (!isActive())
 		return;
 
-	Vector2u txtSize = texture.getSize();
+	Vector2u txtSize = texture->getSize();
 	int deathFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê œmierci
 	int jumpFrame = (txtSize.x / WIDTH - 2);	//Przedostatnia klatka tekstury przeznaczona na animacjê skoku
 
@@ -304,6 +306,18 @@ const float Entity::getWidth() const
 	return WIDTH;
 }
 
+void Entity::loadTexture(string texture)
+{
+	if (!textures.count(texture))
+	{
+		this->texture = new Texture();
+		this->texture->loadFromFile(texture);
+		textures.insert(pair<string, Texture*>(texture, this->texture));
+	}
+	else
+		this->texture = textures.at(texture);
+}
+
 Entity::Entity()
 {
 	WIDTH = Block::WIDTH;
@@ -313,8 +327,8 @@ Entity::Entity()
 
 void Entity::setTexture(string texture)
 {
-	this->texture.loadFromFile("resources/textures/entities/" + texture);
-	Sprite::setTexture(this->texture);
+	loadTexture(RES_DIR + texture);
+	Sprite::setTexture(*this->texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 

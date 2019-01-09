@@ -9,7 +9,10 @@ using namespace sf;
 class Entity : public Sprite
 {
 protected:
-	Texture texture;
+	const string RES_DIR = "resources/textures/entities/";
+	Texture *texture;
+	static map<string, Texture*> textures;
+	void loadTexture(string texture);
 	double yVelocityDown;
 	double yVelocityUp;
 	bool jumping;
