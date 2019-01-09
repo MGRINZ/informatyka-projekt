@@ -306,6 +306,13 @@ const float Entity::getWidth() const
 	return WIDTH;
 }
 
+void Entity::flushTextures()
+{
+	for (auto &pair : textures)
+		delete pair.second;
+	textures.clear();
+}
+
 void Entity::loadTexture(string texture)
 {
 	if (!textures.count(texture))

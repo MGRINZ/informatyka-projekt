@@ -60,7 +60,7 @@ public:
 	void addEnemy(Entity* entity);
 	void addProjectile(Projectile* projectile);
 	void draw(RenderWindow &window);
-	int load(string levelFilename);
+	int load(string levelFilename, bool flushTextures = true);
 	void restart();
 	void resetEndScreen();
 	void resetPauseMenu();

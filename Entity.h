@@ -60,4 +60,5 @@ public:
 	void die();
 	bool isImmortal();
 	const float getWidth() const;
+	static void flushTextures();
 };

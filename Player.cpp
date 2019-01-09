@@ -48,7 +48,6 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 
 Player::Player()
 {
-	setTexture("easteregg-man.png");
 	animationStep = 50;
 }
 
@@ -125,6 +124,7 @@ int Player::getHealth()
 void Player::reset()
 {
 	Entity::reset();
+	setTexture("easteregg-man.png");
 	hud.setPosition(Vector2f(50, 20));
 
 	int difficulty = Game::getInstance().getSave().getDifficulty();

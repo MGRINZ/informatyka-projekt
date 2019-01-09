@@ -18,4 +18,5 @@ public:
 	Block(int x, int y);
 	Block(int x, int y, string texture);
 	void setPosition(int x, int y);
+	static void flushTextures();
 };

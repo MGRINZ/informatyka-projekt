@@ -22,6 +22,13 @@ void Block::setPosition(int x, int y)
 	RectangleShape::setPosition(Vector2f(x * WIDTH, y * WIDTH));
 }
 
+void Block::flushTextures()
+{
+	for (auto &pair : textures)
+		delete pair.second;
+	textures.clear();
+}
+
 void Block::loadTexture(string texture)
 {
 	if (!textures.count(texture))

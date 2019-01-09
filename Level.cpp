@@ -115,11 +115,17 @@ void Level::draw(RenderWindow &window)
 			window.draw(*helpMenu);
 }
 
-int Level::load(string levelFilename)
+int Level::load(string levelFilename, bool flushTextures)
 {
 	status = Status::LOADING;
 	
 	this->levelFilename = levelFilename;
+
+	if (flushTextures)
+	{
+		Block::flushTextures();
+		Entity::flushTextures();
+	}
 
 	solidBlocks.clear();
 	backgroundBlocks.clear();
@@ -293,7 +299,7 @@ int Level::load(string levelFilename)
 
 void Level::restart()
 {
-	load(levelFilename);
+	load(levelFilename, false);
 }
 
 void Level::resetEndScreen()
