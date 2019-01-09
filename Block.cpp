@@ -1,6 +1,8 @@
 #include "Block.h"
 #include "Game.h"
 
+map<string, Texture*> Block::textures;
+
 const float Block::WIDTH = Game::HEIGHT / 18.75;
 
 Block::Block(int x, int y)
@@ -11,11 +13,23 @@ Block::Block(int x, int y)
 
 Block::Block(int x, int y, string txt) : Block(x, y)
 {
-	texture->loadFromFile("resources/textures/blocks/" + txt);
+	loadTexture(RES_DIR + txt);
 	setTexture(texture);
 }
 
 void Block::setPosition(int x, int y)
 {
 	RectangleShape::setPosition(Vector2f(x * WIDTH, y * WIDTH));
+}
+
+void Block::loadTexture(string texture)
+{
+	if (!textures.count(texture))
+	{
+		this->texture = new Texture();
+		this->texture->loadFromFile(texture);
+		textures.insert(pair<string, Texture*>(texture, this->texture));
+	}
+	else
+		this->texture = textures.at(texture);
 }

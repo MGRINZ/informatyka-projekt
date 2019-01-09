@@ -7,7 +7,7 @@ Item::Item(int x, int y) : Block(x, y)
 
 Item::Item(int x, int y, string txt) : Item(x, y)
 {
-	texture->loadFromFile("resources/textures/" + txt);
+	loadTexture(RES_DIR + txt);
 	setTexture(texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
