@@ -20,7 +20,7 @@ private:
 	vector<Block> foregroundBlocks;
 	vector<Entity*> enemies;
 	vector<Projectile*> projectiles;
-	vector<Item> items;
+	vector<Item*> items;
 	Player player;
 	string name;
 	Background background;
@@ -53,6 +53,7 @@ public:
 		FAILED
 	};
 	Level();
+	~Level();
 	void addSolidBlock(Block block);
 	void addBackgroundBlock(Block block);
 	void addForegroundBlock(Block block);

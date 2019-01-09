@@ -26,6 +26,7 @@ public:
 	};
 	string difficultyNames[3];
 	GameMenu();
+	~GameMenu();
 	void draw(RenderWindow &window);
 	void setStatus(Status status);
 };

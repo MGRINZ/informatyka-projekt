@@ -15,6 +15,7 @@ private:
 	Vector2f offset;
 	int layout;
 	class SelectedButtonOnClickListener;
+	vector<SelectedButtonOnClickListener*> buttononClickListeners;
 	ButtonsGroupOnClickListener *onClickListener;
 public:
 	enum Layout
@@ -23,6 +24,7 @@ public:
 		VERTICAL
 	};
 	ButtonsGroup();
+	~ButtonsGroup();
 	void add(Button button);
 	void setLayout(Layout layout);
 	void setSpacing(Vector2f spacing);
@@ -43,5 +45,6 @@ private:
 	ButtonsGroupOnClickListener **onClickListener;
 public:
 	SelectedButtonOnClickListener(int index, ButtonsGroupOnClickListener **onClickListener);
+	~SelectedButtonOnClickListener();
 	void onClick();
 };

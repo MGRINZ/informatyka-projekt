@@ -17,6 +17,7 @@ private:
 	bool shownUp = false;
 public:
 	Frame();
+	~Frame();
 	void draw(RenderTarget& target, RenderStates states) const override;
 	void setPosition(Vector2f position);
 	Vector2f getPosition();

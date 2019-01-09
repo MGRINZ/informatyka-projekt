@@ -28,6 +28,7 @@ private:
 
 public:
 	LevelCompleteScreen(HUD * hud, Vector2f position);
+	~LevelCompleteScreen();
 	void draw(RenderWindow &window);
 };
 

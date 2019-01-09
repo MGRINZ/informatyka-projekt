@@ -12,6 +12,12 @@ Item::Item(int x, int y, string txt) : Item(x, y)
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 
+Item::~Item()
+{
+	if(onPickUpListener != NULL)
+		delete onPickUpListener;
+}
+
 bool Item::isActive()
 {
 	return active;

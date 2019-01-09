@@ -12,6 +12,7 @@ protected:
 	ButtonsGroupOnClickListener *onClickListener;
 public:
 	Menu();
+	~Menu();
 	void draw(RenderTarget& target, RenderStates states) const;
 	void setPosition(Vector2f position);
 	string getMenuId();

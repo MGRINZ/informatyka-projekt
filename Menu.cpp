@@ -7,6 +7,12 @@ Menu::Menu()
 	menu.setSpacing(Vector2f(0, 10));
 }
 
+Menu::~Menu()
+{
+	if (onClickListener != NULL)
+		delete onClickListener;
+}
+
 void Menu::draw(RenderTarget & target, RenderStates states) const
 {
 	target.draw(menu);

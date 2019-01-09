@@ -16,6 +16,7 @@ private:
 public:
 	Item(int x, int y);
 	Item(int x, int y, string texture);
+	~Item();
 	bool isActive();
 	void disable();
 	void animate();

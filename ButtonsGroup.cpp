@@ -6,6 +6,12 @@ ButtonsGroup::ButtonsGroup()
 	setPosition(Vector2f(0, 0));
 }
 
+ButtonsGroup::~ButtonsGroup()
+{
+	for (auto i : buttononClickListeners)
+		delete i;
+}
+
 void ButtonsGroup::add(Button button)
 {
 	//(1)..., wiêc wskaŸniki w Button::buttons bêd¹ wskazywa³y na stare adresy elementów...
@@ -24,6 +30,7 @@ void ButtonsGroup::add(Button button)
 	
 	SelectedButtonOnClickListener *sbClickListener = new SelectedButtonOnClickListener(buttons.size(), &onClickListener);
 	button.setOnClickListener(*sbClickListener);
+	buttononClickListeners.push_back(sbClickListener);
 	buttons.push_back(button);	//vector reallocuje pamiêæ, wiêc adresy elementów siê zmieniaj¹ ...(1)
 
 	//(2)..., by dodaæ nowe adresy.
@@ -137,6 +144,11 @@ ButtonsGroup::SelectedButtonOnClickListener::SelectedButtonOnClickListener(int i
 {
 	this->index = index;
 	this->onClickListener = onClickListener;
+}
+
+ButtonsGroup::SelectedButtonOnClickListener::~SelectedButtonOnClickListener()
+{
+
 }
 
 void ButtonsGroup::SelectedButtonOnClickListener::onClick()

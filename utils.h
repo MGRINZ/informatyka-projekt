@@ -31,6 +31,7 @@ private:
 		if (clock->getElapsedTime().asMilliseconds() > duration)
 		{
 			color.a = maxTransparency;
+			delete clock;
 			clockMap.erase(&object);
 		}
 

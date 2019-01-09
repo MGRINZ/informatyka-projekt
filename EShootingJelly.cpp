@@ -9,6 +9,13 @@ EShootingJelly::EShootingJelly()
 	Game::getInstance().getLevel().addProjectile(projectile);
 }
 
+EShootingJelly::~EShootingJelly()
+{
+	delete projectile;
+	if(delayClock != NULL)
+		delete delayClock;
+}
+
 void EShootingJelly::handleMovement(BlocksVector & solidBlocks)
 {
 	if (!isActive())

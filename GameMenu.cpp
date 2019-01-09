@@ -18,6 +18,12 @@ GameMenu::GameMenu()
 	setStatus(Status::MAIN_MENU);
 }
 
+GameMenu::~GameMenu()
+{
+	if(menu != NULL)
+		delete menu;
+}
+
 void GameMenu::draw(RenderWindow & window)
 {
 	window.setView(view);

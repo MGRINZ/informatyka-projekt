@@ -50,6 +50,12 @@ Frame::Frame()
 	}
 }
 
+Frame::~Frame()
+{
+	if (animationClock != NULL)
+		delete animationClock;
+}
+
 void Frame::showUp(int duration) //duration – czas trwania animacji rozszerzania szerokoœci lub wysokoœci ramki ramki w ms; 2 * duration - czas animacji
 {
 	if (shownUp)
@@ -277,6 +283,7 @@ void Frame::showUp(int duration) //duration – czas trwania animacji rozszerzania
 		
 		shownUp = true;
 		delete animationClock;
+		animationClock = NULL;
 	}
 }
 

@@ -16,6 +16,12 @@ Counter::Counter() : Counter(0, 0)
 
 }
 
+Counter::~Counter()
+{
+	if (animationClock != NULL)
+		delete animationClock;
+}
+
 Counter::Counter(int end, int start)
 {
 	font.loadFromFile("resources/fonts/verdana.ttf");

@@ -253,6 +253,12 @@ LevelCompleteScreen::LevelCompleteScreen(HUD * hud, Vector2f position)
 	counters[4].setStyle(Text::Bold);
 }
 
+LevelCompleteScreen::~LevelCompleteScreen()
+{
+	if (animationClock != NULL)
+		delete animationClock;
+}
+
 void LevelCompleteScreen::draw(RenderWindow & window)
 {
 	if (frame.isShownUp())

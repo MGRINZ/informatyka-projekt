@@ -10,6 +10,7 @@ protected:
 	int shootDelay = 1000;
 public:
 	EShootingJelly();
+	~EShootingJelly();
 	void handleMovement(BlocksVector &solidBlocks);
 };
 

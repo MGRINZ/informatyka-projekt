@@ -28,6 +28,16 @@ Level::Level()
 {
 }
 
+Level::~Level()
+{
+	if(endScreen != NULL)
+		delete endScreen;
+	if(pauseMenu != NULL)
+		delete pauseMenu;
+	if(helpMenu != NULL)
+		delete helpMenu;
+}
+
 void Level::addSolidBlock(Block block)
 {
 	solidBlocks.push_back(block);
@@ -56,10 +66,7 @@ void Level::addItem(int x, int y, string type)
 		item = new IHealth(x, y);
 	
 	if (item != nullptr)
-	{
-		items.push_back(*item);
-		delete item;
-	}
+		items.push_back(item);
 }
 
 void Level::addEnemy(Entity * entity)
@@ -84,8 +91,8 @@ void Level::draw(RenderWindow &window)
 		window.draw(block);
 	for (auto &item : items)
 	{
-		if (item.isActive())
-			window.draw(item);
+		if (item->isActive())
+			window.draw(*item);
 	}
 
 	window.draw(player);
@@ -126,6 +133,15 @@ int Level::load(string levelFilename, bool flushTextures)
 		Block::flushTextures();
 		Entity::flushTextures();
 	}
+
+	for (auto &i : enemies)
+		delete i;
+
+	//for (auto &i : projectiles)
+	//	delete i;
+
+	for (auto &i : items)
+		delete i;
 
 	solidBlocks.clear();
 	backgroundBlocks.clear();
@@ -361,8 +377,8 @@ void Level::handleItems()
 {
 	for (auto &item : items)
 	{
-		item.animate();
-		player.takingItem(item);
+		item->animate();
+		player.takingItem(*item);
 	}
 }
 
@@ -383,6 +399,8 @@ void Level::handleFinish()
 		if(save.getHighScore(level - 1) < newHighScore)
 			save.setHighScore(level - 1, newHighScore);
 		save.write();
+		Game::getInstance().loadSave(save);
+		
 	}
 	if(!player.isAlive())
 	{
