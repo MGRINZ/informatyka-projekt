@@ -55,7 +55,7 @@ bool Entity::canGoRight(BlocksVector &blocks)
 
 	if (getFlag(Flags::SMART))
 	{
-		Block *blockD2 = blocks.getSolidBlockAtPosition((eX) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH);
+		Block *blockD2 = blocks.getSolidBlockAtPosition((eX) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH - 1);
 		if (blockD2 == NULL && !isMovingY)
 			return false;
 	}
@@ -76,7 +76,7 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 
 	if (getFlag(Flags::SMART))
 	{
-		Block *blockD2 = blocks.getSolidBlockAtPosition((eX - 1) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH);
+		Block *blockD2 = blocks.getSolidBlockAtPosition((eX - 1) / Block::WIDTH, (eY + WIDTH) / Block::WIDTH  - 1);
 		if (blockD2 == NULL && !isMovingY)
 			return false;
 	}
@@ -156,8 +156,8 @@ void Entity::jump(double offset)
 	if (!isJumping() && yVelocityDown > 0)
 		return;
 	if (yVelocityUp == 0)
-		yVelocityUp = -0.27 + offset;
-	else if (yVelocityUp > -0.37 + offset)
+		yVelocityUp = -0.30 + offset;
+	else if (yVelocityUp > -0.40 + offset)
 		yVelocityUp -= 10 * 0.001;
 	move(Vector2f(0, -0.025 * Block::WIDTH));
 	jumping = true;

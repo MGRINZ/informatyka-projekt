@@ -13,7 +13,7 @@ GameMenu::GameMenu()
 	difficultyNames[1] = "Midjum";
 	difficultyNames[2] = "Hard";
 
-	bg.setTexture("resources/textures/gui/menu_bg.png");
+	bg.setTexture("menu_bg.jpg");
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
 	setStatus(Status::MAIN_MENU);
 }

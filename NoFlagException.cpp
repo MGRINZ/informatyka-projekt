@@ -3,7 +3,7 @@
 
 NoFlagException::NoFlagException(string flagName)
 {
-	msg = "Flag " + flagName + " does not exists";
+	msg = "Flag " + flagName + " does not exists\n";
 }
 
 const char * NoFlagException::what() const throw()

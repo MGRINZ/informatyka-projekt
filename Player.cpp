@@ -25,7 +25,7 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 	}
 
 	move(velocity);
-	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.2) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.2))
+	if ((getMovingDirectionX() == 1 && getPosition().x > view.getCenter().x + Game::WIDTH / 2 - Game::WIDTH * 0.5) || (getMovingDirectionX() == -1 && getPosition().x < view.getCenter().x - Game::WIDTH / 2 + Game::WIDTH * 0.5) && view.getCenter().x > Game::WIDTH / 2)
 	{
 		view.move(velocity);
 		background.move(velocity);
