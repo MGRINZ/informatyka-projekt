@@ -11,7 +11,7 @@ HelpMenu::HelpMenu()
 	frame.show();
 
 	container.setSize(Vector2f(Game::WIDTH - 140, Game::HEIGHT - 140));
-	container.setBackground(Color(0, 0, 0, 96));
+	container.setBackground(Color(0, 0, 0, 192));
 
 	headers[0].setPosition(Vector2f(10, 10));
 	paragraphs[0].setPosition(Vector2f(10, 50));
