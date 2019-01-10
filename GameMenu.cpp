@@ -9,9 +9,9 @@
 
 GameMenu::GameMenu()
 {
-	difficultyNames[0] = "Ijzi";
-	difficultyNames[1] = "Midjum";
-	difficultyNames[2] = "Hard";
+	difficultyNames[0] = "Latwy";
+	difficultyNames[1] = "Sredni";
+	difficultyNames[2] = "Trudny";
 
 	bg.setTexture("menu_bg.jpg");
 	view = View(FloatRect(0, 0, Game::WIDTH, Game::HEIGHT));
