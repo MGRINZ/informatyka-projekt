@@ -3,6 +3,9 @@
 
 void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &background)
 {
+	if (!isActive())
+		return;
+
 	Vector2f velocity(0, 0);
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
@@ -40,7 +43,13 @@ void Player::handleMovement(BlocksVector &solidBlocks, View &view, Sprite &backg
 		setJumping(false);
 	}
 
-	//cout << (int) (getPosition().x / WIDTH) << ";" << (int) (getPosition().y / WIDTH) << endl; //Debug: player position
+	cout << (int) (getPosition().x / WIDTH) << ";" << (int) ((getPosition().y - 1) / WIDTH) << endl; //Debug: player position
+}
+
+Player::Player()
+{
+	setTexture("easteregg-man.png");
+	animationStep = 50;
 }
 
 HUD * Player::getHUD()
@@ -58,31 +67,42 @@ void Player::takingItem(Item &item)
 	}
 }
 
-void Player::takingDamage(Entity & enemy)
+bool Player::takingDamage(Entity & enemy) //Zwraca true jeœli obra¿enia zosta³y zadane, w przeciwnym razie – false
 {
+	if (!enemy.isActive())
+		return false;
+
 	if (!enemy.isAlive())
-		return;
+		return false;
+
 	FloatRect egb = enemy.getGlobalBounds();
 	Vector2f ppos = getPosition();
 	if (!egb.intersects(getGlobalBounds()))
-		return;
+		return false;
 
-	if ((ppos.x >= egb.left && ppos.x <= egb.left + Entity::WIDTH && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
+	if ((ppos.x >= egb.left && ppos.x <= egb.left + enemy.getWidth() && getMovingDirectionY() == 1))	//TODO: Mo¿e daæ jakieœ 10% szerokoœci?
 	{
-		dealDamage(enemy);
-		return;
+		if (!enemy.isImmortal())
+		{
+			dealDamage(enemy);
+			return false;
+		}
 	}
 
 	if (immunityTimer)
-		return;
+		return false;
 
 	setHealth(getHealth() - 1);
 	immunityTimer = 2;
 	setColor(Color::Transparent);
+	return true;
 }
 
 void Player::dealDamage(Entity & enemy)
 {
+	if (enemy.isImmortal())
+		return;
+
 	enemy.die();
 	setJumping(false);
 	yVelocityDown = 0;
@@ -114,6 +134,7 @@ void Player::reset()
 	immunityTimer = 0;
 	setColor(Color::White);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
+	activate();
 }
 
 void Player::immunity()

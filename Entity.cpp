@@ -1,21 +1,15 @@
 #include "Game.h"
 #include "Entity.h"
 
-const float Entity::WIDTH = Block::WIDTH;
-
 void Entity::handleGravity(BlocksVector &blocks, float gravity)
 {
-	Vector2f entityPosition = getPosition();
-	float eX = entityPosition.x;
-	float eY = entityPosition.y;
+	if (!isActive())
+		return;
 
-	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
-	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	if (yVelocityDown == yVelocityUp)
+		yVelocityDown = 0.0;
 
-	Block *blockUL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
-	Block *blockUR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
-
-	if (blockUL != NULL || blockUR != NULL)
+	if (!canGoUp(blocks))
 	{
 		yVelocityUp = 0.0;
 		yVelocityDown = 0.0;
@@ -23,8 +17,18 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(0);
 	}
 
+	yVelocityDown += gravity * 0.0017;
+	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
+	if (yVelocityDown + yVelocityUp > 0)
+		setMovingDirectionY(1);
+	else if (yVelocityDown + yVelocityUp < 0)
+		setMovingDirectionY(-1);
 
-	if (blockDL != NULL || blockDR != NULL)
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	if (!canGoDown(blocks))
 	{
 		Sprite::setPosition(Vector2f(eX, (int)(eY / Block::WIDTH) * Block::WIDTH));
 		yVelocityDown = 0.0;
@@ -32,16 +36,6 @@ void Entity::handleGravity(BlocksVector &blocks, float gravity)
 		setMovingDirectionY(0);
 		return;
 	}
-
-	if (yVelocityDown == yVelocityUp)
-		yVelocityDown = 0.0;
-
-	yVelocityDown += gravity * 0.0017;
-	move(Vector2f(0, (yVelocityDown + yVelocityUp) * Block::WIDTH));
-	if (yVelocityDown + yVelocityUp > 0)
-		setMovingDirectionY(1);
-	else if (yVelocityDown + yVelocityUp < 0)
-		setMovingDirectionY(-1);
 
 	if (entityPosition.y > Game::HEIGHT + WIDTH)
 		alive = false;
@@ -89,10 +83,45 @@ bool Entity::canGoLeft(BlocksVector &blocks)
 	return false;
 }
 
+bool Entity::canGoUp(BlocksVector & blocks)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	Block *blockUL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+	Block *blockUR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + ((yVelocityDown + yVelocityUp) + 0.025) * Block::WIDTH) / Block::WIDTH);
+
+	if (blockUL == NULL && blockUR == NULL)
+		return true;
+
+	return false;
+}
+
+bool Entity::canGoDown(BlocksVector & blocks)
+{
+	Vector2f entityPosition = getPosition();
+	float eX = entityPosition.x;
+	float eY = entityPosition.y;
+
+	Block *blockDL = blocks.getSolidBlockAtPosition((eX - WIDTH / 2) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+	Block *blockDR = blocks.getSolidBlockAtPosition((eX + WIDTH / 2 - 1) / Block::WIDTH, (eY - WIDTH + Block::WIDTH) / Block::WIDTH);
+
+	if (blockDL == NULL && blockDR == NULL)
+		return true;
+
+	return false;
+}
+
 void Entity::handleMovement(BlocksVector &solidBlocks)
 {
+
+	if (!isActive())
+		return;
+
 	if (!isAlive())
 		return;
+
 	if (getMovingDirectionX() == 0)
 		setMovingDirectionX(-1);
 
@@ -116,13 +145,16 @@ void Entity::handleMovement(BlocksVector &solidBlocks)
 	move(velocity);
 }
 
-void Entity::jump()
+void Entity::jump(double offset)
 {
+	if (!isActive())
+		return;
+
 	if (!isJumping() && yVelocityDown > 0)
 		return;
 	if (yVelocityUp == 0)
-		yVelocityUp = -0.27;
-	else if (yVelocityUp > -0.37)
+		yVelocityUp = -0.27 + offset;
+	else if (yVelocityUp > -0.37 + offset)
 		yVelocityUp -= 10 * 0.001;
 	move(Vector2f(0, -0.025 * Block::WIDTH));
 	jumping = true;
@@ -140,8 +172,20 @@ bool Entity::isJumping()
 
 void Entity::animate()
 {
+	if (!isActive())
+		return;
+
 	Vector2u txtSize = texture.getSize();
-	int jumpFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê skoku
+	int deathFrame = (txtSize.x / WIDTH - 1);	//Ostatnia klatka tekstury przeznaczona na animacjê œmierci
+	int jumpFrame = (txtSize.x / WIDTH - 2);	//Przedostatnia klatka tekstury przeznaczona na animacjê skoku
+
+	if (!isAlive())
+	{
+		IntRect txtRect = getTextureRect();
+		txtRect.left = deathFrame * WIDTH;
+		setTextureRect(txtRect);
+		return;
+	}
 
 	if (isMovingY) {
 		IntRect txtRect = getTextureRect();
@@ -161,11 +205,11 @@ void Entity::animate()
 		return;
 	}
 
-	if (animateClock.getElapsedTime().asMilliseconds() >= 50)
+	if (animateClock.getElapsedTime().asMilliseconds() >= animationStep)
 	{
 		IntRect txtRect = getTextureRect();
-		txtRect.left += WIDTH * ((txtRect.left / WIDTH) + 1);
-		if (txtRect.left >= (jumpFrame - 1) * WIDTH)
+		txtRect.left = WIDTH * ((txtRect.left / WIDTH) + 1);
+		if (txtRect.left >= jumpFrame * WIDTH)
 			txtRect.left = 0;
 		if (isMovingX == 1)
 			txtRect.top = 0;
@@ -222,6 +266,21 @@ Entity::Flags Entity::getFlagByName(string name)
 		return Flags::SMART;
 }
 
+bool Entity::isActive()
+{
+	return active;
+}
+
+void Entity::activate()
+{
+	active = true;
+}
+
+void Entity::deactivate()
+{
+	active = false;
+}
+
 bool Entity::isAlive()
 {
 	return alive;
@@ -232,16 +291,27 @@ void Entity::die()
 	alive = false;
 }
 
+bool Entity::isImmortal()
+{
+	return immortal;
+}
+
+const float Entity::getWidth() const
+{
+	return WIDTH;
+}
+
 Entity::Entity()
 {
+	WIDTH = Block::WIDTH;
 	setOrigin(Vector2f(WIDTH / 2, WIDTH));
 	reset();
 }
 
-Entity::Entity(string texture) : Entity()
+void Entity::setTexture(string texture)
 {
 	this->texture.loadFromFile("resources/textures/entities/" + texture);
-	setTexture(this->texture);
+	Sprite::setTexture(this->texture);
 	setTextureRect(IntRect(0, 0, WIDTH, WIDTH));
 }
 
@@ -252,7 +322,9 @@ void Entity::reset()
 	jumping = false;
 	isMovingX = 0;
 	isMovingY = 0;
+	active = false;
 	alive = true;
+	immortal = false;
 	setTextureRect(IntRect(0, WIDTH, WIDTH, WIDTH));
 }
 

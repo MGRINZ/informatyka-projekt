@@ -17,22 +17,27 @@ protected:
 	int isMovingY;	//-1 w górê, 0 false, 1 w dó³
 	Clock animateClock;
 	bool flags[1] = { 0 };
+	bool active;
 	bool alive;
+	bool immortal;
+	int animationStep;
+	float WIDTH;
 
 public:
-	static const float WIDTH;
 	enum Flags {
 		SMART
 	};
 	Entity();
-	Entity(string texture);
+	void setTexture(string texture);
 	void reset();
 	void setPosition(int x, int y);
 	void handleGravity(BlocksVector &blocks, float gravity = 10);
 	bool canGoRight(BlocksVector &blocks);
 	bool canGoLeft(BlocksVector &blocks);
-	void handleMovement(BlocksVector &solidBlocks);
-	void jump();
+	bool canGoUp(BlocksVector & blocks);
+	bool canGoDown(BlocksVector & blocks);
+	virtual void handleMovement(BlocksVector &solidBlocks);
+	void jump(double offset = 0);
 	void setJumping(bool jumping);
 	bool isJumping();
 	void animate();
@@ -45,6 +50,11 @@ public:
 	void setFlag(Flags flag, bool value);
 	void setFlag(string flag, bool value);
 	Flags getFlagByName(string name);
+	bool isActive();
+	void activate();
+	void deactivate();
 	bool isAlive();
 	void die();
+	bool isImmortal();
+	const float getWidth() const;
 };

@@ -3,6 +3,10 @@
 #include <fstream>
 #include <sstream>
 #include "EJelly.h"
+#include "EJumpJelly.h"
+#include "EMovingShootingJelly.h"
+#include "EShootingJelly.h"
+#include "ESleepingJelly.h"
 #include "Game.h"
 #include "Frame.h"
 #include "PauseMenu.h"
@@ -46,6 +50,11 @@ void Level::addEnemy(Entity * entity)
 	enemies.push_back(entity);
 }
 
+void Level::addProjectile(Projectile * projectile)
+{
+	projectiles.push_back(projectile);
+}
+
 void Level::draw(RenderWindow &window)
 {
 	if (status == Status::LOADING)
@@ -66,6 +75,12 @@ void Level::draw(RenderWindow &window)
 
 	for (auto &enemy : enemies)
 		window.draw(*enemy);
+
+	for (auto &projectile : projectiles)
+	{
+		if (projectile->isActive())
+			window.draw(*projectile);
+	}
 
 	for (auto &block : foregroundBlocks)
 		window.draw(block);
@@ -93,6 +108,7 @@ int Level::load(string levelFilename)
 	backgroundBlocks.clear();
 	foregroundBlocks.clear();
 	enemies.clear();
+	projectiles.clear();
 	items.clear();
 	player.reset();
 	resetEndScreen();
@@ -214,6 +230,14 @@ int Level::load(string levelFilename)
 				Entity* enemy = NULL;
 				if (type == "jelly")
 					enemy = new EJelly();
+				else if (type == "jumpjelly")
+					enemy = new EJumpJelly();
+				else if (type == "sleepingjelly")
+					enemy = new ESleepingJelly();
+				else if (type == "shootingjelly")
+					enemy = new EShootingJelly();
+				else if (type == "movingshootingjelly")
+					enemy = new EMovingShootingJelly();
 				enemy->setPosition(x, y);
 
 				if (!flags.empty())
@@ -270,13 +294,31 @@ void Level::resetHelpMenu()
 
 void Level::handleEntities()
 {
+	Vector2f ep, pp;
+	pp = player.getPosition();
+
 	for (auto &enemy : enemies)
 	{
 		enemy->handleGravity(solidBlocks);
-		//enemy->animate();
+		enemy->animate();
 		enemy->handleMovement(solidBlocks);
 		player.takingDamage(*enemy);
+
+		ep = enemy->getPosition();
+		
+		if (ep.x > pp.x && ep.x - pp.x < Game::WIDTH ||
+			ep.x < pp.x && pp.x - ep.x < Game::WIDTH)	//TODO: Do przemyœlenia po utworzeniu pe³nego poziomu
+			enemy->activate();
 	}
+
+	for (auto &projectile : projectiles)
+	{
+		projectile->animate();
+		projectile->shoot(solidBlocks);
+		if (player.takingDamage(*projectile))
+			projectile->deactivate();
+	}
+
 	player.handleGravity(solidBlocks);
 	player.animate();
 	player.handleMovement(solidBlocks, view, background);
@@ -397,4 +439,9 @@ void Level::showPauseMenu()
 void Level::showHelpMenu()
 {
 	helpMenu = new HelpMenu();
+}
+
+const Player & Level::getPlayer()
+{
+	return player;
 }

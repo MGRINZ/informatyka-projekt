@@ -1,6 +1,6 @@
 ;settings
 background=bg1.jpg
-start=3;8
+start=3;14
 end=30;12;30;14
 time=360
 ;terrain
@@ -132,7 +132,6 @@ time=360
 38;8;dirt.jpg
 0;9;dirt.jpg
 1;9;dirt.jpg
-13;9;crate.jpg
 20;9;grass.jpg
 21;9;grass.jpg
 27;9;dirt.jpg
@@ -149,7 +148,6 @@ time=360
 38;9;dirt.jpg
 0;10;dirt.jpg
 1;10;dirt.jpg
-11;10;crate.jpg
 20;10;dirt.jpg
 21;10;dirt.jpg
 27;10;dirt.jpg
@@ -166,7 +164,6 @@ time=360
 38;10;dirt.jpg
 0;11;dirt.jpg
 1;11;dirt.jpg
-9;11;crate.jpg
 16;11;grass.jpg
 17;11;grass.jpg
 20;11;dirt.jpg
@@ -185,7 +182,6 @@ time=360
 38;11;dirt.jpg
 0;12;dirt.jpg
 1;12;dirt.jpg
-7;12;crate.jpg
 16;12;dirt.jpg
 17;12;dirt.jpg
 20;12;dirt.jpg
@@ -200,7 +196,6 @@ time=360
 38;12;dirt.jpg
 0;13;dirt.jpg
 1;13;dirt.jpg
-5;13;crate.jpg
 16;13;dirt.jpg
 17;13;dirt.jpg
 20;13;dirt.jpg
@@ -371,6 +366,8 @@ time=360
 36;18;dirt.jpg
 37;18;dirt.jpg
 38;18;dirt.jpg
+9;15;grass.jpg
+10;15;grass.jpg
 ;background
 27;12;black.jpg
 28;12;black.jpg
@@ -386,11 +383,15 @@ time=360
 29;14;dirt.jpg
 30;14;dirt.jpg
 ;entities
+11;14;jelly;
+13;14;jumpjelly;
+15;14;sleepingjelly;
+12;14;movingshootingjelly;
+16;10;shootingjelly;
+25;13;jelly;
 ;items
 10;4;egg
 14;4;egg
 17;4;egg
-9;15;egg
-10;15;egg
 9;16;egg
 10;16;egg
