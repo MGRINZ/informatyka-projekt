@@ -137,9 +137,6 @@ int Level::load(string levelFilename, bool flushTextures)
 	for (auto &i : enemies)
 		delete i;
 
-	//for (auto &i : projectiles)
-	//	delete i;
-
 	for (auto &i : items)
 		delete i;
 
